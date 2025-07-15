@@ -6,6 +6,7 @@ import { Star, ShoppingCart, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext"; // ✅ Import useCart
 import axios from "axios";
+import api from '../api'; // adjust path based on file location
 
 
 export function ProductCard({ product }) {
@@ -23,7 +24,7 @@ const handleAddToCart = async () => {
     };
     console.log("Cart item payload:", cartItem);
 
-    const response = await axios.post("http://localhost:5000/api/cart/add", cartItem);
+    const response = await api.post("/api/cart/add", cartItem);
 
     if (response.status === 200 || response.status === 201) {
       alert("✅ Item added to cart!");

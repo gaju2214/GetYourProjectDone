@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import api from '../api'; // adjust path based on file location
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Botton";
 import {
@@ -38,8 +40,8 @@ export default function CartPage() {
   const userId = 1;
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:5000/api/cart/${userId}`)
+    api
+      .get(`/api/cart/${userId}`)
       .then((res) => {
         setCartItems(res.data);
         setItemCount(res.data.reduce((sum, item) => sum + item.quantity, 0));
@@ -68,7 +70,7 @@ export default function CartPage() {
 const updateQuantity = (cartId, newQuantity) => {
   if (newQuantity < 1) return;
 
-  axios.put(`http://localhost:5000/api/cart/update/${cartId}`, {
+  api.put(`/api/cart/update/${cartId}`, {
     quantity: newQuantity
   })
     .then(res => {
@@ -92,7 +94,7 @@ const updateQuantity = (cartId, newQuantity) => {
 
 
  const removeItem = (id) => {
-    axios.delete(`http://localhost:5000/api/cart/${id}`)
+    api.delete(`/api/cart/${id}`)
       .then(() => {
         setCartItems((prev) => prev.filter((item) => item.id !== id));
       })
@@ -197,12 +199,10 @@ const updateQuantity = (cartId, newQuantity) => {
                     <div className="flex gap-6">
                       <div className="relative">
                         <img
-                          src={item.image || "/placeholder.svg"}
-                          alt={item.title}
-                          width={120}
-                          height={120}
-                          className="rounded-xl object-cover shadow-md"
-                        />
+                        src={`http://localhost:5000/uploads/${product.image}`}
+  alt={product.title}
+  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+/>
                         <Badge className="absolute -top-2 -right-2 bg-blue-600">
                           {item.difficulty}
                         </Badge>

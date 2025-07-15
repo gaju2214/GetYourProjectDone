@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ProductCard } from "../components/ProductCard"; // adjust path if needed
+import api from '../api'; // adjust path based on file location
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/projects")
+    api.get('/api/projects')
       .then((res) => {
         const mappedProjects = res.data.map(project => ({
           ...project,

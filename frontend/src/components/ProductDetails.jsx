@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
+import api from '../api'; // adjust path based on file location
 
 import { useParams } from "react-router-dom";
 import { Button } from "../components/ui/Botton";
@@ -32,7 +33,7 @@ export default function ProductDetailPage() {
 const [product, setProduct] = useState(null);
 
 useEffect(() => {
-  axios.get(`http://localhost:5000/api/projects/${id}`)
+  api.get(`/api/projects/${id}`)
     .then((res) => {
       const p = res.data.data; // <-- FIXED
       setProduct({
@@ -98,11 +99,11 @@ if (!product) {
         {/* Product Image */}
         <div className="space-y-4">
           <div className="relative overflow-hidden rounded-lg">
-            <img
-              src={product.image || "/placeholder.svg"}
-              alt={product.title}
-              className="w-full h-96 object-cover"
-            />
+              <img
+  src={`http://localhost:5000/uploads/${product.image}`}
+  alt={product.title}
+  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+/>
             <Badge className="absolute top-4 left-4 bg-red-500">
               {discountPercentage}% OFF
             </Badge>

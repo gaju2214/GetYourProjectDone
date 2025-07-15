@@ -5,12 +5,13 @@ import { mockProducts } from "../lib/mock-data";
 import { ArrowRight, Star, Users, Award, Zap } from "lucide-react";
 import { Link } from "react-router-dom"; // Replace if you're still using Next.js
 import axios from "axios"; // ✅ You forgot this
-
+import api from '../api'; // adjust path based on file location
 const Home = () => {
   const [allProducts, setAllProducts] = useState([]);
+//const backendURL = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/projects")
+api.get('/api/projects')
       .then((res) => {
         const mappedProjects = res.data.map(project => ({
           ...project,
