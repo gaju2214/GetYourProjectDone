@@ -9,6 +9,8 @@ import CartPage from "./pages/Cart";
 import LoginPage from "./pages/Auth";
 import SuccessPage from "./pages/Suceess";
 import ProductDetailPage from "./components/ProductDetails";
+import ProjectList from "./pages/ProjectList"; // or correct path
+
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
           <Route path="/auth/login" element={<LoginPage />} />
           <Route path="/success" element={<SuccessPage />} />
           <Route path="/product/:id" element={<ProductDetailPage />} />
+          <Route path="/projects" element={<ProjectList />} />
+          {/* Add more routes as needed */}
         </Routes>
       </div>
     </>

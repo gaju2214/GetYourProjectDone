@@ -1,12 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../components/ui/Botton";
 import { ProductCard } from "../components/ProductCard";
 import { mockProducts } from "../lib/mock-data";
 import { ArrowRight, Star, Users, Award, Zap } from "lucide-react";
 import { Link } from "react-router-dom"; // Replace if you're still using Next.js
+import axios from "axios"; // ✅ You forgot this
 
-export default function HomePage() {
-  const allProducts = mockProducts;
+const Home = () => {
+  const [allProducts, setAllProducts] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/projects")
+      .then((res) => {
+        const mappedProjects = res.data.map(project => ({
+          ...project,
+          originalPrice: Math.floor(project.price * 1.5),
+          rating: 4.5,
+          reviews: 12,
+          difficulty: "Beginner",
+          components: ["Code", "Docs", "Support"],
+        }));
+        setAllProducts(mappedProjects);
+      })
+      .catch(err => {
+        console.error("Error fetching projects:", err);
+      });
+  }, []);
 
   return (
     <div className="space-y-16">
@@ -100,7 +119,7 @@ export default function HomePage() {
       </section>
 
       {/* All Projects Section */}
-      <section className="py-16">
+       <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -120,7 +139,7 @@ export default function HomePage() {
           </div>
 
           <div className="text-center mt-12">
-            <Link to="/404">
+            <Link to="/projects">
               <Button
                 size="lg"
                 variant="outline"
@@ -208,3 +227,4 @@ function StatCard({ icon, value, label, bg }) {
     </div>
   );
 }
+export default Home;
