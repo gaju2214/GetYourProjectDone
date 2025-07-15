@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Botton";
 import {
@@ -25,12 +26,32 @@ import {
   Phone,
   Package,
 } from "lucide-react";
-import { useCart } from "../context/CartContext";
 import { OrderButton } from "../components/OrderButton";
 
 export default function CartPage() {
-  const { state, dispatch } = useCart();
   const navigate = useNavigate();
+  const [cartItems, setCartItems] = useState([]);
+  const [itemCount, setItemCount] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  // Replace with actual user id from auth if available
+  const userId = 1;
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:5000/api/cart/${userId}`)
+      .then((res) => {
+        setCartItems(res.data);
+        setItemCount(res.data.reduce((sum, item) => sum + item.quantity, 0));
+        setTotal(
+          res.data.reduce(
+            (sum, item) => sum + (item.price || 0) * item.quantity,
+            0
+          )
+        );
+      })
+      .catch((err) => console.error("Error fetching cart:", err));
+  }, [userId]);
 
   const [deliveryInfo, setDeliveryInfo] = useState({
     name: "",
@@ -44,19 +65,44 @@ export default function CartPage() {
   });
 
   const [paymentMethod, setPaymentMethod] = useState("");
+const updateQuantity = (cartId, newQuantity) => {
+  if (newQuantity < 1) return;
 
-  const updateQuantity = (id, quantity) => {
-    dispatch({ type: "UPDATE_QUANTITY", payload: { id, quantity } });
+  axios.put(`http://localhost:5000/api/cart/update/${cartId}`, {
+    quantity: newQuantity
+  })
+    .then(res => {
+      const updatedCart = cartItems.map(item =>
+        item.id === cartId ? { ...item, quantity: newQuantity } : item
+      );
+
+      setCartItems(updatedCart);
+
+      // Optional: update totals
+      const newTotal = updatedCart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+      const newItemCount = updatedCart.reduce((sum, i) => sum + i.quantity, 0);
+      setTotal(newTotal);
+      setItemCount(newItemCount);
+    })
+    .catch(err => {
+      console.error("Failed to update quantity:", err);
+    });
+};
+
+
+
+ const removeItem = (id) => {
+    axios.delete(`http://localhost:5000/api/cart/${id}`)
+      .then(() => {
+        setCartItems((prev) => prev.filter((item) => item.id !== id));
+      })
+      .catch((err) => console.error("Failed to remove item:", err));
   };
 
-  const removeItem = (id) => {
-    dispatch({ type: "REMOVE_ITEM", payload: id });
-  };
-
-  const gstAmount = Math.round(state.total * 0.18);
-  const deliveryCharge = state.total > 2000 ? 0 : 99;
-  const discount = Math.round(state.total * 0.05);
-  const finalTotal = state.total + gstAmount + deliveryCharge - discount;
+  const gstAmount = Math.round(total * 0.18);
+  const deliveryCharge = total > 2000 ? 0 : 99;
+  const discount = Math.round(total * 0.05);
+  const finalTotal = total + gstAmount + deliveryCharge - discount;
 
   const handlePincodeChange = (pincode) => {
     setDeliveryInfo((prev) => ({ ...prev, pincode }));
@@ -87,12 +133,14 @@ export default function CartPage() {
       alert("Please select a payment method");
       return;
     }
-
-    dispatch({ type: "CLEAR_CART" });
+    // Optionally: send order to backend here
+    setCartItems([]);
+    setItemCount(0);
+    setTotal(0);
     navigate("/success");
   };
 
-  if (state.items.length === 0) {
+  if (cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center">
         <div className="text-center p-8">
@@ -135,15 +183,15 @@ export default function CartPage() {
               <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
                 <CardTitle className="text-xl flex items-center gap-2">
                   <Package className="h-6 w-6" />
-                  Order Items ({state.itemCount})
+                  Order Items ({itemCount})
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
-                {state.items.map((item, index) => (
+                {cartItems.map((item, index) => (
                   <div
                     key={item.id}
                     className={`p-6 ${
-                      index !== state.items.length - 1 ? "border-b" : ""
+                      index !== cartItems.length - 1 ? "border-b" : ""
                     }`}
                   >
                     <div className="flex gap-6">
@@ -169,8 +217,16 @@ export default function CartPage() {
                             {item.description}
                           </p>
                           <div className="flex gap-2 mt-3">
-                            <Badge variant="outline">{item.category}</Badge>
-                            <Badge variant="outline">{item.subcategory}</Badge>
+                            <Badge variant="outline">
+                              {typeof item.category === "object"
+                                ? item.category?.name
+                                : item.category}
+                            </Badge>
+                            <Badge variant="outline">
+                              {typeof item.subcategory === "object"
+                                ? item.subcategory?.name
+                                : item.subcategory}
+                            </Badge>
                           </div>
                         </div>
 
@@ -207,7 +263,7 @@ export default function CartPage() {
                                 ₹{(item.price * item.quantity).toLocaleString()}
                               </div>
                               <div className="text-sm text-gray-500">
-                                ₹{item.price.toLocaleString()} each
+                                ₹{item.price?.toLocaleString()} each
                               </div>
                             </div>
                             <Button
@@ -453,9 +509,9 @@ export default function CartPage() {
               <CardContent className="p-6 space-y-4">
                 <div className="space-y-3">
                   <div className="flex justify-between text-lg">
-                    <span>Subtotal ({state.itemCount} items)</span>
+                    <span>Subtotal ({itemCount} items)</span>
                     <span className="font-semibold">
-                      ₹{state.total.toLocaleString()}
+                      ₹{total.toLocaleString()}
                     </span>
                   </div>
 
@@ -506,7 +562,6 @@ export default function CartPage() {
                 </div>
               </CardContent>
             </Card>
-            {/* Since you’ve already shared them, no need to repeat unless you want it */}
           </div>
         </div>
       </div>

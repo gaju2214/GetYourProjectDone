@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useEffect } from "react";
+import axios from "axios";
+
 import { useParams } from "react-router-dom";
 import { Button } from "../components/ui/Botton";
 import { Badge } from "../components/ui/Badge";
@@ -18,7 +21,7 @@ import {
   Shield,
   RotateCcw,
 } from "lucide-react";
-import { mockProducts } from "../lib/mock-data";
+//import { mockProducts } from "../lib/mock-data";
 import { useCart } from "../context/CartContext";
 
 export default function ProductDetailPage() {
@@ -26,17 +29,62 @@ export default function ProductDetailPage() {
   const { dispatch } = useCart();
   const [quantity, setQuantity] = useState(1);
 
-  const product = mockProducts.find((p) => p.id === id);
+const [product, setProduct] = useState(null);
 
-  if (!product) {
-    return <div className="container mx-auto px-4 py-8">Product not found</div>;
-  }
+useEffect(() => {
+  axios.get(`http://localhost:5000/api/projects/${id}`)
+    .then((res) => {
+      const p = res.data.data; // <-- FIXED
+      setProduct({
+        ...p,
+        originalPrice: Math.floor(p.price * 1.5),
+        rating: 4.5,
+        reviews: 12,
+        difficulty: "Beginner",
+        components: ["Code", "Docs", "Support"],
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching project:", err);
+    });
+}, [id]);
+if (!product) {
+  return (
+    <div className="container mx-auto px-4 py-8 text-center text-gray-600">
+      Loading project details...
+    </div>
+  );
+}
 
-  const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      dispatch({ type: "ADD_ITEM", payload: product });
+
+
+
+
+
+    // Make API call to backend
+ const handleAddToCart = async () => {
+  try {
+    const cartItem = {
+      // Try 'projectId' if 'productId' fails
+      userId: 1,
+      projectId: product.id,
+      quantity: quantity,
+    };
+    console.log("Cart item payload:", cartItem);
+
+    const response = await axios.post("http://localhost:5000/api/cart/add", cartItem);
+
+    if (response.status === 200 || response.status === 201) {
+      alert("✅ Item added to cart!");
+    } else {
+      alert("❌ Failed to add item to cart.");
     }
-  };
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+    alert("⚠️ Error adding to cart.");
+  }
+};
+
 
   const discountPercentage = Math.round(
     ((product.originalPrice - product.price) / product.originalPrice) * 100
@@ -65,8 +113,12 @@ export default function ProductDetailPage() {
         <div className="space-y-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Badge variant="outline">{product.category}</Badge>
-              <Badge variant="outline">{product.subcategory}</Badge>
+              <Badge variant="outline">
+  {typeof product.category === "object" ? product.category.name : product.category}
+</Badge>
+<Badge variant="outline">
+  {typeof product.subcategory === "object" ? product.subcategory.name : product.subcategory}
+</Badge>
               <Badge
                 variant={
                   product.difficulty === "Beginner"

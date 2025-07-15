@@ -5,15 +5,37 @@ import { Badge } from "./ui/Badge";
 import { Star, ShoppingCart, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext"; // ✅ Import useCart
+import axios from "axios";
+
 
 export function ProductCard({ product }) {
   const [isAdding, setIsAdding] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
   const { dispatch } = useCart();
 
-  const handleAddToCart = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+const handleAddToCart = async () => {
+  try {
+    const cartItem = {
+      // Try 'projectId' if 'productId' fails
+      userId: 1,
+      projectId: product.id,
+      quantity: 1,
+    };
+    console.log("Cart item payload:", cartItem);
+
+    const response = await axios.post("http://localhost:5000/api/cart/add", cartItem);
+
+    if (response.status === 200 || response.status === 201) {
+      alert("✅ Item added to cart!");
+    } else {
+      alert("❌ Failed to add item to cart.");
+    }
+  } catch (error) {
+    console.error("Error adding to cart:", error);
+    alert("⚠️ Error adding to cart.");
+  }
+
+
 
     setIsAdding(true);
     dispatch({ type: "ADD_ITEM", payload: product });
