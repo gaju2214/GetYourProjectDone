@@ -27,6 +27,7 @@ app.use('/api/cart', cartRoutes);
 const orderRoutes = require('./routes/orderRoutes');
 app.use('/api/orders', orderRoutes);
 
+const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => res.send('Server is running 🚀'));

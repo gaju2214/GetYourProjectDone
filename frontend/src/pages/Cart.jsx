@@ -30,16 +30,23 @@ import {
 } from "lucide-react";
 import { OrderButton } from "../components/OrderButton";
 
+import { useAuth } from "../context/AuthContext"; // ✅
+
 export default function CartPage() {
+  const { user } = useAuth(); // ✅
+  const userId = user?.id; // ✅
+
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [itemCount, setItemCount] = useState(0);
   const [total, setTotal] = useState(0);
 
-  // Replace with actual user id from auth if available
-  const userId = 1;
-
   useEffect(() => {
+     if (!user) {
+    navigate("/auth/login");
+    return;
+  }
+
     api
       .get(`/api/cart/${userId}`)
       .then((res) => {
@@ -90,8 +97,6 @@ const updateQuantity = (cartId, newQuantity) => {
       console.error("Failed to update quantity:", err);
     });
 };
-
-
 
  const removeItem = (id) => {
     api.delete(`/api/cart/${id}`)
@@ -199,10 +204,10 @@ const updateQuantity = (cartId, newQuantity) => {
                     <div className="flex gap-6">
                       <div className="relative">
                         <img
-                        src={`http://localhost:5000/uploads/${product.image}`}
-  alt={product.title}
-  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-/>
+                          src={`http://localhost:5000/uploads/${item.image}`}
+                          alt={item.title}
+                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
                         <Badge className="absolute -top-2 -right-2 bg-blue-600">
                           {item.difficulty}
                         </Badge>

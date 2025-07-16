@@ -24,13 +24,15 @@ import {
 } from "lucide-react";
 //import { mockProducts } from "../lib/mock-data";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext"; // Adjust path as needed
 
 export default function ProductDetailPage() {
   const { id } = useParams();
   const { dispatch } = useCart();
+  const { user } = useAuth(); // ✅
   const [quantity, setQuantity] = useState(1);
+  const [product, setProduct] = useState(null);
 
-const [product, setProduct] = useState(null);
 
 useEffect(() => {
   api.get(`/api/projects/${id}`)
@@ -57,17 +59,16 @@ if (!product) {
   );
 }
 
+// Make API call to backend
+const handleAddToCart = async () => {
+  if (!user) {
+    alert("Please log in to add items to cart.");
+    return;
+  }
 
-
-
-
-
-    // Make API call to backend
- const handleAddToCart = async () => {
   try {
     const cartItem = {
-      // Try 'projectId' if 'productId' fails
-      userId: 1,
+      userId: user.id, // ✅ dynamic user ID from context
       projectId: product.id,
       quantity: quantity,
     };
@@ -85,6 +86,7 @@ if (!product) {
     alert("⚠️ Error adding to cart.");
   }
 };
+
 
 
   const discountPercentage = Math.round(

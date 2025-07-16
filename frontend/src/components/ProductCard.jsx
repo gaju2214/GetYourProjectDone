@@ -7,21 +7,30 @@ import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext"; // ✅ Import useCart
 import axios from "axios";
 import api from '../api'; // adjust path based on file location
+import { useAuth } from "../context/AuthContext"; // Adjust path as needed
 
 
 export function ProductCard({ product }) {
   const [isAdding, setIsAdding] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
   const { dispatch } = useCart();
+  const { user } = useAuth(); // 👈 get logged-in user
 
-const handleAddToCart = async () => {
-  try {
-    const cartItem = {
-      // Try 'projectId' if 'productId' fails
-      userId: 1,
-      projectId: product.id,
-      quantity: 1,
-    };
+
+ const handleAddToCart = async () => {
+   if (!user) {
+  alert("Please log in to add items to cart.");
+  return;
+}
+
+    try {
+   const cartItem = {
+  userId: user?.id,
+  projectId: product.id,
+  quantity: 1,
+};
+
+      setIsAdding(true);
     console.log("Cart item payload:", cartItem);
 
     const response = await api.post("/api/cart/add", cartItem);
