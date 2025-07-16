@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // ✅ ADDED useNavigate
 import { Button } from "../components/ui/Botton";
 import { Badge } from "../components/ui/Badge";
 import { Sheet, SheetContent, SheetTrigger } from "../components/ui/Sheet";
@@ -9,19 +9,26 @@ import { useCart } from "../context/CartContext";
 
 import ExpandableMenu from "./ExpandableMenu";
 import EngiProNetwork from "./EngiproNetwork";
+import { useAuth } from "../context/AuthContext";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNetworkOpen, setIsNetworkOpen] = useState(false);
   const { state } = useCart();
   const [activeNav, setActiveNav] = useState("");
+  const { user, logout } = useAuth(); // ✅ useAuth
+  const navigate = useNavigate();     // ✅ useNavigate
+
+  const handleLogout = () => {
+    logout();
+    navigate("/auth/login");
+  };
 
   return (
     <>
       <nav className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
-            {/* Logo - Now clickable to show network */}
             <button
               onClick={() => setIsNetworkOpen(true)}
               className="flex items-center space-x-3 hover:scale-105 transition-transform duration-200 group"
@@ -37,7 +44,6 @@ const Navigation = () => {
               </div>
             </button>
 
-            {/* Desktop Navigation */}
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
               <Sheet>
@@ -101,11 +107,27 @@ const Navigation = () => {
                 </Button>
               </Link>
 
-              <Link to="/auth/login">
-                <Button variant="ghost" size="icon">
-                  <User className="h-5 w-5" />
-                </Button>
-              </Link>
+              {user ? (
+                <>
+                  <Link to="/profile">
+                    <Button variant="ghost" size="sm" className="text-sm">
+                      Profile
+                    </Button>
+                  </Link>
+                  <Button
+                    onClick={handleLogout}
+                    className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700"
+                  >
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <Link to="/auth/login">
+                  <Button variant="ghost" size="icon">
+                    <User className="h-5 w-5" />
+                  </Button>
+                </Link>
+              )}
 
               {/* Mobile Menu */}
               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
@@ -118,31 +140,45 @@ const Navigation = () => {
                   <div className="flex flex-col space-y-4 mt-8">
                     <ExpandableMenu />
                     <Link
-                      href="/categories/electronics"
+                      to="/categories/electronics"
                       className="text-gray-700 hover:text-gray-900 py-2"
                     >
                       Categories
                     </Link>
                     <Link
-                      href="/orders"
+                      to="/orders"
                       className="text-gray-700 hover:text-gray-900 py-2"
                     >
                       Orders
                     </Link>
                     <Link
-                      href="/cart"
+                      to="/cart"
                       className="text-gray-700 hover:text-gray-900 py-2"
                     >
                       Cart ({state.itemCount})
                     </Link>
-                    <Link
-                      href="/auth/login"
-                      className="text-gray-700 hover:text-gray-900 py-2"
-                    >
-                      Profile
-                    </Link>
+
+                    {user ? (
+                      <>
+                        <Link to="/profile" className="text-gray-700 hover:text-red-600">
+                          Profile
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700"
+                        >
+                          Logout
+                        </button>
+                      </>
+                    ) : (
+                      <Link
+                        to="/auth/login"
+                        className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700"
+                      >
+                        Login
+                      </Link>
+                    )}
                   </div>
-                  
                 </SheetContent>
               </Sheet>
             </div>

@@ -13,6 +13,7 @@ import { Label } from "../components/ui/Label";
 import { Separator } from "../components/ui/Separator";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import api from '../api'; // adjust path based on file location
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -28,7 +29,7 @@ export default function LoginPage() {
 
     try {
       setLoading(true);
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await api.post("/api/auth/login", {
         email,
         password,
       });
@@ -37,7 +38,9 @@ export default function LoginPage() {
       localStorage.setItem("user", JSON.stringify(user));
 
       alert("Login successful!");
-      navigate("/");
+navigate("/", { replace: true });
+window.location.reload();
+
 
     } catch (err) {
       alert("Login failed: " + (err.response?.data?.message || "Server error"));

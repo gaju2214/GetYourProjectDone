@@ -204,10 +204,9 @@ const updateQuantity = (cartId, newQuantity) => {
                     <div className="flex gap-6">
                       <div className="relative">
                         <img
-                          src={`http://localhost:5000/uploads/${item.image}`}
-                          alt={item.title}
-                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
+  src={`${api.defaults.baseURL}/uploads/${item.image}`}
+  alt={item.title}
+/>
                         <Badge className="absolute -top-2 -right-2 bg-blue-600">
                           {item.difficulty}
                         </Badge>

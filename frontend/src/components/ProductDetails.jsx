@@ -74,7 +74,7 @@ const handleAddToCart = async () => {
     };
     console.log("Cart item payload:", cartItem);
 
-    const response = await axios.post("http://localhost:5000/api/cart/add", cartItem);
+    const response = await api.post("/api/cart/add", cartItem);
 
     if (response.status === 200 || response.status === 201) {
       alert("✅ Item added to cart!");
@@ -101,11 +101,11 @@ const handleAddToCart = async () => {
         {/* Product Image */}
         <div className="space-y-4">
           <div className="relative overflow-hidden rounded-lg">
-              <img
-  src={`http://localhost:5000/uploads/${product.image}`}
+<img
+  src={`${api.defaults.baseURL}/uploads/${product.image}`}
   alt={product.title}
-  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
 />
+
             <Badge className="absolute top-4 left-4 bg-red-500">
               {discountPercentage}% OFF
             </Badge>
