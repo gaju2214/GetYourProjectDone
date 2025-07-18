@@ -33,19 +33,16 @@ import { OrderButton } from "../components/OrderButton";
 import { useAuth } from "../context/AuthContext"; // ✅
 
 export default function CartPage() {
-  const { user } = useAuth(); // ✅
-  const userId = user?.id; // ✅
+ // const { user } = useAuth(); // ✅
+  const userId = 1//user?.id; // ✅
 
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [itemCount, setItemCount] = useState(0);
   const [total, setTotal] = useState(0);
 
-  useEffect(() => {
-     if (!user) {
-    navigate("/auth/login");
-    return;
-  }
+ useEffect(() => {
+   
 
     api
       .get(`/api/cart/${userId}`)
