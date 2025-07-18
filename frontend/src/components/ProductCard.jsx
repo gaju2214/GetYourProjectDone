@@ -69,12 +69,13 @@ export function ProductCard({ product }) {
       <Link to={`/product/${product.id}`}>
         <CardContent className="p-0">
           <div className="relative overflow-hidden rounded-t-lg">
-<img
-  src={`${api.defaults.baseURL}/uploads/${product.image}`}
-  alt={product.title}
-/>
-
-
+            <img
+              src={`${api.defaults.baseURL}/uploads/${product.image}`}
+              alt={product.title}
+              width={400}
+              height={300}
+              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+              />
 
             <Badge className="text-white absolute top-3 left-3 bg-red-500 hover:bg-red-600">
               {discountPercentage}% OFF

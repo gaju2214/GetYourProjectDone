@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Button } from "../components/ui/Botton";
 import { ProductCard } from "../components/ProductCard";
 import { mockProducts } from "../lib/mock-data";
 import { ArrowRight, Star, Users, Award, Zap } from "lucide-react";
 import { Link } from "react-router-dom"; // Replace if you're still using Next.js
 import axios from "axios"; // ✅ You forgot this
-import api from '../api'; // adjust path based on file location
-const Home = () => {
+import api from "../api"; // adjust path based on file location
+
+const HomePage = () => {
   const [allProducts, setAllProducts] = useState([]);
-//const backendURL = import.meta.env.VITE_BACKEND_URL;
 
   useEffect(() => {
-api.get('/api/projects')
+    api
+      .get("/api/projects")
       .then((res) => {
-        const mappedProjects = res.data.map(project => ({
+        const mappedProjects = res.data.map((project) => ({
           ...project,
           originalPrice: Math.floor(project.price * 1.5),
           rating: 4.5,
@@ -23,10 +24,18 @@ api.get('/api/projects')
         }));
         setAllProducts(mappedProjects);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Error fetching projects:", err);
       });
   }, []);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+  const allProjectsRef = useRef(null);
+
+  const scrollToProjects = () => {
+    allProjectsRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <div className="space-y-16">
@@ -59,7 +68,7 @@ api.get('/api/projects')
                 </span>
               </Button>
 
-              <Link to="/404">
+              <Link to="/categories">
                 <Button
                   size="lg"
                   variant="outline"
@@ -120,7 +129,7 @@ api.get('/api/projects')
       </section>
 
       {/* All Projects Section */}
-       <section className="py-16">
+       <section className="py-16" ref={allProjectsRef}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -201,14 +210,15 @@ api.get('/api/projects')
             completed their projects with our premium kits. Achieve your goals
             today!
           </p>
-          <Link to="/404">
+         
             <Button
-              size="lg"
-              className="bg-white text-red-600 hover:bg-gray-100"
-            >
-              Browse All Projects
-            </Button>
-          </Link>
+            size="lg"
+            onClick={scrollToProjects} // ✅ Replaces <Link to="/404">
+            className="bg-white text-red-600 hover:bg-gray-100"
+          >
+            Browse All Projects
+          </Button>
+          
         </div>
       </section>
     </div>
@@ -228,4 +238,5 @@ function StatCard({ icon, value, label, bg }) {
     </div>
   );
 }
-export default Home;
+export default HomePage;
+

@@ -9,6 +9,8 @@ import CartPage from "./pages/Cart";
 import LoginPage from "./pages/Auth";
 import SuccessPage from "./pages/Suceess";
 import ProductDetailPage from "./components/ProductDetails";
+import CategoriesPage from "./pages/Categories";
+import CategoryPage from "./components/Subcategory";
 import ProjectList from "./pages/ProjectList"; // or correct path
 import ProjectAdminPanel from './ProjectAdminPanel';
 
@@ -25,6 +27,8 @@ function App() {
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
+        <Route path="/categories" element={<CategoriesPage />} />
+        <Route path="/categories/:category" element={<CategoryPage />} />
         <Route path="/projects" element={<ProjectList />} />
         <Route path="/*" element={<NotFoundPage />} />
       </Routes>

@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
 import { Button } from "../components/ui/Botton"; // Corrected import path
 
-const SCALE_FACTOR = 0.8;
+const SCALE_FACTOR = 1;
 
 const networkData = [
   // Central Hub
@@ -519,12 +519,12 @@ export default function EngiProNetwork({ isOpen, onClose }) {
                           y={node.y + scaledSize + 10}
                           textAnchor="middle"
                           fill="#1f2937"
-                          fontSize={
+                           fontSize={
                             (node.category === "hub"
-                              ? 14
+                              ? 18
                               : node.category === "main"
-                              ? 11
-                              : 9) * SCALE_FACTOR
+                              ? 14
+                              : 11) * SCALE_FACTOR
                           }
                           fontWeight="500"
                           fontFamily="Inter, sans-serif"

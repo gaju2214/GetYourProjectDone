@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+// import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"; // ✅ ADDED useNavigate
 import { Button } from "../components/ui/Botton";
 import { Badge } from "../components/ui/Badge";
@@ -7,7 +8,7 @@ import { Sheet, SheetContent, SheetTrigger } from "../components/ui/Sheet";
 import { Menu, ShoppingCart, User, Search } from "lucide-react";
 import { useCart } from "../context/CartContext";
 
-import ExpandableMenu from "./ExpandableMenu";
+
 import EngiProNetwork from "./EngiproNetwork";
 import { useAuth } from "../context/AuthContext";
 
@@ -16,6 +17,25 @@ const Navigation = () => {
   const [isNetworkOpen, setIsNetworkOpen] = useState(false);
   const { state } = useCart();
   const [activeNav, setActiveNav] = useState("");
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+
+  const searchRef = useRef();
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSearch(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   const { user, logout } = useAuth(); // ✅ useAuth
   const navigate = useNavigate();     // ✅ useNavigate
 
@@ -46,27 +66,20 @@ const Navigation = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    onClick={() => setActiveNav("projectKits")}
-                    className={`text-gray-700 hover:text-gray-900 ${
-                      activeNav === "projectKits"
-                        ? "font-semibold text-black-600"
-                        : ""
-                    }`}
-                  >
-                    Project Kits
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-80">
-                  <ExpandableMenu />
-                </SheetContent>
-              </Sheet>
+              <Link to="/projectkits">
+                <Button
+                  variant="ghost"
+                  onClick={() => setActiveNav("projectKits")}
+                  className={`whitespace-nowrap text-gray-700 hover:text-gray-900 ${
+                    activeNav === "projectKits" ? "font-semibold text-black-600" : ""
+                  }`}
+                >
+                  Project Kits
+                </Button>
+              </Link>
 
               <Link
-                to="/404"
+                to="/categories"
                 onClick={() => setActiveNav("categories")}
                 className={`text-gray-700 hover:text-gray-900 transition-colors ${
                   activeNav === "categories"
@@ -77,19 +90,29 @@ const Navigation = () => {
                 Categories
               </Link>
 
-              <Link
-                to="/Orders"
-                onClick={() => setActiveNav("orders")}
-                className={`text-gray-700 hover:text-gray-900 transition-colors ${
-                  activeNav === "orders" ? "font-semibold text-blue-600" : ""
-                }`}
-              >
-                Orders
-              </Link>
+             
 
-              <Button variant="ghost" size="icon">
-                <Search className="h-5 w-5" />
-              </Button>
+             <div className="flex items-center space-x-2" ref={searchRef}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowSearch(!showSearch)}
+                  aria-label="Toggle Search"
+                >
+                  <Search className="h-5 w-5" />
+                </Button>
+
+                {showSearch && (
+                  <input
+                    type="text"
+                    placeholder="Search projects..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white text-sm text-gray-800 transition-all duration-200 w-64"
+                  />
+                )}
+              </div>
+            
             </div>
 
             {/* Right Side Actions */}
@@ -130,57 +153,77 @@ const Navigation = () => {
               )}
 
               {/* Mobile Menu */}
-              <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="md:hidden">
-                    <Menu className="h-5 w-5" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="w-80">
-                  <div className="flex flex-col space-y-4 mt-8">
-                    <ExpandableMenu />
-                    <Link
-                      to="/categories/electronics"
-                      className="text-gray-700 hover:text-gray-900 py-2"
-                    >
-                      Categories
-                    </Link>
-                    <Link
-                      to="/orders"
-                      className="text-gray-700 hover:text-gray-900 py-2"
-                    >
-                      Orders
-                    </Link>
-                    <Link
-                      to="/cart"
-                      className="text-gray-700 hover:text-gray-900 py-2"
-                    >
-                      Cart ({state.itemCount})
-                    </Link>
+             <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+  <SheetTrigger asChild>
+    <Button variant="ghost" size="icon" className="md:hidden">
+      <Menu className="h-5 w-5" />
+    </Button>
+  </SheetTrigger>
 
-                    {user ? (
-                      <>
-                        <Link to="/profile" className="text-gray-700 hover:text-red-600">
-                          Profile
-                        </Link>
-                        <button
-                          onClick={handleLogout}
-                          className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700"
-                        >
-                          Logout
-                        </button>
-                      </>
-                    ) : (
-                      <Link
-                        to="/auth/login"
-                        className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700"
-                      >
-                        Login
-                      </Link>
-                    )}
-                  </div>
-                </SheetContent>
-              </Sheet>
+  <SheetContent
+    side="right"
+    className="w-80 h-full bg-white p-6 shadow-lg overflow-y-auto"
+  >
+    <div className="flex flex-col space-y-6">
+      <Link
+        to="/categories/electronics"
+        onClick={() => setIsMenuOpen(false)}
+        className="text-gray-700 hover:text-blue-600 text-base font-medium"
+      >
+        Categories
+      </Link>
+
+      <Link
+        to="/orders"
+        onClick={() => setIsMenuOpen(false)}
+        className="text-gray-700 hover:text-blue-600 text-base font-medium"
+      >
+        Orders
+      </Link>
+
+      <Link
+        to="/cart"
+        onClick={() => setIsMenuOpen(false)}
+        className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 py-2"
+      >
+        <ShoppingCart className="h-5 w-5" />
+        {state.itemCount > 0 && (
+          <span className="text-sm font-medium">{state.itemCount}</span>
+        )}
+      </Link>
+
+      {user ? (
+        <>
+          <Link
+            to="/profile"
+            onClick={() => setIsMenuOpen(false)}
+            className="text-gray-700 hover:text-red-600 text-base font-medium"
+          >
+            Profile
+          </Link>
+          <button
+            onClick={() => {
+              handleLogout();
+              setIsMenuOpen(false);
+            }}
+            className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700"
+          >
+            Logout
+          </button>
+        </>
+      ) : (
+        <Link
+          to="/auth/login"
+          onClick={() => setIsMenuOpen(false)}
+          className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700 text-center"
+        >
+          Login
+        </Link>
+      )}
+    </div>
+  </SheetContent>
+</Sheet>
+
             </div>
           </div>
         </div>

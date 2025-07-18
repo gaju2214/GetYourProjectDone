@@ -101,10 +101,11 @@ const handleAddToCart = async () => {
         {/* Product Image */}
         <div className="space-y-4">
           <div className="relative overflow-hidden rounded-lg">
-<img
-  src={`${api.defaults.baseURL}/uploads/${product.image}`}
-  alt={product.title}
-/>
+            <img
+              src={`${api.defaults.baseURL}/uploads/${product.image}`}
+              alt={product.title}
+              className="w-full h-96 object-cover"
+            />
 
             <Badge className="absolute top-4 left-4 bg-red-500">
               {discountPercentage}% OFF
@@ -117,11 +118,11 @@ const handleAddToCart = async () => {
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Badge variant="outline">
-  {typeof product.category === "object" ? product.category.name : product.category}
-</Badge>
-<Badge variant="outline">
-  {typeof product.subcategory === "object" ? product.subcategory.name : product.subcategory}
-</Badge>
+                  {typeof product.category === "object" ? product.category.name : product.category}
+                </Badge>
+                <Badge variant="outline">
+                  {typeof product.subcategory === "object" ? product.subcategory.name : product.subcategory}
+                </Badge>
               <Badge
                 variant={
                   product.difficulty === "Beginner"

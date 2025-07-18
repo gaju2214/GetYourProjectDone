@@ -201,9 +201,12 @@ const updateQuantity = (cartId, newQuantity) => {
                     <div className="flex gap-6">
                       <div className="relative">
                         <img
-  src={`${api.defaults.baseURL}/uploads/${item.image}`}
-  alt={item.title}
-/>
+                          src={`${api.defaults.baseURL}/uploads/${item.image}`}
+                          alt={item.title}
+                          width={120}
+                          height={120}
+                          className="rounded-xl object-cover shadow-md"
+                        />
                         <Badge className="absolute -top-2 -right-2 bg-blue-600">
                           {item.difficulty}
                         </Badge>
