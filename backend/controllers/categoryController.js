@@ -27,7 +27,28 @@ exports.createSubcategory = async (req, res) => {
   }
 };
 
-// Get all categories with subcategories
+exports.getCategories = async (req, res) => {
+  try {
+    const categories = await Category.findAll();
+    res.json(categories);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch categories' });
+  }
+};
+
+// ✅ Get only subcategories (with optional category filtering)
+exports.getSubcategories = async (req, res) => {
+  const { categoryId } = req.query; // Optional filter by categoryId
+  try {
+    const whereClause = categoryId ? { categoryId } : {};
+    const subcategories = await Subcategory.findAll({ where: whereClause });
+    res.json(subcategories);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch subcategories' });
+  }
+};
+
+// Get all categories with subcategories (for dashboard view)
 exports.getAllCategories = async (req, res) => {
   try {
     const categories = await Category.findAll({
@@ -35,6 +56,6 @@ exports.getAllCategories = async (req, res) => {
     });
     res.json(categories);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch categories' });
+    res.status(500).json({ error: 'Failed to fetch categories with subcategories' });
   }
 };

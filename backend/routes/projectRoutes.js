@@ -4,7 +4,7 @@ const upload = require('../middleware/upload');
 const projectController = require('../controllers/projectController');
 
 // Upload project with image
-router.post('/add', upload.single('image'), projectController.createProject);
+router.post('/create-project', upload.single('image'), projectController.createProject);
 
 
 // Get all projects

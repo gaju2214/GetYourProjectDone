@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const categoryController = require('../controllers/categoryController');
 
-// Add category
-router.post('/add-category', categoryController.createCategory);
+router.post('/create-category', categoryController.createCategory);
 
-// Add subcategory
-router.post('/add-subcategory', categoryController.createSubcategory);
+router.post('/create-subcategory', categoryController.createSubcategory);
 
-// Get all categories with subcategories
-router.get('/', categoryController.getAllCategories);
+// GET
+router.get('/categories', categoryController.getCategories); // Only categories
+router.get('/subcategories', categoryController.getSubcategories); // Only subcategories (with optional ?categoryId=)
+router.get('/categoryall', categoryController.getAllCategories); // All categories + subs
 
 module.exports = router;

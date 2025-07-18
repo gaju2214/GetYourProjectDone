@@ -10,7 +10,16 @@ const app = express();
 app.use(cors());
 app.use(express.json()); // required for req.body
 const categoryRoutes = require('./routes/categoryRoutes');
+
+// ✅ Mount the routes
+app.use('/api', categoryRoutes);
+app.use(express.json()); // This is required to parse JSON bodies!
 app.use('/api/categories', categoryRoutes);
+
+
+const subcategoryRoutes = require('./routes/subcategoryRoutes');
+app.use('/api/subcategories', subcategoryRoutes);
+
 
 // Test body parser
 app.post('/test', (req, res) => {
