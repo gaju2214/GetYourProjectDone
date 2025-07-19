@@ -13,12 +13,28 @@ const orderRoutes = require('./routes/orderRoutes');
 const app = express();
 
 // ✅ Place CORS and body parser at the top
+const allowedOrigins = [
+  'http://localhost:5000',
+  'https://qjv19kc1-5000.inc1.devtunnels.ms',
+  'https://getyourprojectdone-backend.onrender.com',
+  'http://localhost:5173', // If your frontend runs on Vite default port
+  'https://yourfrontenddomain.com' // Add your actual frontend domain if different
+];
+
 app.use(cors({
-  origin: '*', // Replace with specific origin in production
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like curl or Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error('CORS not allowed from this origin: ' + origin), false);
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(express.json());
+
 
 // ✅ Route mounts
 app.use('/api/categories', categoryRoutes);
