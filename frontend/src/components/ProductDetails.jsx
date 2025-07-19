@@ -61,14 +61,14 @@ if (!product) {
 
 // Make API call to backend
 const handleAddToCart = async () => {
-  // if (!user) {
-  //   alert("Please log in to add items to cart.");
-  //   return;
-  // }
+  if (!user) {
+    alert("Please log in to add items to cart.");
+    return;
+  }
 
   try {
     const cartItem = {
-      userId: 1, //user.id, // ✅ dynamic user ID from context
+      userId: user.id, //1, ✅ dynamic user ID from context
       projectId: product.id,
       quantity: quantity,
     };

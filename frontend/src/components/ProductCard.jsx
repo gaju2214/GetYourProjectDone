@@ -14,18 +14,18 @@ export function ProductCard({ product }) {
   const [isAdding, setIsAdding] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
   const { dispatch } = useCart();
- // const { user } = useAuth(); // 👈 get logged-in user
+  const { user } = useAuth(); // 👈 get logged-in user
 
 
  const handleAddToCart = async () => {
-  // if (!user) {
-  //   alert("Please log in to add items to cart.");
-  //   return;
-  // }
+  if (!user) {
+    alert("Please log in to add items to cart.");
+    return;
+  }
 
     try {
    const cartItem = {
-  userId: 1,//user?.id,
+  userId: user?.id,//1,
   projectId: product.id,
   quantity: 1,
 };
