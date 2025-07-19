@@ -7,7 +7,7 @@ router.post('/create-category', categoryController.createCategory);
 router.post('/create-subcategory', categoryController.createSubcategory);
 
 // GET
-router.get('/categories', categoryController.getCategories); // Only categories
+router.get('/', categoryController.getCategories); // ✅ This handles GET /api/categories
 router.get('/subcategories', categoryController.getSubcategories); // Only subcategories (with optional ?categoryId=)
 router.get('/categoryall', categoryController.getAllCategories); // All categories + subs
 
