@@ -4,43 +4,40 @@ require('dotenv').config();
 
 const { sequelize } = require('./models');
 const authRoutes = require('./routes/authRoutes');
+const categoryRoutes = require('./routes/categoryRoutes');
+const subcategoryRoutes = require('./routes/subcategoryRoutes');
+const projectRoutes = require('./routes/projectRoutes');
+const cartRoutes = require('./routes/cartRoutes');
+const orderRoutes = require('./routes/orderRoutes');
 
 const app = express();
 
-app.use(cors());
-app.use(express.json()); // required for req.body
-const categoryRoutes = require('./routes/categoryRoutes');
+// ✅ Place CORS and body parser at the top
+app.use(cors({
+  origin: '*', // Replace with specific origin in production
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+app.use(express.json());
 
-// ✅ Mount the routes
-app.use('/api', categoryRoutes);
-app.use(express.json()); // This is required to parse JSON bodies!
+// ✅ Route mounts
 app.use('/api/categories', categoryRoutes);
-
-
-const subcategoryRoutes = require('./routes/subcategoryRoutes');
 app.use('/api/subcategories', subcategoryRoutes);
+app.use('/api/projects', projectRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/uploads', express.static('uploads'));
 
-
-// Test body parser
+// Test
 app.post('/test', (req, res) => {
   console.log('Test body:', req.body);
   res.json(req.body);
 });
-const projectRoutes = require('./routes/projectRoutes');
-app.use('/api/projects', projectRoutes);
-app.use('/uploads', express.static('uploads'));
-
-const cartRoutes = require('./routes/cartRoutes');
-app.use('/api/cart', cartRoutes);
-
-const orderRoutes = require('./routes/orderRoutes');
-app.use('/api/orders', orderRoutes);
-
-//const authRoutes = require('./routes/authRoutes');
-app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => res.send('Server is running 🚀'));
 
+// ✅ Start the server
 const PORT = process.env.PORT || 5000;
 sequelize.sync({ alter: true }).then(() => {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
