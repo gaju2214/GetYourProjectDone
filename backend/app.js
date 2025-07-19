@@ -43,7 +43,6 @@ app.use(express.json()); // This is required to parse JSON bodies!
 app.use('/api/categories', categoryRoutes);
 
 
-const subcategoryRoutes = require('./routes/subcategoryRoutes');
 app.use('/api/subcategories', subcategoryRoutes);
 
 
@@ -52,14 +51,11 @@ app.post('/test', (req, res) => {
   console.log('Test body:', req.body);
   res.json(req.body);
 });
-const projectRoutes = require('./routes/projectRoutes');
 app.use('/api/projects', projectRoutes);
 app.use('/uploads', express.static('uploads'));
 
-const cartRoutes = require('./routes/cartRoutes');
 app.use('/api/cart', cartRoutes);
 
-const orderRoutes = require('./routes/orderRoutes');
 app.use('/api/orders', orderRoutes);
 
 //const authRoutes = require('./routes/authRoutes');
