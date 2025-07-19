@@ -32,7 +32,6 @@ app.use(express.json()); // required for req.body
 const categoryRoutes = require('./routes/categoryRoutes');
 app.use('/api/categories', categoryRoutes);
 
-const subcategoryController = require('./controllers/subcategoryController');
 const subcategoryRoutes = require('./routes/subcategoryRoutes'); // Adjust path as needed
 
 app.use('/api/subcategories', subcategoryRoutes);
