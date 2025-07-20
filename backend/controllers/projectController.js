@@ -58,5 +58,32 @@ exports.getProjectById = async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to fetch project', error: err.message });
   }
 };
+// Get all projects (with optional subcategory filtering)
+exports.getAllProjects = async (req, res) => {
+  const { subcategoryId } = req.query;
 
+  const whereClause = subcategoryId ? { subcategoryId } : {};
+
+  try {
+    const projects = await Project.findAll({
+      where: whereClause,
+      include: { model: Subcategory, as: 'subcategory' }
+    });
+    res.json(projects);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch projects' });
+  }
+};
+
+exports.getProjectsBySubcategory = async (req, res) => {
+  const { subcategoryId } = req.params;
+  try {
+    const projects = await Project.findAll({
+      where: { subcategoryId },
+    });
+    res.status(200).json(projects);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch projects' });
+  }
+};
 

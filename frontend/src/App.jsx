@@ -31,6 +31,8 @@ function App() {
         <Route path="/categories/:category" element={<CategoryPage />} />
         <Route path="/projects" element={<ProjectList />} />
         <Route path="/*" element={<NotFoundPage />} />
+        <Route path="/projects/:category" element={<CategoryPage />} />
+
       </Routes>
     </>
   );

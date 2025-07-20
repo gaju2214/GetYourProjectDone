@@ -1,23 +1,75 @@
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ProductCard } from "../components/ProductCard";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Botton";
 import { Card, CardContent } from "../components/ui/Card";
-import { categoryProducts, categories } from "../lib/mock-data";
 import { Filter, Grid, List, SortAsc } from "lucide-react";
+import axios from "axios";
 
 export default function CategoryPage() {
   const params = useParams();
   const category = params.category;
   const [viewMode, setViewMode] = useState("grid");
-  const [sortBy, setSortBy] = useState("popular");
+ const [sortBy, setSortBy] = useState("popular");
+const [categoryName, setCategoryName] = useState("");
 
-  const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
-  const products = categoryProducts[categoryName] || [];
-  const subcategories = categories[categoryName] || {};
 
-  if (!products.length) {
+  //const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
+
+  const [subcategories, setSubcategories] = useState([]);
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState(null);
+  const [products, setProducts] = useState([]);
+
+  // Fetch subcategories using category slug
+
+
+useEffect(() => {
+  const fetchSubcategoriesAndCategory = async () => {
+    try {
+      // Fetch category name using slug
+      const categoryRes = await axios.get(
+        `http://localhost:5000/api/categories/${category}`
+      );
+      setCategoryName(categoryRes.data.name);
+
+      // Fetch subcategories using slug
+      const subRes = await axios.get(
+        `http://localhost:5000/api/categories/subcategories/by-slug/${category}`
+      );
+      setSubcategories(subRes.data);
+
+      // Set default selected subcategory if available
+      if (subRes.data.length > 0) {
+        setSelectedSubcategoryId(subRes.data[0].id);
+      }
+    } catch (err) {
+      console.error("Failed to fetch category or subcategories", err);
+    }
+  };
+
+  fetchSubcategoriesAndCategory();
+}, [category]);
+
+
+
+  // Fetch products when a subcategory is selected
+  useEffect(() => {
+    const fetchProjects = async () => {
+      if (!selectedSubcategoryId) return;
+      try {
+        const res = await axios.get(
+          `http://localhost:5000/api/projects/by-subcategory/${selectedSubcategoryId}`
+        );
+        setProducts(res.data);
+      } catch (err) {
+        console.error("Failed to fetch projects", err);
+      }
+    };
+    fetchProjects();
+  }, [selectedSubcategoryId]);
+
+  if (!subcategories.length) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
         <div className="max-w-6xl mx-auto px-4 text-center">
@@ -29,6 +81,7 @@ export default function CategoryPage() {
       </div>
     );
   }
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
@@ -46,21 +99,23 @@ export default function CategoryPage() {
                 {categoryName} Projects
               </h1>
               <p className="text-gray-600 text-lg">
-                Premium project kits for {categoryName.toLowerCase()}{" "}
-                engineering
+                Premium project kits for {categoryName.toLowerCase()} engineering
               </p>
             </div>
           </div>
 
           {/* Subcategories */}
           <div className="flex flex-wrap gap-3 mb-6">
-            {Object.keys(subcategories).map((subcategory) => (
+            {subcategories.map((sub) => (
               <Badge
-                key={subcategory}
+                key={sub.id}
                 variant="outline"
-                className="px-4 py-2 text-sm hover:bg-blue-50 cursor-pointer"
+                onClick={() => setSelectedSubcategoryId(sub.id)}
+                className={`px-4 py-2 text-sm hover:bg-blue-50 cursor-pointer ${
+                  selectedSubcategoryId === sub.id ? "bg-blue-100" : ""
+                }`}
               >
-                {subcategory}
+                {sub.name}
               </Badge>
             ))}
           </div>
@@ -135,9 +190,7 @@ export default function CategoryPage() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-lg font-semibold mb-3">
-                  What You'll Learn
-                </h3>
+                <h3 className="text-lg font-semibold mb-3">What You'll Learn</h3>
                 <ul className="space-y-2 text-gray-600">
                   <li>• Industry-standard practices and methodologies</li>
                   <li>• Hands-on experience with real-world projects</li>

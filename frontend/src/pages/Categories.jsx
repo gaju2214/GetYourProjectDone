@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import {
   Card,
@@ -8,10 +9,11 @@ import {
 } from "../components/ui/Card";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Botton";
-import { categories, categoryProducts } from "../lib/mock-data";
 import { ArrowRight, Users, Award, Clock, Zap } from "lucide-react";
 
 export default function CategoriesPage() {
+  const [categoriesData, setCategoriesData] = useState([]);
+
   const categoryIcons = {
     Electronics: "⚡",
     Software: "💻",
@@ -29,6 +31,15 @@ export default function CategoriesPage() {
     Civil: "from-green-500 to-teal-500",
     Mechatronics: "from-indigo-500 to-purple-500",
   };
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5000/api/categories/categoryall")
+      .then((res) => setCategoriesData(res.data))
+      .catch((err) => console.error("Error fetching categories:", err));
+  }, []);
+
+if (!categoriesData.length) return <p className="text-center">Loading categories...</p>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
@@ -71,125 +82,68 @@ export default function CategoriesPage() {
 
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {Object.entries(categories).map(([category, subcategories]) => {
-            const productCount = categoryProducts[category]?.length || 0;
-            const icon = categoryIcons[category] || "📦";
-            const gradient =
-              categoryColors[category] || "from-gray-400 to-gray-600";
+{categoriesData.map((categoryObj) => {
+  const category = categoryObj.name;
+  const categoryId = categoryObj.id;
+  const categorySlug = categoryObj.slug; // ✅ define slug
+  const subcategories = categoryObj.subcategories || [];
+  const icon = categoryIcons[category] || "📦";
+  const gradient = categoryColors[category] || "from-gray-400 to-gray-600";
 
-            return (
-              <Card
-                key={category}
-                className="shadow-xl border-0 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
-              >
-                <CardHeader
-                  className={`bg-gradient-to-r ${gradient} text-white rounded-t-lg`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl">{icon}</span>
-                      <div>
-                        <CardTitle className="text-2xl">{category}</CardTitle>
-                        <p className="text-white/80">
-                          {productCount} Projects Available
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardHeader>
 
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    <p className="text-gray-600 leading-relaxed">
-                      Comprehensive {category.toLowerCase()} engineering
-                      projects with industry-standard components and expert
-                      guidance.
-                    </p>
-
-                    {/* Subcategories */}
-                    <div className="space-y-3">
-                      <h4 className="font-semibold text-gray-900">
-                        Specializations:
-                      </h4>
-                      <div className="flex flex-wrap gap-2">
-                        {Object.keys(subcategories)
-                          .slice(0, 4)
-                          .map((subcategory) => (
-                            <Badge
-                              key={subcategory}
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              {subcategory}
-                            </Badge>
-                          ))}
-                        {Object.keys(subcategories).length > 4 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{Object.keys(subcategories).length - 4} more
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Features */}
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        Complete component kits included
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        Step-by-step documentation
-                      </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
-                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                        Video tutorials & code
-                      </div>
-                    </div>
-
-                    <Link to={`/categories/${category.toLowerCase()}`}>
-                      <Button className="text-white mt-4 grouptext-lg px-20 bg-red-500 hover:bg-red-700">
-                        Explore {category} Projects
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-
-        {/* CTA Section */}
-        <div className="mt-16 text-center bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-12 text-white">
-          <h2 className="text-3xl font-bold mb-4">
-            Ready to Start Your Engineering Journey?
-          </h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of engineering students who have successfully
-            completed their projects with our premium kits and expert support.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/#all-projects">
-              <Button
-                size="lg"
-                className="bg-white text-blue-600 hover:bg-gray-100"
-              >
-                Browse All Projects
-              </Button>
-            </Link>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white hover:text-blue-600 bg-transparent"
-              >
-                Contact Support
-              </Button>
+  return (
+    <Card key={category} className="shadow-xl border-0 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+      <CardHeader className={`bg-gradient-to-r ${gradient} text-white rounded-t-lg`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">{icon}</span>
+            <div>
+              <CardTitle className="text-2xl">{category}</CardTitle>
+              <p className="text-white/80">{subcategories.length} Specializations</p>
             </div>
           </div>
+        </div>
+      </CardHeader>
+
+      <CardContent className="p-6">
+        <div className="space-y-4">
+          <p className="text-gray-600 leading-relaxed">
+            Comprehensive {category.toLowerCase()} engineering projects with industry-standard components and expert guidance.
+          </p>
+
+          <div className="space-y-3">
+            <h4 className="font-semibold text-gray-900">Specializations:</h4>
+            <div className="flex flex-wrap gap-2">
+              {subcategories.slice(0, 4).map((sub) => (
+                <Badge key={sub.id} variant="outline" className="text-xs">
+                  {sub.name}
+                </Badge>
+              ))}
+              {subcategories.length > 4 && (
+                <Badge variant="outline" className="text-xs">
+                  +{subcategories.length - 4} more
+                </Badge>
+              )}
+            </div>
+          </div>
+
+          {/* ✅ Fixed this line by defining categoryId above */}
+{category && categorySlug && (
+  <Link to={`/projects/${categorySlug}`}>
+    <Button className="text-white mt-4 grouptext-lg px-20 bg-red-500 hover:bg-red-700">
+      Explore {category} Projects
+    </Button>
+  </Link>
+)}
+    
+        </div>
+      </CardContent>
+    </Card>
+  );
+})}
         </div>
       </div>
     </div>
   );
 }
+

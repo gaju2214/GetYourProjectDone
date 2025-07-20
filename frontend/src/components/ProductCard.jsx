@@ -61,7 +61,7 @@ export function ProductCard({ product }) {
   };
 
   const discountPercentage = Math.round(
-    ((product.originalPrice - product.price) / product.originalPrice) * 100
+        ((product.originalPrice - product.price) / product.originalPrice) * 100
   );
 
   return (
@@ -77,9 +77,12 @@ export function ProductCard({ product }) {
               className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
               />
 
-            <Badge className="text-white absolute top-3 left-3 bg-red-500 hover:bg-red-600">
-              {discountPercentage}% OFF
-            </Badge>
+           {typeof product.price === "number" && (
+  <Badge className="text-white absolute top-3 left-3 bg-red-500 hover:bg-red-600">
+    {`${Math.round(100 - (product.price / (product.originalPrice || (product.price / 0.6)) * 100))}% OFF`}
+  </Badge>
+)}
+
             <Badge
               className="absolute top-3 right-3"
               variant={
@@ -109,27 +112,31 @@ export function ProductCard({ product }) {
               {product.description}
             </p>
 
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-2xl font-bold text-green-600">
-                ₹{product.price.toLocaleString()}
-              </span>
-              <span className="text-lg text-gray-500 line-through">
-                ₹{product.originalPrice.toLocaleString()}
-              </span>
-            </div>
+<div className="flex items-center gap-3 mb-4">
+  <span className="text-2xl font-bold text-green-600">
+    ₹{product.price?.toLocaleString?.()}
+  </span>
+  {typeof product.price === "number" && (
+    <span className="text-lg text-gray-500 line-through">
+      ₹{Math.round(product.price / 0.6).toLocaleString()}
+    </span>
+  )}
+</div>
 
-            <div className="flex flex-wrap gap-2 mb-4">
-              {product.components.slice(0, 3).map((component, index) => (
-                <Badge key={index} variant="outline" className="text-xs">
-                  {component}
-                </Badge>
-              ))}
-              {product.components.length > 3 && (
-                <Badge variant="outline" className="text-xs">
-                  +{product.components.length - 3} more
-                </Badge>
-              )}
-            </div>
+
+
+         <div className="flex flex-wrap gap-2 mb-4">
+  {Array.isArray(product.components) && product.components.length > 0 ? (
+    product.components.slice(0, 3).map((component, index) => (
+      <Badge key={index} className="text-sm">
+        {component}
+      </Badge>
+    ))
+  ) : (
+    <p className="text-gray-400 text-sm">No components listed</p>
+  )}
+</div>
+
           </div>
         </CardContent>
       </Link>

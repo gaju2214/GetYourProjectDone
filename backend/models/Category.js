@@ -4,8 +4,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true
-    }
+    },
+    slug: {
+  type: DataTypes.STRING,
+  unique: true
+}
   });
+
 
   Category.associate = models => {
     Category.hasMany(models.Subcategory, { foreignKey: 'categoryId', as: 'subcategories' });

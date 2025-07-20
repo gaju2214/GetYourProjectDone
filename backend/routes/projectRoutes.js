@@ -12,5 +12,6 @@ router.get('/', projectController.getAllProjects);
 
 // Get single project
 router.get('/:id', projectController.getProjectById);
-
+router.get('/by-subcategory/:subcategoryId', projectController.getProjectsBySubcategory);
+// Get projects by subcategory
 module.exports = router;

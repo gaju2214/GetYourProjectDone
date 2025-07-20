@@ -4,6 +4,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false
     },
+    slug: {
+  type: DataTypes.STRING,
+  unique: true
+},
+
     categoryId: {
       type: DataTypes.INTEGER,
       allowNull: false
