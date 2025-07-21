@@ -296,18 +296,22 @@ const handleAddToCart = async () => {
         </h3>
         <div className="space-y-4 text-blue-900">
           {[
-  ["Category", product.category?.name || "N/A"],
-  ["Subcategory", product.subcategory?.name || "N/A"],
-  ["Difficulty Level", product.difficulty],
+  //["Category", product.category?.slug || "N/A"],
+  ["Specification", product.subcategory?.name || "N/A"],
+   ["Project Title", product.title],
+  ["Price", `₹${product.price.toLocaleString()}`],
+  //["Original Price", `₹${product.originalPrice.toLocaleString()}`],
+  //["Discount", `${discountPercentage}%`],
+  ["Components", (product.components || []).length + " items"],
+  ["Details", product.details || "Not provided"],
+  ["Project Description", product.description || "Not provided"],
   ["Components Count", `${(product.components || []).length} items`],
   ["Estimated Build Time", "2–4 hours"],
-  ["Documentation", product.details || "Not provided"],
 ]
-
 .map(([label, value], i) => (
             <div
               key={i}
-              className={`grid grid-cols-2 gap-4 py-2 ${i < 5 ? "border-b border-blue-100" : ""}`}
+              className={`grid grid-cols-2 gap-4 py-2 ${i < 10 ? "border-b border-blue-100" : ""}`}
             >
               <span className="font-medium">{label}:</span>
               <span>{value}</span>
