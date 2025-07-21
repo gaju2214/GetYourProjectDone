@@ -13,18 +13,45 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     image: {
-      type: DataTypes.STRING // Store filename or URL
+      type: DataTypes.STRING
+    },
+ components: {
+  type: DataTypes.ARRAY(DataTypes.STRING),
+  allowNull: true
+},
+
+
+   
+    block_diagram: {
+      type: DataTypes.STRING, // Store filename or URL
+      allowNull: true
+    },
+    details: {
+      type: DataTypes.TEXT
+    },
+    review: {
+      type: DataTypes.TEXT // Can change to a Review model later if needed
     },
     subcategoryId: {
       type: DataTypes.INTEGER,
       allowNull: false
+    },
+    slug: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false
     }
+  }, {
+    tableName: 'Projects',
+    freezeTableName: true
   });
-Project.associate = models => {
-  Project.belongsTo(models.Subcategory, {
-    foreignKey: 'subcategoryId',
-    as: 'subcategory'
-  });
-};
+
+  Project.associate = models => {
+    Project.belongsTo(models.Subcategory, {
+      foreignKey: 'subcategoryId',
+      as: 'subcategory'
+    });
+  };
+
   return Project;
 };

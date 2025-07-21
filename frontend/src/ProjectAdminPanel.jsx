@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const API_BASE = 'https://getyourprojectdone-backend.onrender.com';
+//const API_BASE = 'https://getyourprojectdone-backend.onrender.com';
+
+ const API_BASE = 'http://localhost:5000'; // Use this for local development
 
 const ProjectAdminPanel = () => {
   const [categoryName, setCategoryName] = useState('');
@@ -22,7 +24,7 @@ const ProjectAdminPanel = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const catRes = await axios.get(`${API_BASE}/api/categories`);
+        const catRes = await axios.get(`${API_BASE}/api/categories/getallcategory`);
         setCategories(catRes.data);
       } catch (error) {
         console.error('Failed to load categories', error);

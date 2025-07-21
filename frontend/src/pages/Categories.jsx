@@ -35,7 +35,23 @@ export default function CategoriesPage() {
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/categories/categoryall")
-      .then((res) => setCategoriesData(res.data))
+      .then((res) => {
+        setCategoriesData(res.data);
+        // Fetch subcategories for each category
+        res.data.forEach((category) => {
+          axios
+            .get(`http://localhost:5000/api/subcategories/by-category/${category.id}`)
+            .then((subRes) => {
+              // Update the category object with its subcategories
+              setCategoriesData((prevData) =>
+                prevData.map((cat) =>
+                  cat.id === category.id ? { ...cat, subcategories: subRes.data } : cat
+                )
+              );
+            })
+            .catch((err) => console.error("Error fetching subcategories:", err));
+        });
+      })
       .catch((err) => console.error("Error fetching categories:", err));
   }, []);
 

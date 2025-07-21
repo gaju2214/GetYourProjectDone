@@ -1,23 +1,44 @@
 const { Project, Subcategory } = require('../models');
+const slugify = require('slugify');
 
 // Create a new project
 exports.createProject = async (req, res) => {
-  const { title, description, price, subcategoryId } = req.body;
-  const image = req.file ? req.file.filename : null;
+  const { title, description, price, subcategoryId, components, details, review } = req.body;
+const imageFile = req.files['image']?.[0];
+const blockDiagramFile = req.files['block_diagram']?.[0];
+
+const image = imageFile ? imageFile.filename : null;
+const block_diagram = blockDiagramFile ? blockDiagramFile.filename : null;
+console.log("Image:", image);
+console.log("Block Diagram:", block_diagram);
 
   try {
     const subcategory = await Subcategory.findByPk(subcategoryId);
     if (!subcategory) {
       return res.status(404).json({ error: 'Subcategory not found' });
     }
-
+  let slug = slugify(title);
+    let counter = 1;
+    let originalSlug = slug;
+      while (true) {
+      const existing = await Project.findOne({ where: { slug } });
+      if (!existing) break;
+      slug = `${originalSlug}-${counter}`;
+      counter++;
+    }
     const project = await Project.create({
-      title,
-      description,
-      price,
-      image,
-      subcategoryId
-    });
+  title,
+  slug,
+  description,
+  price,
+  image,
+  subcategoryId,
+  components,
+  block_diagram,
+  details,
+  review
+});
+
 
     res.status(201).json(project);
   } catch (err) {
@@ -87,3 +108,22 @@ exports.getProjectsBySubcategory = async (req, res) => {
   }
 };
 
+// Add a new method to get project by slug
+exports.getProjectBySlug = async (req, res) => {
+  const { slug } = req.params;
+  try {
+    const project = await Project.findOne({ 
+      where: { slug },
+      include: { model: Subcategory, as: 'subcategory' }
+    });
+
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'Project not found' });
+    }
+
+    res.json({ success: true, data: project });
+  } catch (err) {
+    console.error('Error fetching project:', err.message);
+    res.status(500).json({ success: false, message: 'Failed to fetch project', error: err.message });
+  }
+};

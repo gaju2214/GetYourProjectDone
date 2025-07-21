@@ -35,16 +35,14 @@ export default function ProductDetailPage() {
 
 
 useEffect(() => {
-  api.get(`/api/projects/${id}`)
+  const slug = window.location.pathname.split('/').pop();
+  api.get(`/api/projects/by-slug/${slug}`)
     .then((res) => {
       const p = res.data.data; // <-- FIXED
       setProduct({
         ...p,
         originalPrice: Math.floor(p.price * 1.5),
-        rating: 4.5,
-        reviews: 12,
-        difficulty: "Beginner",
-        components: ["Code", "Docs", "Support"],
+      
       });
     })
     .catch((err) => {
@@ -117,9 +115,9 @@ const handleAddToCart = async () => {
         <div className="space-y-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
-              <Badge variant="outline">
+              {/* <Badge variant="outline">
                   {typeof product.category === "object" ? product.category.name : product.category}
-                </Badge>
+                </Badge> */}
                 <Badge variant="outline">
                   {typeof product.subcategory === "object" ? product.subcategory.name : product.subcategory}
                 </Badge>
@@ -246,125 +244,132 @@ const handleAddToCart = async () => {
         </div>
       </div>
 
-      {/* Product Details Tabs */}
-      <div className="mt-16">
-        <Tabs defaultValue="components" className="w-full">
-          {/* Tabs Header */}
-          <TabsList className="grid w-full grid-cols-3 bg-white border border-orange-100 rounded-xl shadow-md overflow-hidden ">
-            <TabsTrigger
-              value="components"
-              className="py-3 text-center font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-100 data-[state=active]:to-blue-100 data-[state=active]:text-orange-700"
-            >
-              Components
-            </TabsTrigger>
-            <TabsTrigger
-              value="specifications"
-              className="py-3 text-center font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-100 data-[state=active]:to-blue-100 data-[state=active]:text-orange-700"
-            >
-              Specifications
-            </TabsTrigger>
-            <TabsTrigger
-              value="reviews"
-              className="py-3 text-center font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-100 data-[state=active]:to-blue-100 data-[state=active]:text-orange-700"
-            >
-              Reviews
-            </TabsTrigger>
-          </TabsList>
+     {/* Product Details Tabs */}
+<div className="mt-16">
+  <Tabs defaultValue="components" className="w-full">
+    {/* Tabs Header */}
+    <TabsList className="grid w-full grid-cols-3 bg-white border border-orange-100 rounded-xl shadow-md overflow-hidden ">
+      <TabsTrigger value="components" className="py-3 text-center font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-100 data-[state=active]:to-blue-100 data-[state=active]:text-orange-700">
+        Components
+      </TabsTrigger>
+      <TabsTrigger value="specifications" className="py-3 text-center font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-100 data-[state=active]:to-blue-100 data-[state=active]:text-orange-700">
+        Specifications
+      </TabsTrigger>
+      <TabsTrigger value="reviews" className="py-3 text-center font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-100 data-[state=active]:to-blue-100 data-[state=active]:text-orange-700">
+        Reviews
+      </TabsTrigger>
+    </TabsList>
 
-          {/* Components Tab */}
-          <TabsContent value="components" className="mt-8">
-            <Card className="bg-white shadow-md rounded-xl border border-orange-100">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold text-orange-700 mb-4">
-                  Included Components
-                </h3>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {product.components.map((component, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg shadow-sm"
-                    >
-                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                      <span className="text-sm font-medium text-blue-900">
-                        {component}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Specifications Tab */}
-          <TabsContent value="specifications" className="mt-8">
-            <Card className="bg-white shadow-md rounded-xl border border-blue-100">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold text-blue-700 mb-4">
-                  Technical Specifications
-                </h3>
-                <div className="space-y-4 text-blue-900">
-                  {[
-                    ["Category", product.category],
-                    ["Subcategory", product.subcategory],
-                    ["Difficulty Level", product.difficulty],
-                    ["Components Count", `${product.components.length} items`],
-                    ["Estimated Build Time", "2–4 hours"],
-                    ["Documentation", "Complete manual included"],
-                  ].map(([label, value], i) => (
-                    <div
-                      key={i}
-                      className={`grid grid-cols-2 gap-4 py-2 ${
-                        i < 5 ? "border-b border-blue-100" : ""
-                      }`}
-                    >
-                      <span className="font-medium">{label}:</span>
-                      <span>{value}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Reviews Tab */}
-          <TabsContent value="reviews" className="mt-8">
-            <Card className="bg-white shadow-md rounded-xl border border-orange-100">
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold text-orange-700 mb-4">
-                  Customer Reviews
-                </h3>
-                <div className="space-y-6 text-blue-900">
-                  {[1, 2, 3].map((review) => (
-                    <div key={review} className="border-b border-blue-100 pb-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="flex">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star
-                              key={star}
-                              className="h-4 w-4 fill-yellow-400 text-yellow-400"
-                            />
-                          ))}
-                        </div>
-                        <span className="font-medium text-orange-700">
-                          Engineering Student
-                        </span>
-                        <span className="text-sm text-gray-500">
-                          2 days ago
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-600">
-                        Excellent project kit! All components were included and
-                        the documentation was very clear. Helped me complete my
-                        final year project successfully.
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+    {/* Components Tab */}
+   {/* Components Tab */}
+<TabsContent value="components" className="mt-8">
+  <Card className="bg-white shadow-md rounded-xl border border-orange-100">
+    <CardContent className="p-6">
+      <h3 className="text-xl font-semibold text-orange-700 mb-4">
+        Included Components
+      </h3>
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+        {(product.components || []).map((component, index) => (
+          <div
+            key={index}
+            className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg shadow-sm"
+          >
+            <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+            <span className="text-sm font-medium text-blue-900">
+              {component}
+            </span>
+          </div>
+        ))}
       </div>
+    </CardContent>
+  </Card>
+</TabsContent>
+
+
+  {/* Specifications Tab */}
+{product && (
+  <TabsContent value="specifications" className="mt-8">
+    <Card className="bg-white shadow-md rounded-xl border border-blue-100">
+      <CardContent className="p-6">
+        <h3 className="text-xl font-semibold text-blue-700 mb-4">
+          Technical Specifications
+        </h3>
+        <div className="space-y-4 text-blue-900">
+          {[
+  ["Category", product.category?.name || "N/A"],
+  ["Subcategory", product.subcategory?.name || "N/A"],
+  ["Difficulty Level", product.difficulty],
+  ["Components Count", `${(product.components || []).length} items`],
+  ["Estimated Build Time", "2–4 hours"],
+  ["Documentation", product.details || "Not provided"],
+]
+
+.map(([label, value], i) => (
+            <div
+              key={i}
+              className={`grid grid-cols-2 gap-4 py-2 ${i < 5 ? "border-b border-blue-100" : ""}`}
+            >
+              <span className="font-medium">{label}:</span>
+              <span>{value}</span>
+            </div>
+          ))}
+
+          {product.block_diagram && typeof product.block_diagram === 'string' && (
+            <div className="pt-6">
+              <h4 className="font-medium text-blue-600">Block Diagram</h4>
+              <img
+               src={`http://localhost:5000/uploads/${product.block_diagram}`}
+                alt="Block Diagram"
+                className="mt-2 rounded-lg shadow"
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
+            </div>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  </TabsContent>
+)}
+
+
+    {/* Reviews Tab */}
+    <TabsContent value="reviews" className="mt-8">
+      <Card className="bg-white shadow-md rounded-xl border border-orange-100">
+        <CardContent className="p-6">
+          <h3 className="text-xl font-semibold text-orange-700 mb-4">
+            Customer Reviews
+          </h3>
+          {product.review ? (
+            <div className="space-y-6 text-blue-900">
+              <div className="border-b border-blue-100 pb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                      />
+                    ))}
+                  </div>
+                  <span className="font-medium text-orange-700">
+                    Verified User
+                  </span>
+                  <span className="text-sm text-gray-500">Recently</span>
+                </div>
+                <p className="text-sm text-gray-600">
+                  {product.review}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">No reviews yet.</p>
+          )}
+        </CardContent>
+      </Card>
+    </TabsContent>
+  </Tabs>
+</div>
+
     </div>
   );
 }
