@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-//const API_BASE = 'https://getyourprojectdone-backend.onrender.com';
+const API_BASE = 'https://getyourprojectdone.onrender.com';
 
- const API_BASE = 'http://localhost:5000'; // Use this for local development
+ //const API_BASE = 'http://localhost:5000'; // Use this for local development
 
 const ProjectAdminPanel = () => {
   const [categoryName, setCategoryName] = useState('');
@@ -84,22 +84,47 @@ useEffect(() => {
     }
   };
 
-  const handleAddProject = async () => {
-    try {
-      await axios.post(`${API_BASE}/api/projects/create-project`, projectData);
-      alert('Project added!');
-      setProjectData({
-        title: '',
-        description: '',
-        price: '',
-        categoryId: '',
-        subcategoryId: '',
-      });
-    } catch (error) {
-      console.error(error);
-      alert('Error adding project');
+  const [imageFile, setImageFile] = useState(null);
+const [blockDiagramFile, setBlockDiagramFile] = useState(null);
+
+const handleAddProject = async () => {
+  try {
+    const formData = new FormData();
+    formData.append('title', projectData.title);
+    formData.append('description', projectData.description);
+    formData.append('price', projectData.price);
+    formData.append('categoryId', projectData.categoryId);
+    formData.append('subcategoryId', projectData.subcategoryId);
+
+    if (imageFile) {
+      formData.append('image', imageFile);
     }
-  };
+    if (blockDiagramFile) {
+      formData.append('block_diagram', blockDiagramFile);
+    }
+
+    await axios.post(`${API_BASE}/api/projects/create-project`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    alert('Project added!');
+    setProjectData({
+      title: '',
+      description: '',
+      price: '',
+      categoryId: '',
+      subcategoryId: '',
+    });
+    setImageFile(null);
+    setBlockDiagramFile(null);
+  } catch (error) {
+    console.error(error);
+    alert('Error adding project');
+  }
+};
+
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-8">
@@ -180,6 +205,17 @@ useEffect(() => {
             setProjectData({ ...projectData, price: e.target.value })
           }
         />
+        <input
+  type="file"
+  className="border p-2 w-full mb-2"
+  onChange={(e) => setImageFile(e.target.files[0])}
+/>
+<input
+  type="file"
+  className="border p-2 w-full mb-2"
+  onChange={(e) => setBlockDiagramFile(e.target.files[0])}
+/>
+
         <select
           className="border p-2 w-full mb-2"
           value={projectData.categoryId}

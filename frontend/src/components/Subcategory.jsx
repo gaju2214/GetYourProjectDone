@@ -6,6 +6,7 @@ import { Button } from "../components/ui/Botton";
 import { Card, CardContent } from "../components/ui/Card";
 import { Filter, Grid, List, SortAsc } from "lucide-react";
 import axios from "axios";
+import api from "../api"; // adjust path based on file location
 
 export default function CategoryPage() {
   const params = useParams();
@@ -28,14 +29,12 @@ useEffect(() => {
   const fetchSubcategoriesAndCategory = async () => {
     try {
       // Fetch category name using slug
-      const categoryRes = await axios.get(
-        `http://localhost:5000/api/categories/${category}`
-      );
+      const categoryRes = await api.get(`/api/categories/${category}`);
       setCategoryName(categoryRes.data.name);
 
       // Fetch subcategories using slug
-      const subRes = await axios.get(
-        `http://localhost:5000/api/categories/subcategories/by-slug/${category}`
+      const subRes = await api.get(
+        `/api/categories/subcategories/by-slug/${category}`
       );
       setSubcategories(subRes.data);
 
@@ -58,8 +57,8 @@ useEffect(() => {
     const fetchProjects = async () => {
       if (!selectedSubcategoryId) return;
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/projects/by-subcategory/${selectedSubcategoryId}`
+        const res =  await api.get(
+          `/api/projects/by-subcategory/${selectedSubcategoryId}`
         );
         setProducts(res.data);
       } catch (err) {
