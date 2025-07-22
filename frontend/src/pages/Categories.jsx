@@ -10,6 +10,7 @@ import {
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Botton";
 import { ArrowRight, Users, Award, Clock, Zap } from "lucide-react";
+import api from "../api"; // adjust path based on file location
 
 export default function CategoriesPage() {
   const [categoriesData, setCategoriesData] = useState([]);
@@ -34,13 +35,13 @@ export default function CategoriesPage() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/categories/categoryall")
+      .get("https://getyourprojectdone.onrender.com/api/categories/categoryall")
       .then((res) => {
         setCategoriesData(res.data);
         // Fetch subcategories for each category
         res.data.forEach((category) => {
           axios
-            .get(`http://localhost:5000/api/subcategories/by-category/${category.id}`)
+            .get(`https://getyourprojectdone.onrender.com/api/subcategories/by-category/${category.id}`)
             .then((subRes) => {
               // Update the category object with its subcategories
               setCategoriesData((prevData) =>
