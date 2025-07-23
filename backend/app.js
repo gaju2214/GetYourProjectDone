@@ -12,7 +12,7 @@ const allowedOrigins = [
   'https://qjv19kc1-5000.inc1.devtunnels.ms',
   'https://getyourprojectdone.onrender.com',
   'http://localhost:5173', // If your frontend runs on Vite default port
-  'https://yourfrontenddomain.com' // Add your actual frontend domain if different
+  'https://getyourprojectdone-frontend.onrender.com' // Add your actual frontend domain if different
 ];
 
 app.use(cors({
