@@ -34,14 +34,14 @@ export default function CategoriesPage() {
   };
 
   useEffect(() => {
-    axios
-      .get("https://getyourprojectdone.onrender.com/api/categories/categoryall")
+    api
+      .get("/api/categories/categoryall")
       .then((res) => {
         setCategoriesData(res.data);
         // Fetch subcategories for each category
         res.data.forEach((category) => {
-          axios
-            .get(`https://getyourprojectdone.onrender.com/api/subcategories/by-category/${category.id}`)
+          api
+            .get(`/api/subcategories/by-category/${category.id}`)
             .then((subRes) => {
               // Update the category object with its subcategories
               setCategoriesData((prevData) =>

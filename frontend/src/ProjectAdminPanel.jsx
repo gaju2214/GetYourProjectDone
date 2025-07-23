@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
-const API_BASE = 'https://getyourprojectdone.onrender.com';
+import api from './api'; // Adjust the path based on your file structure
+//const VITE_BACKEND_URL= 'https://pretty-adventure-production.up.railway.app';
 
  //const API_BASE = 'http://localhost:5000'; // Use this for local development
 
@@ -24,7 +24,7 @@ const ProjectAdminPanel = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const catRes = await axios.get(`${API_BASE}/api/categories/getallcategory`);
+        const catRes = await api.get('/api/categories/getallcategory');
         setCategories(catRes.data);
       } catch (error) {
         console.error('Failed to load categories', error);
@@ -43,8 +43,8 @@ useEffect(() => {
     }
 
     try {
-      const res = await axios.get(
-        `${API_BASE}/api/subcategories/by-category/${projectData.categoryId}`
+      const res = await api.get(
+        `/api/subcategories/by-category/${projectData.categoryId}`
       );
       setSubcategories(res.data);
     } catch (error) {
@@ -58,7 +58,7 @@ useEffect(() => {
 
   const handleAddCategory = async () => {
     try {
-      await axios.post(`${API_BASE}/api/categories/create-category`, {
+      await api.post('/api/categories/create-category', {
         name: categoryName,
       });
       alert('Category added!');
@@ -71,7 +71,7 @@ useEffect(() => {
 
   const handleAddSubcategory = async () => {
     try {
-      await axios.post(`${API_BASE}/api/categories/create-subcategory`, {
+      await api.post('/api/categories/create-subcategory', {
         name: subcategoryName,
         categoryId: selectedCategoryId,
       });
@@ -103,7 +103,7 @@ const handleAddProject = async () => {
       formData.append('block_diagram', blockDiagramFile);
     }
 
-    await axios.post(`${API_BASE}/api/projects/create-project`, formData, {
+    await api.post('/api/projects/create-project', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

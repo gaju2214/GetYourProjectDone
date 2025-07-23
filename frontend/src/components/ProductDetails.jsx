@@ -322,7 +322,7 @@ const handleAddToCart = async () => {
             <div className="pt-6">
               <h4 className="font-medium text-blue-600">Block Diagram</h4>
               <img
-                src={`https://getyourprojectdone.onrender.com/uploads/${product.block_diagram}`}
+                src={`${api.defaults.baseURL}/uploads/${product.block_diagram}`}
                 alt="Block Diagram"
                 className="mt-2 rounded-lg shadow"
                 onError={(e) => { e.target.style.display = 'none'; }}
