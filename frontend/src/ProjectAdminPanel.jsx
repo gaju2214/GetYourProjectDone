@@ -18,6 +18,8 @@ const ProjectAdminPanel = () => {
     price: '',
     categoryId: '',
     subcategoryId: '',
+      components: [], // array of strings
+
   });
 
   // Fetch all categories on mount
@@ -95,7 +97,8 @@ const handleAddProject = async () => {
     formData.append('price', projectData.price);
     formData.append('categoryId', projectData.categoryId);
     formData.append('subcategoryId', projectData.subcategoryId);
-
+    formData.append('components', JSON.stringify(projectData.components)); // Important!
+    formData.append('details', projectData.details || '');
     if (imageFile) {
       formData.append('image', imageFile);
     }
@@ -196,6 +199,28 @@ const handleAddProject = async () => {
             setProjectData({ ...projectData, description: e.target.value })
           }
         />
+        {/* Project Details */}
+<textarea
+  className="border p-2 w-full mb-2"
+  placeholder="Project Details"
+  value={projectData.details}
+  onChange={(e) =>
+    setProjectData({ ...projectData, details: e.target.value })
+  }
+/>
+
+{/* Components (comma separated) */}
+<input
+  className="border p-2 w-full mb-2"
+  type="text"
+  placeholder="Project Components (comma separated)"
+  onChange={(e) =>
+    setProjectData({
+      ...projectData,
+      components: e.target.value.split(',').map(c => c.trim())
+    })
+  }
+/>
         <input
           className="border p-2 w-full mb-2"
           type="number"

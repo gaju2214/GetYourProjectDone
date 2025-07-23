@@ -33,13 +33,11 @@ console.log("Block Diagram:", block_diagram);
   price,
   image,
   subcategoryId,
-  components,
+  components: JSON.parse(components || '[]'),  // Parse stringified array
   block_diagram,
   details,
   review
 });
-
-
     res.status(201).json(project);
   } catch (err) {
     console.error(err);
