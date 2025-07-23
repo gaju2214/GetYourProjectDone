@@ -9,11 +9,12 @@ const app = express();
 
 const allowedOrigins = [
   'http://localhost:5000',
+  'getyourprojectdone-backend.up.railway.app',
   'https://qjv19kc1-5000.inc1.devtunnels.ms',
   'https://getyourprojectdone.onrender.com',
   'http://localhost:5173', // If your frontend runs on Vite default port
   'https://getyourprojectdone-frontend.onrender.com',
-  'https://getyourprojectdone-production.up.railway.app', // Add your actual frontend domain if different
+  'getyourprojectdone.up.railway.app', // Add your actual frontend domain if different
 ];
 
 app.use(cors({
