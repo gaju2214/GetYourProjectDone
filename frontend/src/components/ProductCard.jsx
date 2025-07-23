@@ -24,11 +24,19 @@ export function ProductCard({ product }) {
   }
 
     try {
+<<<<<<< HEAD
    const cartItem = {
   userId: user?.id,//1,
   projectId: product.id,
   quantity: 1,
 };
+=======
+      const cartItem = {
+        userId: user?.id,//1,
+        projectId: product.id,
+        quantity: 1,
+      };
+>>>>>>> 624fb3e (changes)
 
       setIsAdding(true);
     console.log("Cart item payload:", cartItem);
@@ -83,6 +91,15 @@ export function ProductCard({ product }) {
   </Badge>
 )}
 
+<<<<<<< HEAD
+=======
+            {typeof product.price === "number" && (
+              <Badge className="text-white absolute top-3 left-3 bg-red-500 hover:bg-red-600">
+                {`${Math.round(100 - (product.price / (product.originalPrice || (product.price / 0.6)) * 100))}% OFF`}
+              </Badge>
+            )}
+
+>>>>>>> 624fb3e (changes)
             <Badge
               className="absolute top-3 right-3"
               variant={
@@ -112,6 +129,7 @@ export function ProductCard({ product }) {
               {product.description}
             </p>
 
+<<<<<<< HEAD
 <div className="flex items-center gap-3 mb-4">
   <span className="text-2xl font-bold text-green-600">
     ₹{product.price?.toLocaleString?.()}
@@ -136,6 +154,32 @@ export function ProductCard({ product }) {
     <p className="text-gray-400 text-sm">No components listed</p>
   )}
 </div>
+=======
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-2xl font-bold text-green-600">
+                ₹{product.price?.toLocaleString?.()}
+              </span>
+              {typeof product.price === "number" && (
+                <span className="text-lg text-gray-500 line-through">
+                  ₹{Math.round(product.price / 0.6).toLocaleString()}
+                </span>
+              )}
+            </div>
+
+
+
+            <div className="flex flex-wrap gap-2 mb-4">
+              {Array.isArray(product.components) && product.components.length > 0 ? (
+                product.components.slice(0, 3).map((component, index) => (
+                  <Badge key={index} className="text-sm">
+                    {component}
+                  </Badge>
+                ))
+              ) : (
+                <p className="text-gray-400 text-sm">No components listed</p>
+              )}
+            </div>
+>>>>>>> 624fb3e (changes)
 
           </div>
         </CardContent>
