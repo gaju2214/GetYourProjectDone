@@ -17,41 +17,33 @@ export function ProductCard({ product }) {
   const { user } = useAuth(); // 👈 get logged-in user
 
 
- const handleAddToCart = async () => {
-  if (!user) {
-    alert("Please log in to add items to cart.");
-    return;
-  }
+  const handleAddToCart = async () => {
+    if (!user) {
+      alert("Please log in to add items to cart.");
+      return;
+    }
 
     try {
-<<<<<<< HEAD
-   const cartItem = {
-  userId: user?.id,//1,
-  projectId: product.id,
-  quantity: 1,
-};
-=======
       const cartItem = {
         userId: user?.id,//1,
         projectId: product.id,
         quantity: 1,
       };
->>>>>>> 624fb3e (changes)
 
       setIsAdding(true);
-    console.log("Cart item payload:", cartItem);
+      console.log("Cart item payload:", cartItem);
 
-    const response = await api.post("/api/cart/add", cartItem);
+      const response = await api.post("/api/cart/add", cartItem);
 
-    if (response.status === 200 || response.status === 201) {
-      alert("✅ Item added to cart!");
-    } else {
-      alert("❌ Failed to add item to cart.");
+      if (response.status === 200 || response.status === 201) {
+        alert("✅ Item added to cart!");
+      } else {
+        alert("❌ Failed to add item to cart.");
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("⚠️ Error adding to cart.");
     }
-  } catch (error) {
-    console.error("Error adding to cart:", error);
-    alert("⚠️ Error adding to cart.");
-  }
 
 
 
@@ -69,12 +61,12 @@ export function ProductCard({ product }) {
   };
 
   const discountPercentage = Math.round(
-        ((product.originalPrice - product.price) / product.originalPrice) * 100
+    ((product.originalPrice - product.price) / product.originalPrice) * 100
   );
 
   return (
     <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 shadow-lg">
-<Link to={`/product/${product.slug}`}>
+      <Link to={`/product/${product.slug}`}>
         <CardContent className="p-0">
           <div className="relative overflow-hidden rounded-t-lg">
             <img
@@ -83,31 +75,22 @@ export function ProductCard({ product }) {
               width={400}
               height={300}
               className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-              />
+            />
 
-           {typeof product.price === "number" && (
-  <Badge className="text-white absolute top-3 left-3 bg-red-500 hover:bg-red-600">
-    {`${Math.round(100 - (product.price / (product.originalPrice || (product.price / 0.6)) * 100))}% OFF`}
-  </Badge>
-)}
-
-<<<<<<< HEAD
-=======
             {typeof product.price === "number" && (
               <Badge className="text-white absolute top-3 left-3 bg-red-500 hover:bg-red-600">
                 {`${Math.round(100 - (product.price / (product.originalPrice || (product.price / 0.6)) * 100))}% OFF`}
               </Badge>
             )}
 
->>>>>>> 624fb3e (changes)
             <Badge
               className="absolute top-3 right-3"
               variant={
                 product.difficulty === "Beginner"
                   ? "secondary"
                   : product.difficulty === "Intermediate"
-                  ? "default"
-                  : "destructive"
+                    ? "default"
+                    : "destructive"
               }
             >
               {product.difficulty}
@@ -129,32 +112,6 @@ export function ProductCard({ product }) {
               {product.description}
             </p>
 
-<<<<<<< HEAD
-<div className="flex items-center gap-3 mb-4">
-  <span className="text-2xl font-bold text-green-600">
-    ₹{product.price?.toLocaleString?.()}
-  </span>
-  {typeof product.price === "number" && (
-    <span className="text-lg text-gray-500 line-through">
-      ₹{Math.round(product.price / 0.6).toLocaleString()}
-    </span>
-  )}
-</div>
-
-
-
-         <div className="flex flex-wrap gap-2 mb-4">
-  {Array.isArray(product.components) && product.components.length > 0 ? (
-    product.components.slice(0, 3).map((component, index) => (
-      <Badge key={index} className="text-sm">
-        {component}
-      </Badge>
-    ))
-  ) : (
-    <p className="text-gray-400 text-sm">No components listed</p>
-  )}
-</div>
-=======
             <div className="flex items-center gap-3 mb-4">
               <span className="text-2xl font-bold text-green-600">
                 ₹{product.price?.toLocaleString?.()}
@@ -179,7 +136,6 @@ export function ProductCard({ product }) {
                 <p className="text-gray-400 text-sm">No components listed</p>
               )}
             </div>
->>>>>>> 624fb3e (changes)
 
           </div>
         </CardContent>
@@ -187,11 +143,10 @@ export function ProductCard({ product }) {
 
       <CardFooter className="p-6 pt-0">
         <Button
-          className={`w-full transition-all duration-300 ${
-            isAdded
-              ? "focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-              : "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          }`}
+          className={`w-full transition-all duration-300 ${isAdded
+            ? "focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+            : "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            }`}
           onClick={handleAddToCart}
           disabled={isAdding}
         >

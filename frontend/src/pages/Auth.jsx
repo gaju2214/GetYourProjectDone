@@ -47,7 +47,7 @@ export default function LoginPage() {
       localStorage.setItem("user", JSON.stringify(user));
 
       alert("Login successful!");
-      navigate("/", { replace: true });
+      navigate("/account", { replace: true });
       window.location.reload();
     } catch (err) {
       alert("Login failed: " + (err.response?.data?.message || "Server error"));
@@ -120,31 +120,28 @@ export default function LoginPage() {
             {/* Switcher */}
             <div className="flex rounded-lg bg-gray-100 p-1">
               <button
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                  method === "email"
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
+                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${method === "email"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+                  }`}
                 onClick={() => setMethod("email")}
               >
                 Email
               </button>
               <button
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                  method === "phone"
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
+                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${method === "phone"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+                  }`}
                 onClick={() => setMethod("phone")}
               >
                 Phone
               </button>
               <button
-                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
-                  method === "google"
-                    ? "bg-white text-gray-900 shadow-sm"
-                    : "text-gray-600 hover:text-gray-900"
-                }`}
+                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${method === "google"
+                  ? "bg-white text-gray-900 shadow-sm"
+                  : "text-gray-600 hover:text-gray-900"
+                  }`}
                 onClick={() => setMethod("google")}
               >
                 Google

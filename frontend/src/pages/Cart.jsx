@@ -33,7 +33,7 @@ import { OrderButton } from "../components/OrderButton";
 import { useAuth } from "../context/AuthContext"; // ✅
 
 export default function CartPage() {
- // const { user } = useAuth(); // ✅
+  // const { user } = useAuth(); // ✅
   const userId = 1//user?.id; // ✅
 
   const navigate = useNavigate();
@@ -41,8 +41,8 @@ export default function CartPage() {
   const [itemCount, setItemCount] = useState(0);
   const [total, setTotal] = useState(0);
 
- useEffect(() => {
-   
+  useEffect(() => {
+
 
     api
       .get(`/api/cart/${userId}`)
@@ -71,31 +71,31 @@ export default function CartPage() {
   });
 
   const [paymentMethod, setPaymentMethod] = useState("");
-const updateQuantity = (cartId, newQuantity) => {
-  if (newQuantity < 1) return;
+  const updateQuantity = (cartId, newQuantity) => {
+    if (newQuantity < 1) return;
 
-  api.put(`/api/cart/update/${cartId}`, {
-    quantity: newQuantity
-  })
-    .then(res => {
-      const updatedCart = cartItems.map(item =>
-        item.id === cartId ? { ...item, quantity: newQuantity } : item
-      );
-
-      setCartItems(updatedCart);
-
-      // Optional: update totals
-      const newTotal = updatedCart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-      const newItemCount = updatedCart.reduce((sum, i) => sum + i.quantity, 0);
-      setTotal(newTotal);
-      setItemCount(newItemCount);
+    api.put(`/api/cart/update/${cartId}`, {
+      quantity: newQuantity
     })
-    .catch(err => {
-      console.error("Failed to update quantity:", err);
-    });
-};
+      .then(res => {
+        const updatedCart = cartItems.map(item =>
+          item.id === cartId ? { ...item, quantity: newQuantity } : item
+        );
 
- const removeItem = (id) => {
+        setCartItems(updatedCart);
+
+        // Optional: update totals
+        const newTotal = updatedCart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+        const newItemCount = updatedCart.reduce((sum, i) => sum + i.quantity, 0);
+        setTotal(newTotal);
+        setItemCount(newItemCount);
+      })
+      .catch(err => {
+        console.error("Failed to update quantity:", err);
+      });
+  };
+
+  const removeItem = (id) => {
     api.delete(`/api/cart/${id}`)
       .then(() => {
         setCartItems((prev) => prev.filter((item) => item.id !== id));
@@ -194,9 +194,8 @@ const updateQuantity = (cartId, newQuantity) => {
                 {cartItems.map((item, index) => (
                   <div
                     key={item.id}
-                    className={`p-6 ${
-                      index !== cartItems.length - 1 ? "border-b" : ""
-                    }`}
+                    className={`p-6 ${index !== cartItems.length - 1 ? "border-b" : ""
+                      }`}
                   >
                     <div className="flex gap-6">
                       <div className="relative">
@@ -290,7 +289,7 @@ const updateQuantity = (cartId, newQuantity) => {
 
           <div className="xl:col-span-2 space-y-6">
             {/* Delivery info, payment method, and order summary go here as-is */}
-            <Card className="shadow-lg border-0">
+            {/* <Card className="shadow-lg border-0">
               <CardHeader className="bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-t-lg">
                 <CardTitle className="text-xl flex items-center gap-2">
                   <MapPin className="h-6 w-6" />
@@ -439,7 +438,7 @@ const updateQuantity = (cartId, newQuantity) => {
                   />
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Payment Method */}
             <Card className="shadow-lg border-0">
@@ -482,11 +481,10 @@ const updateQuantity = (cartId, newQuantity) => {
                   ].map((method) => (
                     <div
                       key={method.id}
-                      className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md ${
-                        paymentMethod === method.id
+                      className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md ${paymentMethod === method.id
                           ? "border-blue-500 bg-blue-50 shadow-md"
                           : "border-gray-200 hover:border-gray-300"
-                      }`}
+                        }`}
                       onClick={() => setPaymentMethod(method.id)}
                     >
                       <div className="flex items-center gap-3">
@@ -536,9 +534,8 @@ const updateQuantity = (cartId, newQuantity) => {
                   <div className="flex justify-between">
                     <span>Delivery Charges</span>
                     <span
-                      className={`font-semibold ${
-                        deliveryCharge === 0 ? "text-green-600" : ""
-                      }`}
+                      className={`font-semibold ${deliveryCharge === 0 ? "text-green-600" : ""
+                        }`}
                     >
                       {deliveryCharge === 0 ? "FREE" : `₹${deliveryCharge}`}
                     </span>

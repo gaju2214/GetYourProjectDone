@@ -145,8 +145,7 @@ export default function SuccessPage() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link to="/">
             <button
-              class="transition-colors py-3 text-lg px-5 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-md dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-              fdprocessedid="r1clir"
+              className="w-full sm:w-auto transition-colors py-3 text-lg px-5 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-md dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
             >
               Continue Shopping
             </button>
@@ -155,11 +154,12 @@ export default function SuccessPage() {
             <Button
               size="lg"
               variant="outline"
-              className="w-full sm:w-auto bg-transparent"
+              className="w-full sm:w-auto py-3 text-lg px-5"
             >
               Track Order
             </Button>
           </Link>
+
         </div>
 
         {/* Additional Info */}

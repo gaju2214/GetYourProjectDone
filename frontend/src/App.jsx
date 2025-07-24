@@ -1,3 +1,4 @@
+
 import HomePage from "./pages/Home";
 import "./App.css";
 import Navigation from "./components/Navigation";
@@ -13,6 +14,8 @@ import CategoriesPage from "./pages/Categories";
 import CategoryPage from "./components/Subcategory";
 import ProjectList from "./pages/ProjectList"; // or correct path
 import ProjectAdminPanel from './ProjectAdminPanel';
+import Account from "./pages/Account";
+
 
 
 function App() {
@@ -32,7 +35,7 @@ function App() {
         <Route path="/projects" element={<ProjectList />} />
         <Route path="/*" element={<NotFoundPage />} />
         <Route path="/projects/:category" element={<CategoryPage />} />
-
+        <Route path="/account" element={<Account />} />
       </Routes>
     </>
   );
