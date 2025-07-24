@@ -482,8 +482,8 @@ export default function CartPage() {
                     <div
                       key={method.id}
                       className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md ${paymentMethod === method.id
-                          ? "border-blue-500 bg-blue-50 shadow-md"
-                          : "border-gray-200 hover:border-gray-300"
+                        ? "border-blue-500 bg-blue-50 shadow-md"
+                        : "border-gray-200 hover:border-gray-300"
                         }`}
                       onClick={() => setPaymentMethod(method.id)}
                     >
