@@ -5,6 +5,7 @@ import api from '../api'; // adjust path based on file location
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Botton";
 import {
+  
   Card,
   CardContent,
   CardHeader,
@@ -33,8 +34,8 @@ import { OrderButton } from "../components/OrderButton";
 import { useAuth } from "../context/AuthContext"; // ✅
 
 export default function CartPage() {
-  // const { user } = useAuth(); // ✅
-  const userId = 1//user?.id; // ✅
+ const { user } = useAuth(); // ✅
+  const userId = user?.id; // ✅
 
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
@@ -482,8 +483,8 @@ export default function CartPage() {
                     <div
                       key={method.id}
                       className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md ${paymentMethod === method.id
-                        ? "border-blue-500 bg-blue-50 shadow-md"
-                        : "border-gray-200 hover:border-gray-300"
+                          ? "border-blue-500 bg-blue-50 shadow-md"
+                          : "border-gray-200 hover:border-gray-300"
                         }`}
                       onClick={() => setPaymentMethod(method.id)}
                     >

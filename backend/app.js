@@ -14,7 +14,8 @@ const allowedOrigins = [
   'http://localhost:5173', // If your frontend runs on Vite default port
   'https://getyourprojectdone-frontend.onrender.com',
   'https://getyourprojectdone.up.railway.app',
-  'https://getyourprojectdone-backend.up.railway.app',  // Add your actual frontend domain if different
+  'https://getyourprojectdone-backend.up.railway.app',
+  'http://192.168.31.24:5173',  // Add your actual frontend domain if different
 ];
 
 app.use(cors({
