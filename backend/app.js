@@ -8,14 +8,20 @@ const authRoutes = require('./routes/authRoutes');
 const app = express();
 
 const allowedOrigins = [
+  //localhost and development environments
   'http://localhost:5000',
-  'https://qjv19kc1-5000.inc1.devtunnels.ms',
-  'https://getyourprojectdone.onrender.com',
   'http://localhost:5173', // If your frontend runs on Vite default port
+  'http://192.168.31.24:5173',
+  'https://qjv19kc1-5000.inc1.devtunnels.ms',
+
+  // Production environments Render
+  'https://getyourprojectdone.onrender.com',
   'https://getyourprojectdone-frontend.onrender.com',
+
+  // Production environments Railway
   'https://getyourprojectdone.up.railway.app',
   'https://getyourprojectdone-backend.up.railway.app',
-  'http://192.168.31.24:5173',  // Add your actual frontend domain if different
+   // Add your actual frontend domain if different
 ];
 
 app.use(cors({
