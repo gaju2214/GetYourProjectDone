@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { motion } from "framer-motion";
 import { Button } from "../components/ui/Botton";
 import { ProductCard } from "../components/ProductCard";
 import { mockProducts } from "../lib/mock-data";
@@ -129,7 +130,7 @@ const HomePage = () => {
       </section>
 
       {/* All Projects Section */}
-       <section className="py-16" ref={allProjectsRef}>
+      <section className="py-16" ref={allProjectsRef}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -210,15 +211,19 @@ const HomePage = () => {
             completed their projects with our premium kits. Achieve your goals
             today!
           </p>
-         
-            <Button
-            size="lg"
-            onClick={scrollToProjects} // ✅ Replaces <Link to="/404">
-            className="bg-white text-red-600 hover:bg-gray-100"
+
+          <motion.button
+            onClick={scrollToProjects}
+            className="bg-white text-red-600 px-6 py-3 rounded-lg text-lg font-semibold shadow-md hover:bg-gray-100 transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-105"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
           >
             Browse All Projects
-          </Button>
-          
+          </motion.button>
+
         </div>
       </section>
     </div>

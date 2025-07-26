@@ -370,15 +370,16 @@ const Navigation = () => {
               </div>
             </div>
 
+
             {/* Right Side */}
-            <div className="flex items-center gap-1 sm:gap-2 md:gap-3 pr-1 sm:pr-2 flex-shrink-0">
-              <Link to="/" className="block md:hidden">
+            <div className="flex items-center gap-1 sm:gap-2 md:gap-3 pr-1 sm:pr-2 flex-shrink-0 flex-nowrap overflow-x-auto max-w-full">
+              <Link to="/" className="block md:hidden flex-shrink-0">
                 <Button variant="ghost" size="icon">
                   <Home className="h-5 w-5 transition-transform duration-300 hover:scale-110 hover:text-orange-500" />
                 </Button>
               </Link>
 
-              <Link to="/cart">
+              <Link to="/cart" className="flex-shrink-0">
                 <Button variant="ghost" size="icon" className="relative">
                   <ShoppingCart className="h-5 w-5 transition-transform duration-300 hover:scale-110 hover:text-orange-500" />
                   {state.itemCount > 0 && (
@@ -391,20 +392,20 @@ const Navigation = () => {
 
               {user ? (
                 <>
-                  <Link to="/account">
+                  <Link to="/account" className="flex-shrink-0">
                     <Button variant="ghost" size="icon" className="p-2">
                       <User className="h-5 w-5 transition-transform duration-300 hover:scale-110 hover:text-orange-500" />
                     </Button>
                   </Link>
                   <Button
                     onClick={handleLogout}
-                    className="hidden lg:inline-flex bg-red-600 text-white px-3 py-1 text-sm rounded hover:bg-red-700 transition-colors"
+                    className="hidden lg:inline-flex bg-red-600 text-white px-3 py-1 text-sm rounded hover:bg-red-700 transition-colors flex-shrink-0"
                   >
                     Logout
                   </Button>
                 </>
               ) : (
-                <Link to="/auth/login">
+                <Link to="/auth/login" className="flex-shrink-0">
                   <Button variant="ghost" size="icon" className="p-2">
                     <User className="h-5 w-5 transition-transform duration-300 hover:scale-110 hover:text-orange-500" />
                   </Button>
@@ -413,57 +414,99 @@ const Navigation = () => {
 
               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="md:hidden">
-                    <Menu className="h-5 w-5 transition-transform duration-300 hover:scale-110 hover:text-orange-500" />
+                  <Button variant="ghost" size="icon" className="md:hidden flex-shrink-0">
+                    <Menu className="h-6 w-6 transition-transform duration-300 hover:scale-110 hover:text-orange-500" />
                   </Button>
                 </SheetTrigger>
+
+
                 <SheetContent
                   side="right"
-                  className="w-80 h-full bg-white px-4 py-6 shadow-lg overflow-y-auto transition-all duration-300 ease-in-out"
+                  className="w-80 h-full bg-white px-6 py-8 shadow-xl overflow-y-auto transition-all duration-500 ease-in-out rounded-l-xl"
                 >
-                  <div className="flex flex-col space-y-6">
-                    <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-blue-600 text-base font-medium">
+                  {/* Logo or Title */}
+                  <div className="mb-8 text-center">
+                    <div className="flex justify-center items-center w-full sm:w-auto mx-auto">
+                      <div className="relative h-12 w-40 sm:h-13 sm:w-[200px] flex-shrink-0">
+                        <img
+                          src="/logo.png"
+                          alt="Get Your Project Done"
+                          className="h-full w-full object-contain transition-transform duration-300 ease-in-out hover:scale-105"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+
+
+                  {/* Nav Items */}
+                  <div className="flex flex-col space-y-5 text-lg font-medium">
+                    <Link
+                      to="/"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="text-gray-700 hover:text-orange-500 transition-colors duration-300"
+                    >
                       Home
                     </Link>
-                    <Link to="/categories" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-blue-600 text-base font-medium">
+
+                    <Link
+                      to="/categories"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="text-gray-700 hover:text-orange-500 transition-colors duration-300"
+                    >
                       Categories
                     </Link>
-                    <Link to="/orders" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-blue-600 text-base font-medium">
-                      Orders
+
+                    <Link
+                      to="/cart"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="text-gray-700 hover:text-orange-500 transition-colors duration-300"
+                    >
+                      Cart
                     </Link>
-                    <Link to="/cart" onClick={() => setIsMenuOpen(false)}>
-                      <Button variant="ghost" size="icon" className="relative">
-                        <ShoppingCart className="h-5 w-5" />
-                        {state.itemCount > 0 && (
-                          <Badge className="absolute -top-1 right-5 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-black text-white">
-                            <span>{state.itemCount}</span>
-                          </Badge>
-                        )}
-                      </Button>
-                    </Link>
+
                     {user ? (
                       <>
-                        <Link to="/account" onClick={() => setIsMenuOpen(false)} className="text-gray-700 hover:text-red-600 text-base font-medium">
+                        <Link
+                          to="/account"
+                          onClick={() => setIsMenuOpen(false)}
+                          className="text-gray-700 hover:text-orange-500 transition-colors duration-300"
+                        >
                           Profile
                         </Link>
+
                         <button
                           onClick={() => {
                             handleLogout();
                             setIsMenuOpen(false);
                           }}
-                          className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 text-center"
+                          className="w-full text-white bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 rounded-md py-2 transition-all duration-300 shadow-md hover:shadow-lg hover:from-orange-600 hover:via-red-600 hover:to-pink-600 backdrop-blur-sm bg-opacity-80"
                         >
                           Logout
                         </button>
+
                       </>
                     ) : (
-                      <Link to="/auth/login" onClick={() => setIsMenuOpen(false)} className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 text-center">
+                      <Link
+                        to="/auth/login"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="w-full text-white bg-orange-400/90 hover:bg-orange-500 text-center rounded-lg py-2 font-medium shadow-[0_4px_14px_rgba(255,87,34,0.3),0_2px_8px_rgba(244,67,54,0.25)] transition-all duration-300 backdrop-blur-sm"
+                      >
                         Login
                       </Link>
+
+
+
                     )}
+                  </div>
+
+                  {/* Footer / Version or anything else */}
+                  <div className="mt-10 text-sm text-gray-400 text-center">
+                    © 2025 GYPD. All rights reserved.
                   </div>
                 </SheetContent>
               </Sheet>
+
             </div>
           </div>
         </div>
@@ -476,3 +519,5 @@ const Navigation = () => {
 };
 
 export default Navigation;
+
+

@@ -29,6 +29,22 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // useEffect(() => {
+  //   const downloadInfo = JSON.parse(localStorage.getItem("downloadAfterLogin"));
+  //   const user = JSON.parse(localStorage.getItem("user"));
+
+  //   if (downloadInfo && user) {
+  //     const url = `${api.defaults.baseURL}/uploads/${downloadInfo.title}-abstract.pdf`;
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.download = `${downloadInfo.title}-abstract.pdf`;
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //     localStorage.removeItem("downloadAfterLogin");
+  //   }
+  // }, []);
+
   // Email login handler
   const handleEmailLogin = async () => {
     if (!email || !password) {

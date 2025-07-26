@@ -224,6 +224,30 @@ export default function ProductDetailPage() {
                 <Share2 className="h-5 w-5" />
               </Button>
             </div>
+
+            <Button
+              size="lg"
+              className="mt-2 bg-orange-500 text-white hover:bg-orange-600 transition duration-300 shadow-md"
+              onClick={() => {
+                if (!user) {
+                  localStorage.setItem("downloadAfterLogin", JSON.stringify({
+                    projectId: product.id,
+                    title: product.title,
+                  }));
+                  window.location.href = "/login";
+                } else {
+                  const downloadUrl = `${api.defaults.baseURL}/uploads/${product.abstract_pdf}`;
+                  const link = document.createElement("a");
+                  link.href = downloadUrl;
+                  link.download = `${product.title}-abstract.pdf`;
+                  link.click();
+                }
+              }}
+            >
+              📄 Download Abstract
+            </Button>
+
+
           </div>
 
           {/* Features */}
