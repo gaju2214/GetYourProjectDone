@@ -88,8 +88,6 @@ export default function ProductDetailPage() {
     }
   };
 
-
-
   const discountPercentage = Math.round(
     ((product.originalPrice - product.price) / product.originalPrice) * 100
   );
@@ -230,11 +228,16 @@ export default function ProductDetailPage() {
               className="mt-2 bg-orange-500 text-white hover:bg-orange-600 transition duration-300 shadow-md"
               onClick={() => {
                 if (!user) {
+                  alert("Please login to download the abstract.");
                   localStorage.setItem("downloadAfterLogin", JSON.stringify({
                     projectId: product.id,
                     title: product.title,
+                    abstract_pdf: product.abstract_pdf,
                   }));
-                  window.location.href = "/login";
+
+                  setTimeout(() => {
+                    window.location.href = "/auth/login"; // ✅ update to your actual route
+                  }, 100);
                 } else {
                   const downloadUrl = `${api.defaults.baseURL}/uploads/${product.abstract_pdf}`;
                   const link = document.createElement("a");
@@ -246,8 +249,6 @@ export default function ProductDetailPage() {
             >
               📄 Download Abstract
             </Button>
-
-
           </div>
 
           {/* Features */}
@@ -312,7 +313,6 @@ export default function ProductDetailPage() {
             </Card>
           </TabsContent>
 
-
           {/* Specifications Tab */}
           {product && (
             <TabsContent value="specifications" className="mt-8">
@@ -361,8 +361,6 @@ export default function ProductDetailPage() {
               </Card>
             </TabsContent>
           )}
-
-
           {/* Reviews Tab */}
           <TabsContent value="reviews" className="mt-8">
             <Card className="bg-white shadow-md rounded-xl border border-orange-100">

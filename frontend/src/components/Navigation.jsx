@@ -1,247 +1,3 @@
-// import React, { useState, useRef, useEffect } from "react";
-// // import React, { useState } from "react";
-// import { Link, useNavigate } from "react-router-dom"; // ✅ ADDED useNavigate
-// import { Button } from "../components/ui/Botton";
-// import { Badge } from "../components/ui/Badge";
-// import { Sheet, SheetContent, SheetTrigger } from "../components/ui/Sheet";
-
-// import { Menu, ShoppingCart, User, Search } from "lucide-react";
-// import { useCart } from "../context/CartContext";
-
-
-// import EngiProNetwork from "./EngiproNetwork";
-// import { useAuth } from "../context/AuthContext";
-
-// const Navigation = () => {
-//   const [isMenuOpen, setIsMenuOpen] = useState(false);
-//   const [isNetworkOpen, setIsNetworkOpen] = useState(false);
-//   const { state } = useCart();
-//   const [activeNav, setActiveNav] = useState("");
-
-//   const [searchQuery, setSearchQuery] = useState("");
-//   const [showSearch, setShowSearch] = useState(false);
-
-//   const searchRef = useRef();
-
-//   useEffect(() => {
-//     const handleClickOutside = (event) => {
-//       if (searchRef.current && !searchRef.current.contains(event.target)) {
-//         setShowSearch(false);
-//       }
-//     };
-
-//     document.addEventListener("mousedown", handleClickOutside);
-//     return () => {
-//       document.removeEventListener("mousedown", handleClickOutside);
-//     };
-//   }, []);
-
-//   const { user, logout } = useAuth(); // ✅ useAuth
-//   const navigate = useNavigate();     // ✅ useNavigate
-
-//   const handleLogout = () => {
-//     logout();
-//     navigate("/auth/login");
-//   };
-
-//   return (
-//     <>
-//       <nav className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-//         <div className="container mx-auto px-4">
-//           <div className="flex h-16 items-center justify-between">
-//             <button
-//               onClick={() => setIsNetworkOpen(true)}
-//               className="flex justify-start sm:justify-center items-center w-full sm:w-auto pl-2 sm:pl-0 hover:scale-105 transition-transform duration-200"
-//             >
-//               <div className="relative h-12 w-40 sm:h-13 sm:w-[200px] flex-shrink-0">
-//                 <img
-//                   src="/logo.png"
-//                   alt="Get Your Project Done"
-//                   className="h-full w-full object-contain group-hover:brightness-110 transition-all"
-//                 />
-//               </div>
-//             </button>
-
-
-
-//             {/* Desktop Navigation */}
-//             <div className="hidden md:flex items-center space-x-8">
-//               <Link to="/projectkits">
-//                 <Button
-//                   variant="ghost"
-//                   onClick={() => setActiveNav("projectKits")}
-//                   className={`whitespace-nowrap text-gray-700 hover:text-gray-900 ${activeNav === "projectKits" ? "font-semibold text-black-600" : ""
-//                     }`}
-//                 >
-//                   Project Kits
-//                 </Button>
-//               </Link>
-
-//               <Link
-//                 to="/categories"
-//                 onClick={() => setActiveNav("categories")}
-//                 className={`text-gray-700 hover:text-gray-900 transition-colors ${activeNav === "categories"
-//                   ? "font-semibold text-blue-600"
-//                   : ""
-//                   }`}
-//               >
-//                 Categories
-//               </Link>
-
-
-
-//               <div className="flex items-center space-x-2" ref={searchRef}>
-//                 <Button
-//                   variant="ghost"
-//                   size="icon"
-//                   onClick={() => setShowSearch(!showSearch)}
-//                   aria-label="Toggle Search"
-//                 >
-//                   <Search className="h-5 w-5" />
-//                 </Button>
-
-//                 {showSearch && (
-//                   <input
-//                     type="text"
-//                     placeholder="Search projects..."
-//                     value={searchQuery}
-//                     onChange={(e) => setSearchQuery(e.target.value)}
-//                     className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white text-sm text-gray-800 transition-all duration-200 w-64"
-//                   />
-//                 )}
-//               </div>
-
-//             </div>
-
-//             {/* Right Side Actions */}
-//             <div className="flex items-center gap-2 sm:gap-4 pr-2 sm:pr-0">
-//               {/* Cart Button */}
-//               <Link to="/cart">
-//                 <Button variant="ghost" size="icon" className="relative">
-//                   <ShoppingCart className="h-5 w-5" />
-//                   {state.itemCount > 0 && (
-//                     <Badge className="absolute -top-1 right-5 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
-//                       <span className="text-white bg-black px-1 rounded-full">
-//                         {state.itemCount}
-//                       </span>
-//                     </Badge>
-//                   )}
-//                 </Button>
-//               </Link>
-
-//               {/* If user is logged in */}
-//               {user ? (
-//                 <>
-//                   <Link to="/account">
-//                     <Button variant="ghost" size="icon" className="p-2">
-//                       <User className="h-5 w-5" />
-//                     </Button>
-//                   </Link>
-//                   <Button
-//                     onClick={handleLogout}
-//                     className="bg-red-600 text-white px-3 py-1 text-sm rounded hover:bg-red-700"
-//                   >
-//                     Logout
-//                   </Button>
-//                 </>
-//               ) : (
-//                 <Link to="/auth/login">
-//                   <Button variant="ghost" size="icon" className="p-2">
-//                     <User className="h-5 w-5" />
-//                   </Button>
-//                 </Link>
-//               )}
-
-//               {/* Mobile Menu */}
-//               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-//                 <SheetTrigger asChild>
-//                   <Button variant="ghost" size="icon" className="md:hidden">
-//                     <Menu className="h-5 w-5" />
-//                   </Button>
-//                 </SheetTrigger>
-
-//                 <SheetContent
-//                   side="right"
-//                   className="w-80 h-full bg-white p-6 shadow-lg overflow-y-auto"
-//                 >
-//                   <div className="flex flex-col space-y-6">
-//                     <Link
-//                       to="/categories/electronics"
-//                       onClick={() => setIsMenuOpen(false)}
-//                       className="text-gray-700 hover:text-blue-600 text-base font-medium"
-//                     >
-//                       Categories
-//                     </Link>
-
-//                     <Link
-//                       to="/orders"
-//                       onClick={() => setIsMenuOpen(false)}
-//                       className="text-gray-700 hover:text-blue-600 text-base font-medium"
-//                     >
-//                       Orders
-//                     </Link>
-
-//                     <Link to="/cart">
-//                       <Button variant="ghost" size="icon" className="relative">
-//                         <ShoppingCart className="h-5 w-5" />
-//                         {state.itemCount > 0 && (
-//                           <Badge className="absolute -top-1 right-5 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
-//                             <span className="text-white bg-black px-1 rounded-full">
-//                               {state.itemCount}
-//                             </span>
-//                           </Badge>
-//                         )}
-//                       </Button>
-//                     </Link>
-
-//                     {user ? (
-//                       <>
-//                         <Link
-//                           to="/account"
-//                           onClick={() => setIsMenuOpen(false)}
-//                           className="text-gray-700 hover:text-red-600 text-base font-medium"
-//                         >
-//                           Profile
-//                         </Link>
-//                         <button
-//                           onClick={() => {
-//                             handleLogout();
-//                             setIsMenuOpen(false);
-//                           }}
-//                           className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700"
-//                         >
-//                           Logout
-//                         </button>
-//                       </>
-//                     ) : (
-//                       <Link
-//                         to="/auth/login"
-//                         onClick={() => setIsMenuOpen(false)}
-//                         className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700 text-center"
-//                       >
-//                         Login
-//                       </Link>
-//                     )}
-//                   </div>
-//                 </SheetContent>
-//               </Sheet>
-
-//             </div>
-//           </div>
-//         </div>
-//       </nav>
-
-//       {/* Network Modal */}
-//       <EngiProNetwork
-//         isOpen={isNetworkOpen}
-//         onClose={() => setIsNetworkOpen(false)}
-//       />
-//     </>
-//   );
-// };
-
-// export default Navigation;
-
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Botton";
@@ -298,12 +54,14 @@ const Navigation = () => {
     <>
       <nav className={`sticky top-0 z-50 w-full bg-white/90 backdrop-blur transition-shadow duration-300 ${hasShadow ? "shadow-md" : ""}`}>
         <div className="container mx-auto px-4">
-          <div className="flex h-16 items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-y-2 h-auto py-2">
+
+            {/* Logo */}
             <button
               onClick={() => setIsNetworkOpen(true)}
-              className="flex justify-start sm:justify-center items-center w-full sm:w-auto pl-2 sm:pl-0 hover:scale-105 transition-transform duration-200"
+              className="flex items-center justify-center w-full sm:justify-start sm:w-auto hover:scale-105 transition-transform duration-200"
             >
-              <div className="relative h-12 w-40 sm:h-13 sm:w-[200px] flex-shrink-0">
+              <div className="relative h-10 w-32 xs:h-12 xs:w-36 sm:h-13 sm:w-[200px] flex-shrink-0 mx-auto sm:mx-0">
                 <img
                   src="/logo.png"
                   alt="Get Your Project Done"
@@ -312,41 +70,26 @@ const Navigation = () => {
               </div>
             </button>
 
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              <Link to="/">
-                <Button
-                  variant="ghost"
-                  onClick={() => setActiveNav("home")}
-                  className={`text-gray-700 hover:text-gray-900 transition-transform duration-200 hover:scale-105 ${activeNav === "home" ? "font-semibold text-black-600" : ""}`}
-                >
-                  Home
-                </Button>
-              </Link>
+            {/* Desktop Nav Items */}
+            <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
+              {[
+                { label: "Home", to: "/", key: "home" },
+                { label: "Project Kits", to: "/projectkits", key: "projectKits" },
+                { label: "Categories", to: "/categories", key: "categories" },
+              ].map((item) => (
+                <Link to={item.to} key={item.key}>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setActiveNav(item.key)}
+                    className={`text-gray-700 hover:text-gray-900 hover:scale-105 transition-transform duration-200 ${activeNav === item.key ? "font-semibold text-black-600" : ""
+                      }`}
+                  >
+                    {item.label}
+                  </Button>
+                </Link>
+              ))}
 
-              <Link to="/projectkits">
-                <Button
-                  variant="ghost"
-                  onClick={() => setActiveNav("projectKits")}
-                  className={`whitespace-nowrap text-gray-700 hover:text-gray-900 transition-transform duration-200 hover:scale-105 ${activeNav === "projectKits" ? "font-semibold text-black-600" : ""
-                    }`}
-                >
-                  Project Kits
-                </Button>
-              </Link>
-
-              <Link to="/categories">
-                <Button
-                  variant="ghost"
-                  onClick={() => setActiveNav("categories")}
-                  className={`text-gray-700 hover:text-gray-900 transition-transform duration-200 hover:scale-105 ${activeNav === "categories" ? "font-semibold text-blue-600" : ""
-                    }`}
-                >
-                  Categories
-                </Button>
-              </Link>
-
-
+              {/* Search Box */}
               <div className="flex items-center space-x-2" ref={searchRef}>
                 <Button
                   variant="ghost"
@@ -370,31 +113,35 @@ const Navigation = () => {
               </div>
             </div>
 
+            {/* Right Side Buttons (Icons) */}
+            <div className="flex items-center gap-8 sm:gap-2 md:gap-3 pr-1 sm:pr-2 flex-shrink-0 flex-nowrap overflow-x-auto max-w-full">
 
-            {/* Right Side */}
-            <div className="flex items-center gap-1 sm:gap-2 md:gap-3 pr-1 sm:pr-2 flex-shrink-0 flex-nowrap overflow-x-auto max-w-full">
+              {/* Home Icon for Mobile */}
               <Link to="/" className="block md:hidden flex-shrink-0">
                 <Button variant="ghost" size="icon">
-                  <Home className="h-5 w-5 transition-transform duration-300 hover:scale-110 hover:text-orange-500" />
+                  <Home className="h-5 w-5 hover:scale-110 hover:text-orange-500 transition-transform duration-300" />
                 </Button>
               </Link>
 
+              {/* Cart Icon */}
               <Link to="/cart" className="flex-shrink-0">
                 <Button variant="ghost" size="icon" className="relative">
-                  <ShoppingCart className="h-5 w-5 transition-transform duration-300 hover:scale-110 hover:text-orange-500" />
+                  <ShoppingCart className="h-5 w-5 hover:scale-110 hover:text-orange-500 transition-transform duration-300" />
                   {state.itemCount > 0 && (
-                    <Badge className="absolute -top-1 right-5 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-black text-white">
-                      <span>{state.itemCount}</span>
+                    <Badge className="absolute top-0 right-5 h-5 w-5 rounded-full flex items-center justify-center text-[10px] bg-black text-white shadow-md">
+                      {state.itemCount}
                     </Badge>
                   )}
+
                 </Button>
               </Link>
 
+              {/* User / Auth Buttons */}
               {user ? (
                 <>
                   <Link to="/account" className="flex-shrink-0">
-                    <Button variant="ghost" size="icon" className="p-2">
-                      <User className="h-5 w-5 transition-transform duration-300 hover:scale-110 hover:text-orange-500" />
+                    <Button variant="ghost" size="icon">
+                      <User className="h-5 w-5 hover:scale-110 hover:text-orange-500 transition-transform duration-300" />
                     </Button>
                   </Link>
                   <Button
@@ -406,61 +153,53 @@ const Navigation = () => {
                 </>
               ) : (
                 <Link to="/auth/login" className="flex-shrink-0">
-                  <Button variant="ghost" size="icon" className="p-2">
-                    <User className="h-5 w-5 transition-transform duration-300 hover:scale-110 hover:text-orange-500" />
+                  <Button variant="ghost" size="icon">
+                    <User className="h-5 w-5 hover:scale-110 hover:text-orange-500 transition-transform duration-300" />
                   </Button>
                 </Link>
               )}
 
+              {/* Mobile Sheet Menu */}
               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon" className="md:hidden flex-shrink-0">
-                    <Menu className="h-6 w-6 transition-transform duration-300 hover:scale-110 hover:text-orange-500" />
+                    <Menu className="h-6 w-6 hover:scale-110 hover:text-orange-500 transition-transform duration-300" />
                   </Button>
                 </SheetTrigger>
-
-
                 <SheetContent
                   side="right"
-                  className="w-80 h-full bg-white px-6 py-8 shadow-xl overflow-y-auto transition-all duration-500 ease-in-out rounded-l-xl"
+                  className="w-80 h-full bg-white px-6 py-8 shadow-xl overflow-y-auto rounded-l-xl"
                 >
-                  {/* Logo or Title */}
-                  <div className="mb-8 text-center">
-                    <div className="flex justify-center items-center w-full sm:w-auto mx-auto">
-                      <div className="relative h-12 w-40 sm:h-13 sm:w-[200px] flex-shrink-0">
-                        <img
-                          src="/logo.png"
-                          alt="Get Your Project Done"
-                          className="h-full w-full object-contain transition-transform duration-300 ease-in-out hover:scale-105"
-                        />
-                      </div>
+                  {/* Mobile Sheet Content */}
+                  <div className="flex justify-center mb-6">
+                    <div className="relative h-12 w-40 sm:h-13 sm:w-[200px]">
+                      <img
+                        src="/logo.png"
+                        alt="Get Your Project Done"
+                        className="h-full w-full object-contain transition-transform duration-300 hover:scale-105"
+                      />
                     </div>
                   </div>
 
-
-
-                  {/* Nav Items */}
                   <div className="flex flex-col space-y-5 text-lg font-medium">
                     <Link
                       to="/"
                       onClick={() => setIsMenuOpen(false)}
-                      className="text-gray-700 hover:text-orange-500 transition-colors duration-300"
+                      className="text-gray-800 hover:text-orange-500 transition-colors duration-300"
                     >
                       Home
                     </Link>
-
                     <Link
                       to="/categories"
                       onClick={() => setIsMenuOpen(false)}
-                      className="text-gray-700 hover:text-orange-500 transition-colors duration-300"
+                      className="text-gray-800 hover:text-orange-500 transition-colors duration-300"
                     >
                       Categories
                     </Link>
-
                     <Link
                       to="/cart"
                       onClick={() => setIsMenuOpen(false)}
-                      className="text-gray-700 hover:text-orange-500 transition-colors duration-300"
+                      className="text-gray-800 hover:text-orange-500 transition-colors duration-300"
                     >
                       Cart
                     </Link>
@@ -470,43 +209,36 @@ const Navigation = () => {
                         <Link
                           to="/account"
                           onClick={() => setIsMenuOpen(false)}
-                          className="text-gray-700 hover:text-orange-500 transition-colors duration-300"
+                          className="text-gray-800 hover:text-orange-500 transition-colors duration-300"
                         >
                           Profile
                         </Link>
-
                         <button
                           onClick={() => {
                             handleLogout();
                             setIsMenuOpen(false);
                           }}
-                          className="w-full text-white bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 rounded-md py-2 transition-all duration-300 shadow-md hover:shadow-lg hover:from-orange-600 hover:via-red-600 hover:to-pink-600 backdrop-blur-sm bg-opacity-80"
+                          className="w-full bg-gradient-to-r from-orange-500 via-rose-500 to-pink-500 text-white rounded-md py-2 transition-all duration-300 hover:from-orange-600 hover:to-pink-600 shadow-md"
                         >
                           Logout
                         </button>
-
                       </>
                     ) : (
                       <Link
                         to="/auth/login"
                         onClick={() => setIsMenuOpen(false)}
-                        className="w-full text-white bg-orange-400/90 hover:bg-orange-500 text-center rounded-lg py-2 font-medium shadow-[0_4px_14px_rgba(255,87,34,0.3),0_2px_8px_rgba(244,67,54,0.25)] transition-all duration-300 backdrop-blur-sm"
+                        className="w-full bg-orange-500 hover:bg-orange-600 text-white rounded-md py-2 text-center shadow-md transition-all duration-300"
                       >
                         Login
                       </Link>
-
-
-
                     )}
                   </div>
 
-                  {/* Footer / Version or anything else */}
                   <div className="mt-10 text-sm text-gray-400 text-center">
                     © 2025 GYPD. All rights reserved.
                   </div>
                 </SheetContent>
               </Sheet>
-
             </div>
           </div>
         </div>
@@ -519,5 +251,3 @@ const Navigation = () => {
 };
 
 export default Navigation;
-
-
