@@ -205,41 +205,53 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            <div className="flex gap-4 items-center">
+            <div className="flex flex-wrap gap-3 justify-center sm:justify-start w-full">
               <Button
                 size="lg"
-                className="flex bg-blue-600 text-white w-150 place-content-center hover:bg-blue-700 transition-colors duration-300 hover:shadow-md"
+                className="flex items-center justify-center bg-blue-600 text-white px-6 py-3 flex-grow sm:flex-grow-0 sm:w-auto hover:bg-blue-700 transition duration-300 shadow-sm hover:shadow-md"
                 onClick={handleAddToCart}
               >
                 <ShoppingCart className="h-5 w-5 mr-2" />
                 Add to Cart
               </Button>
 
-              <Button size="lg" variant="outline">
+              <Button
+                size="lg"
+                variant="outline"
+                className="flex items-center justify-center px-6 py-3 sm:w-auto"
+              >
                 <Heart className="h-5 w-5" />
               </Button>
-              <Button size="lg" variant="outline">
+
+              <Button
+                size="lg"
+                variant="outline"
+                className="flex items-center justify-center px-6 py-3 sm:w-auto"
+              >
                 <Share2 className="h-5 w-5" />
               </Button>
             </div>
 
+
             <Button
               size="lg"
-              className="mt-2 bg-orange-500 text-white hover:bg-orange-600 transition duration-300 shadow-md"
+              className="w-full mt-2 bg-orange-500 text-white hover:bg-orange-600 transition duration-300 shadow-md"
               onClick={() => {
                 if (!user) {
+                  // Save download intent in localStorage
+                  localStorage.setItem(
+                    "downloadAfterLogin",
+                    JSON.stringify({
+                      title: product.title,
+                      abstract_pdf: product.abstract_pdf,
+                    })
+                  );
+                  // Redirect to login page
                   alert("Please login to download the abstract.");
-                  localStorage.setItem("downloadAfterLogin", JSON.stringify({
-                    projectId: product.id,
-                    title: product.title,
-                    abstract_pdf: product.abstract_pdf,
-                  }));
-
-                  setTimeout(() => {
-                    window.location.href = "/auth/login"; // ✅ update to your actual route
-                  }, 100);
+                  window.location.href = "/auth/login"; // adjust if your route is different
                 } else {
-                  const downloadUrl = `${api.defaults.baseURL}/uploads/${product.abstract_pdf}`;
+                  // Logged in user: allow download
+                  const downloadUrl = `/uploads/${product.abstract_pdf}`;
                   const link = document.createElement("a");
                   link.href = downloadUrl;
                   link.download = `${product.title}-abstract.pdf`;
@@ -249,6 +261,7 @@ export default function ProductDetailPage() {
             >
               📄 Download Abstract
             </Button>
+
           </div>
 
           {/* Features */}

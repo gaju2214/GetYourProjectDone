@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { Button } from "../components/ui/Botton";
@@ -29,21 +29,28 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const downloadInfo = JSON.parse(localStorage.getItem("downloadAfterLogin"));
-  //   const user = JSON.parse(localStorage.getItem("user"));
 
-  //   if (downloadInfo && user) {
-  //     const url = `${api.defaults.baseURL}/uploads/${downloadInfo.title}-abstract.pdf`;
-  //     const link = document.createElement("a");
-  //     link.href = url;
-  //     link.download = `${downloadInfo.title}-abstract.pdf`;
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     document.body.removeChild(link);
-  //     localStorage.removeItem("downloadAfterLogin");
-  //   }
-  // }, []);
+
+  useEffect(() => {
+    const downloadData = JSON.parse(localStorage.getItem("downloadAfterLogin"));
+
+    if (downloadData) {
+      const { title, abstract_pdf } = downloadData;
+
+      // Delay download a bit (optional)
+      setTimeout(() => {
+        const link = document.createElement("a");
+        link.href = `/uploads/${abstract_pdf}`;
+        link.download = `${title}-abstract.pdf`;
+        link.click();
+
+        // Clear it after download
+        localStorage.removeItem("downloadAfterLogin");
+      }, 500); // optional delay
+    }
+  }, []);
+
+
 
   // Email login handler
   const handleEmailLogin = async () => {
