@@ -21,6 +21,7 @@ const allowedOrigins = [
   // Production environments Railway
   'https://getyourprojectdone.up.railway.app',
   'https://getyourprojectdone-backend.up.railway.app',
+  'https://www.getyourprojectdone.in',
    // Add your actual frontend domain if different
 ];
 
