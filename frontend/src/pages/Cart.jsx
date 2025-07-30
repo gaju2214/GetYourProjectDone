@@ -5,7 +5,7 @@ import api from '../api'; // adjust path based on file location
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Botton";
 import {
-  
+
   Card,
   CardContent,
   CardHeader,
@@ -34,7 +34,7 @@ import { OrderButton } from "../components/OrderButton";
 import { useAuth } from "../context/AuthContext"; // ✅
 
 export default function CartPage() {
- const { user } = useAuth(); // ✅
+  const { user } = useAuth(); // ✅
   const userId = user?.id; // ✅
 
   const navigate = useNavigate();
@@ -182,9 +182,9 @@ export default function CartPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 md:gap-8">
           <div className="xl:col-span-3 space-y-6">
-            <Card className="shadow-lg border-0">
+            <Card className="shadow-lg border-0 w-full">
               <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
                 <CardTitle className="text-xl flex items-center gap-2">
                   <Package className="h-6 w-6" />
@@ -198,15 +198,14 @@ export default function CartPage() {
                     className={`p-6 ${index !== cartItems.length - 1 ? "border-b" : ""
                       }`}
                   >
-                    <div className="flex gap-6">
+                    <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                       <div className="relative">
                         <img
                           src={`${api.defaults.baseURL}/uploads/${item.image}`}
                           alt={item.title}
-                          width={120}
-                          height={120}
-                          className="rounded-xl object-cover shadow-md"
+                          className="w-full sm:w-[120px] sm:h-[120px] object-cover rounded-xl shadow-md"
                         />
+
                         <Badge className="absolute -top-2 -right-2 bg-blue-600">
                           {item.difficulty}
                         </Badge>
@@ -234,7 +233,7 @@ export default function CartPage() {
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                           <div className="flex items-center gap-3">
                             <Button
                               variant="outline"
@@ -483,8 +482,8 @@ export default function CartPage() {
                     <div
                       key={method.id}
                       className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md ${paymentMethod === method.id
-                          ? "border-blue-500 bg-blue-50 shadow-md"
-                          : "border-gray-200 hover:border-gray-300"
+                        ? "border-blue-500 bg-blue-50 shadow-md"
+                        : "border-gray-200 hover:border-gray-300"
                         }`}
                       onClick={() => setPaymentMethod(method.id)}
                     >

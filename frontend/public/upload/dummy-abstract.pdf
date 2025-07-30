@@ -1,0 +1,6 @@
+{
+  id: "demo123",
+  title: "Smart Waste Management System",
+  abstract_pdf: "dummy-abstract.pdf",
+  ...
+}
