@@ -6,16 +6,14 @@ import { Star, ShoppingCart, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext"; // ✅ Import useCart
 import axios from "axios";
-import api from '../api'; // adjust path based on file location
+import api from "../api"; // adjust path based on file location
 import { useAuth } from "../context/AuthContext"; // Adjust path as needed
-
 
 export function ProductCard({ product }) {
   const [isAdding, setIsAdding] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
   const { dispatch } = useCart();
   const { user } = useAuth(); // 👈 get logged-in user
-
 
   const handleAddToCart = async () => {
     if (!user) {
@@ -25,7 +23,7 @@ export function ProductCard({ product }) {
 
     try {
       const cartItem = {
-        userId: user?.id,//1,
+        userId: user?.id, //1,
         projectId: product.id,
         quantity: 1,
       };
@@ -44,8 +42,6 @@ export function ProductCard({ product }) {
       console.error("Error adding to cart:", error);
       alert("⚠️ Error adding to cart.");
     }
-
-
 
     setIsAdding(true);
     dispatch({ type: "ADD_ITEM", payload: product });
@@ -70,7 +66,7 @@ export function ProductCard({ product }) {
         <CardContent className="p-0">
           <div className="relative overflow-hidden rounded-t-lg">
             <img
-              src={`${api.defaults.baseURL}/uploads/${product.image}`}
+              src={`${product.image}`}
               alt={product.title}
               width={400}
               height={300}
@@ -79,7 +75,12 @@ export function ProductCard({ product }) {
 
             {typeof product.price === "number" && (
               <Badge className="text-white absolute top-3 left-3 bg-red-500 hover:bg-red-600">
-                {`${Math.round(100 - (product.price / (product.originalPrice || (product.price / 0.6)) * 100))}% OFF`}
+                {`${Math.round(
+                  100 -
+                    (product.price /
+                      (product.originalPrice || product.price / 0.6)) *
+                      100
+                )}% OFF`}
               </Badge>
             )}
 
@@ -89,8 +90,8 @@ export function ProductCard({ product }) {
                 product.difficulty === "Beginner"
                   ? "secondary"
                   : product.difficulty === "Intermediate"
-                    ? "default"
-                    : "destructive"
+                  ? "default"
+                  : "destructive"
               }
             >
               {product.difficulty}
@@ -123,10 +124,9 @@ export function ProductCard({ product }) {
               )}
             </div>
 
-
-
             <div className="flex flex-wrap gap-2 mb-4">
-              {Array.isArray(product.components) && product.components.length > 0 ? (
+              {Array.isArray(product.components) &&
+              product.components.length > 0 ? (
                 product.components.slice(0, 3).map((component, index) => (
                   <Badge key={index} className="text-sm">
                     {component}
@@ -136,17 +136,17 @@ export function ProductCard({ product }) {
                 <p className="text-gray-400 text-sm">No components listed</p>
               )}
             </div>
-
           </div>
         </CardContent>
       </Link>
 
       <CardFooter className="p-6 pt-0">
         <Button
-          className={`w-full transition-all duration-300 ${isAdded
-            ? "focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-            : "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            }`}
+          className={`w-full transition-all duration-300 ${
+            isAdded
+              ? "focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+              : "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+          }`}
           onClick={handleAddToCart}
           disabled={isAdding}
         >

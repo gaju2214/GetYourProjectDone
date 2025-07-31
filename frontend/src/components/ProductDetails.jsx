@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
-import api from '../api'; // adjust path based on file location
+import api from "../api"; // adjust path based on file location
 
 import { useParams } from "react-router-dom";
 import { Button } from "../components/ui/Botton";
@@ -33,16 +33,15 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState(null);
 
-
   useEffect(() => {
-    const slug = window.location.pathname.split('/').pop();
-    api.get(`/api/projects/by-slug/${slug}`)
+    const slug = window.location.pathname.split("/").pop();
+    api
+      .get(`/api/projects/by-slug/${slug}`)
       .then((res) => {
         const p = res.data.data; // <-- FIXED
         setProduct({
           ...p,
           originalPrice: Math.floor(p.price * 1.5),
-
         });
       })
       .catch((err) => {
@@ -101,7 +100,7 @@ export default function ProductDetailPage() {
         <div className="space-y-4">
           <div className="relative overflow-hidden rounded-lg">
             <img
-              src={`${api.defaults.baseURL}/uploads/${product.image}`}
+              src={`${product.image}`}
               alt={product.title}
               className="w-full h-96 object-cover"
             />
@@ -120,15 +119,17 @@ export default function ProductDetailPage() {
                   {typeof product.category === "object" ? product.category.name : product.category}
                 </Badge> */}
               <Badge variant="outline">
-                {typeof product.subcategory === "object" ? product.subcategory.name : product.subcategory}
+                {typeof product.subcategory === "object"
+                  ? product.subcategory.name
+                  : product.subcategory}
               </Badge>
               <Badge
                 variant={
                   product.difficulty === "Beginner"
                     ? "secondary"
                     : product.difficulty === "Intermediate"
-                      ? "default"
-                      : "destructive"
+                    ? "default"
+                    : "destructive"
                 }
               >
                 {product.difficulty}
@@ -232,7 +233,6 @@ export default function ProductDetailPage() {
               </Button>
             </div>
 
-
             <Button
               size="lg"
               className="w-full mt-2 bg-orange-500 text-white hover:bg-orange-600 transition duration-300 shadow-md"
@@ -261,7 +261,6 @@ export default function ProductDetailPage() {
             >
               📄 Download Abstract
             </Button>
-
           </div>
 
           {/* Features */}
@@ -290,13 +289,22 @@ export default function ProductDetailPage() {
         <Tabs defaultValue="components" className="w-full">
           {/* Tabs Header */}
           <TabsList className="grid w-full grid-cols-3 bg-white border border-orange-100 rounded-xl shadow-md overflow-hidden ">
-            <TabsTrigger value="components" className="py-3 text-center font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-100 data-[state=active]:to-blue-100 data-[state=active]:text-orange-700">
+            <TabsTrigger
+              value="components"
+              className="py-3 text-center font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-100 data-[state=active]:to-blue-100 data-[state=active]:text-orange-700"
+            >
               Components
             </TabsTrigger>
-            <TabsTrigger value="specifications" className="py-3 text-center font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-100 data-[state=active]:to-blue-100 data-[state=active]:text-orange-700">
+            <TabsTrigger
+              value="specifications"
+              className="py-3 text-center font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-100 data-[state=active]:to-blue-100 data-[state=active]:text-orange-700"
+            >
               Specifications
             </TabsTrigger>
-            <TabsTrigger value="reviews" className="py-3 text-center font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-100 data-[state=active]:to-blue-100 data-[state=active]:text-orange-700">
+            <TabsTrigger
+              value="reviews"
+              className="py-3 text-center font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-100 data-[state=active]:to-blue-100 data-[state=active]:text-orange-700"
+            >
               Reviews
             </TabsTrigger>
           </TabsList>
@@ -342,33 +350,48 @@ export default function ProductDetailPage() {
                       ["Price", `₹${product.price.toLocaleString()}`],
                       //["Original Price", `₹${product.originalPrice.toLocaleString()}`],
                       //["Discount", `${discountPercentage}%`],
-                      ["Components", (product.components || []).length + " items"],
+                      [
+                        "Components",
+                        (product.components || []).length + " items",
+                      ],
                       ["Details", product.details || "Not provided"],
-                      ["Project Description", product.description || "Not provided"],
-                      ["Components Count", `${(product.components || []).length} items`],
+                      [
+                        "Project Description",
+                        product.description || "Not provided",
+                      ],
+                      [
+                        "Components Count",
+                        `${(product.components || []).length} items`,
+                      ],
                       ["Estimated Build Time", "2–4 hours"],
-                    ]
-                      .map(([label, value], i) => (
-                        <div
-                          key={i}
-                          className={`grid grid-cols-2 gap-4 py-2 ${i < 10 ? "border-b border-blue-100" : ""}`}
-                        >
-                          <span className="font-medium">{label}:</span>
-                          <span>{value}</span>
-                        </div>
-                      ))}
-
-                    {product.block_diagram && typeof product.block_diagram === 'string' && (
-                      <div className="pt-6">
-                        <h4 className="font-medium text-blue-600">Block Diagram</h4>
-                        <img
-                          src={`${api.defaults.baseURL}/uploads/${product.block_diagram}`}
-                          alt="Block Diagram"
-                          className="mt-2 rounded-lg shadow"
-                          onError={(e) => { e.target.style.display = 'none'; }}
-                        />
+                    ].map(([label, value], i) => (
+                      <div
+                        key={i}
+                        className={`grid grid-cols-2 gap-4 py-2 ${
+                          i < 10 ? "border-b border-blue-100" : ""
+                        }`}
+                      >
+                        <span className="font-medium">{label}:</span>
+                        <span>{value}</span>
                       </div>
-                    )}
+                    ))}
+
+                    {product.block_diagram &&
+                      typeof product.block_diagram === "string" && (
+                        <div className="pt-6">
+                          <h4 className="font-medium text-blue-600">
+                            Block Diagram
+                          </h4>
+                          <img
+                            src={`${api.defaults.baseURL}/uploads/${product.block_diagram}`}
+                            alt="Block Diagram"
+                            className="mt-2 rounded-lg shadow"
+                            onError={(e) => {
+                              e.target.style.display = "none";
+                            }}
+                          />
+                        </div>
+                      )}
                   </div>
                 </CardContent>
               </Card>
@@ -398,9 +421,7 @@ export default function ProductDetailPage() {
                         </span>
                         <span className="text-sm text-gray-500">Recently</span>
                       </div>
-                      <p className="text-sm text-gray-600">
-                        {product.review}
-                      </p>
+                      <p className="text-sm text-gray-600">{product.review}</p>
                     </div>
                   </div>
                 ) : (
@@ -411,7 +432,6 @@ export default function ProductDetailPage() {
           </TabsContent>
         </Tabs>
       </div>
-
     </div>
   );
 }
