@@ -90,10 +90,10 @@ const Navigation = () => {
             <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
               {[
                 { label: "Home", to: "/", key: "home" },
+                { label: "Project Kits", to: "/categories", key: "categories" },
                 {
                   label: "IoT Platform", to: "https://getyourprojectdone.in/iot_platform/", key: "projectKits"
                 },
-                { label: "Project Kits", to: "/categories", key: "categories" },
               ].map((item) => (
                 <Link to={item.to} key={item.key}>
                   <Button
