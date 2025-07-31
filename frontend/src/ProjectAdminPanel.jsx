@@ -230,17 +230,18 @@ const handleAddProject = async () => {
             setProjectData({ ...projectData, price: e.target.value })
           }
         />
-        <input
-  type="file"
-  className="border p-2 w-full mb-2"
-  onChange={(e) => setImageFile(e.target.files[0])}
-/>
-<input
-  type="file"
-  className="border p-2 w-full mb-2"
-  onChange={(e) => setBlockDiagramFile(e.target.files[0])}
-/>
-
+    <h2 className="font-semibold mb-2">Project Image</h2>
+      <input
+      type="file"
+      className="border p-2 w-full mb-2"
+      onChange={(e) => setImageFile(e.target.files[0])}
+    />
+      <h2 className="font-semibold mb-2">Block Diagram</h2>
+      <input
+        type="file"
+        className="border p-2 w-full mb-2"
+        onChange={(e) => setBlockDiagramFile(e.target.files[0])}
+      />
         <select
           className="border p-2 w-full mb-2"
           value={projectData.categoryId}
