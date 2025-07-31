@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { Button } from "../components/ui/Botton";
@@ -28,29 +28,6 @@ export default function LoginPage() {
 
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-
-
-  useEffect(() => {
-    const downloadData = JSON.parse(localStorage.getItem("downloadAfterLogin"));
-
-    if (downloadData) {
-      const { title, abstract_pdf } = downloadData;
-
-      // Delay download a bit (optional)
-      setTimeout(() => {
-        const link = document.createElement("a");
-        link.href = `/uploads/${abstract_pdf}`;
-        link.download = `${title}-abstract.pdf`;
-        link.click();
-
-        // Clear it after download
-        localStorage.removeItem("downloadAfterLogin");
-      }, 500); // optional delay
-    }
-  }, []);
-
-
 
   // Email login handler
   const handleEmailLogin = async () => {
@@ -109,9 +86,9 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    alert("Google login would be implemented here");
-    navigate("/");
-  };
+  window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/google`;
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
