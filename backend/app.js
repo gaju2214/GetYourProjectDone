@@ -66,9 +66,17 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => res.send('Server is running 🚀'));
+// Redirect must come before static serving
 app.get(/^\/auth\/login\/?$/, (req, res) => {
-  res.redirect(301, 'https://auth.getyourprojectdone.in/');
+  return res.redirect(301, 'https://auth.getyourprojectdone.in/');
 });
+
+// Your static file handling (like for React)
+app.use(express.static(path.join(__dirname, 'build')));
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+// Redirect from /auth/register to subdomain
 app.get(/^\/auth\/register\/?$/, (req, res) => {
   res.redirect(301, 'https://auth.getyourprojectdone.in/');
 });
