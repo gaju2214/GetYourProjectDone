@@ -1,35 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import api from './api'; // Adjust the path based on your file structure
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import api from "./api"; // Adjust the path based on your file structure
 //const VITE_BACKEND_URL= 'https://pretty-adventure-production.up.railway.app';
 
- //const API_BASE = 'http://localhost:5000'; // Use this for local development
+//const API_BASE = 'http://localhost:5000'; // Use this for local development
 
 const ProjectAdminPanel = () => {
-  const [categoryName, setCategoryName] = useState('');
-  const [subcategoryName, setSubcategoryName] = useState('');
-  const [selectedCategoryId, setSelectedCategoryId] = useState('');
+  const [categoryName, setCategoryName] = useState("");
+  const [subcategoryName, setSubcategoryName] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
 
   const [projectData, setProjectData] = useState({
-    title: '',
-    description: '',
-    price: '',
-    categoryId: '',
-    subcategoryId: '',
-      components: [], // array of strings
-
+    title: "",
+    description: "",
+    price: "",
+    categoryId: "",
+    subcategoryId: "",
+    components: [], // array of strings
   });
 
   // Fetch all categories on mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const catRes = await api.get('/api/categories/getallcategory');
+        const catRes = await api.get("/api/categories/getallcategory");
         setCategories(catRes.data);
       } catch (error) {
-        console.error('Failed to load categories', error);
+        console.error("Failed to load categories", error);
       }
     };
 
@@ -37,97 +36,120 @@ const ProjectAdminPanel = () => {
   }, []);
 
   // Fetch subcategories when selectedCategoryId changes
-useEffect(() => {
-  const fetchSubcategories = async () => {
-    if (!projectData.categoryId) {
-      setSubcategories([]);
-      return;
-    }
+  useEffect(() => {
+    const fetchSubcategories = async () => {
+      if (!projectData.categoryId) {
+        setSubcategories([]);
+        return;
+      }
 
-    try {
-      const res = await api.get(
-        `/api/subcategories/by-category/${projectData.categoryId}`
-      );
-      setSubcategories(res.data);
-    } catch (error) {
-      console.error('Failed to load subcategories', error);
-    }
-  };
+      try {
+        const res = await api.get(
+          `/api/subcategories/by-category/${projectData.categoryId}`
+        );
+        setSubcategories(res.data);
+      } catch (error) {
+        console.error("Failed to load subcategories", error);
+      }
+    };
 
-  fetchSubcategories();
-}, [projectData.categoryId]);
-
+    fetchSubcategories();
+  }, [projectData.categoryId]);
 
   const handleAddCategory = async () => {
     try {
-      await api.post('/api/categories/create-category', {
+      await api.post("/api/categories/create-category", {
         name: categoryName,
       });
-      alert('Category added!');
-      setCategoryName('');
+      alert("Category added!");
+      setCategoryName("");
     } catch (error) {
       console.error(error);
-      alert('Error adding category');
+      alert("Error adding category");
     }
   };
 
   const handleAddSubcategory = async () => {
     try {
-      await api.post('/api/categories/create-subcategory', {
+      await api.post("/api/categories/create-subcategory", {
         name: subcategoryName,
         categoryId: selectedCategoryId,
       });
-      alert('Subcategory added!');
-      setSubcategoryName('');
-      setSelectedCategoryId('');
+      alert("Subcategory added!");
+      setSubcategoryName("");
+      setSelectedCategoryId("");
     } catch (error) {
       console.error(error);
-      alert('Error adding subcategory');
+      alert("Error adding subcategory");
     }
   };
 
   const [imageFile, setImageFile] = useState(null);
-const [blockDiagramFile, setBlockDiagramFile] = useState(null);
+  const [blockDiagramFile, setBlockDiagramFile] = useState(null);
 
-const handleAddProject = async () => {
-  try {
-    const formData = new FormData();
-    formData.append('title', projectData.title);
-    formData.append('description', projectData.description);
-    formData.append('price', projectData.price);
-    formData.append('categoryId', projectData.categoryId);
-    formData.append('subcategoryId', projectData.subcategoryId);
-    formData.append('components', JSON.stringify(projectData.components)); // Important!
-    formData.append('details', projectData.details || '');
-    if (imageFile) {
-      formData.append('image', imageFile);
+  const uploadToCloudinary = async (file) => {
+    const data = new FormData();
+    data.append("file", file);
+    data.append("upload_preset", import.meta.env.VITE_CLOUDINARY_PRESET);
+    data.append("cloud_name", import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
+
+    try {
+      const res = await fetch(
+        `https://api.cloudinary.com/v1_1/${
+          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
+        }/upload`,
+        {
+          method: "POST",
+          body: data,
+        }
+      );
+
+      const result = await res.json();
+      return result.secure_url; // Returns the uploaded file's URL
+    } catch (err) {
+      console.error("Cloudinary upload failed:", err);
+      return null;
     }
-    if (blockDiagramFile) {
-      formData.append('block_diagram', blockDiagramFile);
+  };
+
+  const handleAddProject = async () => {
+    try {
+      let imageUrl = null;
+      let blockDiagramUrl = null;
+
+      if (imageFile) {
+        imageUrl = await uploadToCloudinary(imageFile);
+      }
+
+      if (blockDiagramFile) {
+        blockDiagramUrl = await uploadToCloudinary(blockDiagramFile);
+      }
+
+      const payload = {
+        ...projectData,
+        components: JSON.stringify(projectData.components),
+        image: imageUrl,
+        block_diagram: blockDiagramUrl,
+      };
+
+      await api.post("/api/projects/create-project", payload);
+
+      alert("Project added!");
+      setProjectData({
+        title: "",
+        description: "",
+        price: "",
+        categoryId: "",
+        subcategoryId: "",
+      });
+      setImageFile(null);
+      setBlockDiagramFile(null);
+      console.log(imageFile);
+    } catch (error) {
+      console.error(error);
+      alert("Error adding project");
     }
-
-    await api.post('/api/projects/create-project', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    alert('Project added!');
-    setProjectData({
-      title: '',
-      description: '',
-      price: '',
-      categoryId: '',
-      subcategoryId: '',
-    });
-    setImageFile(null);
-    setBlockDiagramFile(null);
-  } catch (error) {
-    console.error(error);
-    alert('Error adding project');
-  }
-};
-
+  };
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-8">
@@ -189,7 +211,9 @@ const handleAddProject = async () => {
           type="text"
           placeholder="Project Title"
           value={projectData.title}
-          onChange={(e) => setProjectData({ ...projectData, title: e.target.value })}
+          onChange={(e) =>
+            setProjectData({ ...projectData, title: e.target.value })
+          }
         />
         <textarea
           className="border p-2 w-full mb-2"
@@ -200,27 +224,27 @@ const handleAddProject = async () => {
           }
         />
         {/* Project Details */}
-<textarea
-  className="border p-2 w-full mb-2"
-  placeholder="Project Details"
-  value={projectData.details}
-  onChange={(e) =>
-    setProjectData({ ...projectData, details: e.target.value })
-  }
-/>
+        <textarea
+          className="border p-2 w-full mb-2"
+          placeholder="Project Details"
+          value={projectData.details}
+          onChange={(e) =>
+            setProjectData({ ...projectData, details: e.target.value })
+          }
+        />
 
-{/* Components (comma separated) */}
-<input
-  className="border p-2 w-full mb-2"
-  type="text"
-  placeholder="Project Components (comma separated)"
-  onChange={(e) =>
-    setProjectData({
-      ...projectData,
-      components: e.target.value.split(',').map(c => c.trim())
-    })
-  }
-/>
+        {/* Components (comma separated) */}
+        <input
+          className="border p-2 w-full mb-2"
+          type="text"
+          placeholder="Project Components (comma separated)"
+          onChange={(e) =>
+            setProjectData({
+              ...projectData,
+              components: e.target.value.split(",").map((c) => c.trim()),
+            })
+          }
+        />
         <input
           className="border p-2 w-full mb-2"
           type="number"
@@ -231,15 +255,15 @@ const handleAddProject = async () => {
           }
         />
         <input
-  type="file"
-  className="border p-2 w-full mb-2"
-  onChange={(e) => setImageFile(e.target.files[0])}
-/>
-<input
-  type="file"
-  className="border p-2 w-full mb-2"
-  onChange={(e) => setBlockDiagramFile(e.target.files[0])}
-/>
+          type="file"
+          className="border p-2 w-full mb-2"
+          onChange={(e) => setImageFile(e.target.files[0])}
+        />
+        <input
+          type="file"
+          className="border p-2 w-full mb-2"
+          onChange={(e) => setBlockDiagramFile(e.target.files[0])}
+        />
 
         <select
           className="border p-2 w-full mb-2"
@@ -248,7 +272,7 @@ const handleAddProject = async () => {
             setProjectData({
               ...projectData,
               categoryId: e.target.value,
-              subcategoryId: '', // reset subcategory when category changes
+              subcategoryId: "", // reset subcategory when category changes
             })
           }
         >

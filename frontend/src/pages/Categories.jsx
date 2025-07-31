@@ -46,17 +46,22 @@ export default function CategoriesPage() {
               // Update the category object with its subcategories
               setCategoriesData((prevData) =>
                 prevData.map((cat) =>
-                  cat.id === category.id ? { ...cat, subcategories: subRes.data } : cat
+                  cat.id === category.id
+                    ? { ...cat, subcategories: subRes.data }
+                    : cat
                 )
               );
             })
-            .catch((err) => console.error("Error fetching subcategories:", err));
+            .catch((err) =>
+              console.error("Error fetching subcategories:", err)
+            );
         });
       })
       .catch((err) => console.error("Error fetching categories:", err));
   }, []);
 
-if (!categoriesData.length) return <p className="text-center">Loading categories...</p>;
+  if (!categoriesData.length)
+    return <p className="text-center">Loading categories...</p>;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
@@ -99,68 +104,81 @@ if (!categoriesData.length) return <p className="text-center">Loading categories
 
         {/* Categories Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-{categoriesData.map((categoryObj) => {
-  const category = categoryObj.name;
-  const categoryId = categoryObj.id;
-  const categorySlug = categoryObj.slug; // ✅ define slug
-  const subcategories = categoryObj.subcategories || [];
-  const icon = categoryIcons[category] || "📦";
-  const gradient = categoryColors[category] || "from-gray-400 to-gray-600";
+          {categoriesData.map((categoryObj) => {
+            const category = categoryObj.name;
+            const categoryId = categoryObj.id;
+            const categorySlug = categoryObj.slug; // ✅ define slug
+            const subcategories = categoryObj.subcategories || [];
+            const icon = categoryIcons[category] || "📦";
+            const gradient =
+              categoryColors[category] || "from-gray-400 to-gray-600";
 
+            return (
+              <Card
+                key={category}
+                className="shadow-xl border-0 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
+              >
+                <CardHeader
+                  className={`bg-gradient-to-r ${gradient} text-white rounded-t-lg`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">{icon}</span>
+                      <div>
+                        <CardTitle className="text-2xl">{category}</CardTitle>
+                        <p className="text-white/80">
+                          {subcategories.length} Specializations
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardHeader>
 
-  return (
-    <Card key={category} className="shadow-xl border-0 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
-      <CardHeader className={`bg-gradient-to-r ${gradient} text-white rounded-t-lg`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <span className="text-3xl">{icon}</span>
-            <div>
-              <CardTitle className="text-2xl">{category}</CardTitle>
-              <p className="text-white/80">{subcategories.length} Specializations</p>
-            </div>
-          </div>
-        </div>
-      </CardHeader>
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    <p className="text-gray-600 leading-relaxed">
+                      Comprehensive {category.toLowerCase()} engineering
+                      projects with industry-standard components and expert
+                      guidance.
+                    </p>
 
-      <CardContent className="p-6">
-        <div className="space-y-4">
-          <p className="text-gray-600 leading-relaxed">
-            Comprehensive {category.toLowerCase()} engineering projects with industry-standard components and expert guidance.
-          </p>
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-gray-900">
+                        Specializations:
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {subcategories.slice(0, 4).map((sub) => (
+                          <Badge
+                            key={sub.id}
+                            variant="outline"
+                            className="text-xs"
+                          >
+                            {sub.name}
+                          </Badge>
+                        ))}
+                        {subcategories.length > 4 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{subcategories.length - 4} more
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
 
-          <div className="space-y-3">
-            <h4 className="font-semibold text-gray-900">Specializations:</h4>
-            <div className="flex flex-wrap gap-2">
-              {subcategories.slice(0, 4).map((sub) => (
-                <Badge key={sub.id} variant="outline" className="text-xs">
-                  {sub.name}
-                </Badge>
-              ))}
-              {subcategories.length > 4 && (
-                <Badge variant="outline" className="text-xs">
-                  +{subcategories.length - 4} more
-                </Badge>
-              )}
-            </div>
-          </div>
-
-          {/* ✅ Fixed this line by defining categoryId above */}
-{category && categorySlug && (
-  <Link to={`/projects/${categorySlug}`}>
-    <Button className="text-white mt-4 grouptext-lg px-20 bg-red-500 hover:bg-red-700">
-      Explore {category} Projects
-    </Button>
-  </Link>
-)}
-    
-        </div>
-      </CardContent>
-    </Card>
-  );
-})}
+                    {/* ✅ Fixed this line by defining categoryId above */}
+                    {category && categorySlug && (
+                      <Link to={`/projects/${categorySlug}`}>
+                        <Button className="text-white mt-4 grouptext-lg px-20 bg-red-500 hover:bg-red-700">
+                          Explore {category} Projects
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </div>
     </div>
   );
 }
-
