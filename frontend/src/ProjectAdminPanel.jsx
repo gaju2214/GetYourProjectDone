@@ -144,7 +144,6 @@ const ProjectAdminPanel = () => {
       });
       setImageFile(null);
       setBlockDiagramFile(null);
-      console.log(imageFile);
     } catch (error) {
       console.error(error);
       alert("Error adding project");

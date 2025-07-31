@@ -18,6 +18,7 @@ export default function CategoriesPage() {
   const categoryIcons = {
     Electronics: "⚡",
     Software: "💻",
+    Computer: "💻",
     Mechanical: "⚙️",
     Electrical: "🔌",
     Civil: "🏗️",
@@ -27,6 +28,7 @@ export default function CategoriesPage() {
   const categoryColors = {
     Electronics: "from-blue-500 to-cyan-500",
     Software: "from-purple-500 to-pink-500",
+    Computer: "from-purple-500 to-pink-500",
     Mechanical: "from-orange-500 to-red-500",
     Electrical: "from-yellow-500 to-orange-500",
     Civil: "from-green-500 to-teal-500",
