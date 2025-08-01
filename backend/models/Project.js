@@ -20,7 +20,10 @@ module.exports = (sequelize, DataTypes) => {
   allowNull: true
 },
 
-
+abstract_file: {
+  type: DataTypes.STRING,
+  allowNull: true
+},
    
     block_diagram: {
       type: DataTypes.STRING, // Store filename or URL
