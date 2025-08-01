@@ -19,11 +19,13 @@ module.exports = (sequelize, DataTypes) => {
   type: DataTypes.ARRAY(DataTypes.STRING),
   allowNull: true
 },
-
+// ...existing code...
 abstract_file: {
   type: DataTypes.STRING,
   allowNull: true
 },
+// ...existing code...
+
    
     block_diagram: {
       type: DataTypes.STRING, // Store filename or URL
