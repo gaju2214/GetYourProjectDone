@@ -237,13 +237,13 @@ export default function ProductDetailPage() {
               size="lg"
               className="w-full mt-2 bg-orange-500 text-white hover:bg-orange-600 transition duration-300 shadow-md"
               onClick={() => {
-                if (!user) {
+                if (user) {
                   // Save download intent in localStorage
                   localStorage.setItem(
                     "downloadAfterLogin",
                     JSON.stringify({
                       title: product.title,
-                      abstract_pdf: product.abstract_pdf,
+                      abstract_pdf: product.abstract_file,
                     })
                   );
                   // Redirect to login page
@@ -251,7 +251,7 @@ export default function ProductDetailPage() {
                   window.location.href = "/auth/login"; // adjust if your route is different
                 } else {
                   // Logged in user: allow download
-                  const downloadUrl = `/uploads/${product.abstract_pdf}`;
+                  const downloadUrl = `/${product.abstract_file}`;
                   const link = document.createElement("a");
                   link.href = downloadUrl;
                   link.download = `${product.title}-abstract.pdf`;

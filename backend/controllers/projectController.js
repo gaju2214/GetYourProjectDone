@@ -13,9 +13,15 @@ exports.createProject = async (req, res) => {
     review,
     image, // Cloudinary URL
     block_diagram, // Cloudinary URL
+    abstract_file, // Cloudinary URL
   } = req.body;
 
   try {
+    // Validate required fields
+    if (!title || !description || !subcategoryId) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
     const subcategory = await Subcategory.findByPk(subcategoryId);
     if (!subcategory) {
       return res.status(404).json({ error: "Subcategory not found" });
@@ -36,10 +42,11 @@ exports.createProject = async (req, res) => {
       slug,
       description,
       price,
-      image, // Now it's a URL string, not a file name
+      image, // Cloudinary URL string
       subcategoryId,
       components: JSON.parse(components || "[]"), // Parse stringified array
-      block_diagram, // Also a Cloudinary URL
+      block_diagram, // Cloudinary URL
+      abstract_file, // Cloudinary URL
       details,
       review,
     });
@@ -125,13 +132,11 @@ exports.getProjectById = async (req, res) => {
     res.json({ success: true, data: project });
   } catch (err) {
     console.error("Error fetching project:", err.message);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Failed to fetch project",
-        error: err.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch project",
+      error: err.message,
+    });
   }
 };
 // Get all projects (with optional subcategory filtering)
@@ -181,12 +186,10 @@ exports.getProjectBySlug = async (req, res) => {
     res.json({ success: true, data: project });
   } catch (err) {
     console.error("Error fetching project:", err.message);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Failed to fetch project",
-        error: err.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch project",
+      error: err.message,
+    });
   }
 };

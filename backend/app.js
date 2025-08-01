@@ -93,11 +93,14 @@ const allowedOrigins = [
   "http://localhost:5000",
   "http://localhost:5173",
   "http://192.168.31.24:5173",
+  "https://www.getyourprojectdone.in",
+  "https://getyourprojectdone.in",
   "https://qjv19kc1-5000.inc1.devtunnels.ms",
   "https://getyourprojectdone.onrender.com",
   "https://getyourprojectdone-frontend.onrender.com",
   "https://getyourprojectdone.up.railway.app",
   "https://getyourprojectdone-backend.up.railway.app",
+  "https://master.getyourprojectdone.in"
 ];
 
 // Middleware
