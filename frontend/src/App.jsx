@@ -14,6 +14,7 @@ import CategoryPage from "./components/Subcategory";
 import ProjectList from "./pages/ProjectList"; // or correct path
 import ProjectAdminPanel from "./ProjectAdminPanel";
 import Account from "./pages/Account";
+import AuthSuccess from "./pages/AuthSuccess";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/success" element={<SuccessPage />} />
+        <Route path="/authsuccess" element={<AuthSuccess />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/categories/:category" element={<CategoryPage />} />

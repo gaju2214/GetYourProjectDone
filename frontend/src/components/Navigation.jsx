@@ -90,14 +90,17 @@ const Navigation = () => {
             <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
               {[
                 { label: "Home", to: "/", key: "home" },
-                { label: "Project Kits", to: "/projectkits", key: "projectKits" },
-                { label: "Categories", to: "/categories", key: "categories" },
+                { label: "Project Kits", to: "/categories", key: "categories" },
+                {
+                  label: "IoT Platform", to: "https://getyourprojectdone.in/iot_platform/", key: "projectKits"
+                },
               ].map((item) => (
                 <Link to={item.to} key={item.key}>
                   <Button
                     variant="ghost"
                     onClick={() => setActiveNav(item.key)}
-                    className={`text-gray-700 hover:text-gray-900 hover:scale-105 transition-transform duration-200 ${activeNav === item.key ? "font-semibold text-black-600" : ""}`}
+                    className={`whitespace-nowrap min-w-[120px] text-center px-4 text-gray-700 hover:text-gray-900 hover:scale-105 transition-transform duration-200 ${activeNav === item.key ? "font-semibold text-black-600" : ""
+                      }`}
                   >
                     {item.label}
                   </Button>
@@ -273,7 +276,7 @@ const Navigation = () => {
                           onClick={() => setIsMenuOpen(false)}
                           className="text-gray-800 hover:text-orange-500 transition-colors duration-300"
                         >
-                          Categories
+                          Project Kits
                         </Link>
                         <Link
                           to="/cart"
