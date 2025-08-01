@@ -383,7 +383,7 @@ export default function ProductDetailPage() {
                             Block Diagram
                           </h4>
                           <img
-                            src={`${api.defaults.baseURL}/uploads/${product.block_diagram}`}
+                            src={`${product.block_diagram}`}
                             alt="Block Diagram"
                             className="mt-2 rounded-lg shadow"
                             onError={(e) => {
