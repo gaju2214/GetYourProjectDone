@@ -1,4 +1,3 @@
-
 import HomePage from "./pages/Home";
 import "./App.css";
 import Navigation from "./components/Navigation";
@@ -13,10 +12,8 @@ import ProductDetailPage from "./components/ProductDetails";
 import CategoriesPage from "./pages/Categories";
 import CategoryPage from "./components/Subcategory";
 import ProjectList from "./pages/ProjectList"; // or correct path
-import ProjectAdminPanel from './ProjectAdminPanel';
+import ProjectAdminPanel from "./ProjectAdminPanel";
 import Account from "./pages/Account";
-
-
 
 function App() {
   return (
@@ -24,7 +21,10 @@ function App() {
       <Navigation />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/admin" element={<ProjectAdminPanel />} />
+        <Route
+          path="/getyourprojectdoneadmin"
+          element={<ProjectAdminPanel />}
+        />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
