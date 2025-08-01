@@ -253,11 +253,13 @@ const ProjectAdminPanel = () => {
             setProjectData({ ...projectData, price: e.target.value })
           }
         />
+         <h2 className="font-semibold mb-2"> Add Project Image</h2>
         <input
           type="file"
           className="border p-2 w-full mb-2"
           onChange={(e) => setImageFile(e.target.files[0])}
         />
+         <h2 className="font-semibold mb-2">Add Block Diagram</h2>
         <input
           type="file"
           className="border p-2 w-full mb-2"
