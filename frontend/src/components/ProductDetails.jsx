@@ -234,33 +234,35 @@ export default function ProductDetailPage() {
             </div>
 
             <Button
-              size="lg"
-              className="w-full mt-2 bg-orange-500 text-white hover:bg-orange-600 transition duration-300 shadow-md"
-              onClick={() => {
-                if (user) {
-                  // Save download intent in localStorage
-                  localStorage.setItem(
-                    "downloadAfterLogin",
-                    JSON.stringify({
-                      title: product.title,
-                      abstract_pdf: product.abstract_file,
-                    })
-                  );
-                  // Redirect to login page
-                  alert("Please login to download the abstract.");
-                  window.location.href = "/auth/login"; // adjust if your route is different
-                } else {
-                  // Logged in user: allow download
-                  const downloadUrl = `/${product.abstract_file}`;
-                  const link = document.createElement("a");
-                  link.href = downloadUrl;
-                  link.download = `${product.title}-abstract.pdf`;
-                  link.click();
-                }
-              }}
-            >
-              📄 Download Abstract
-            </Button>
+  size="lg"
+  className="w-full mt-2 bg-orange-500 text-white hover:bg-orange-600 transition duration-300 shadow-md"
+  onClick={() => {
+    if (user) {
+      // Not logged in: save download intent and redirect to login
+      localStorage.setItem(
+        "downloadAfterLogin",
+        JSON.stringify({
+          title: product.title,
+          abstract_pdf: product.abstract_file,
+        })
+      );
+      alert("Please login to download the abstract.");
+      window.location.href = "/auth/login"; // adjust if your route is different
+    } else {
+      // Logged in user: allow download
+      const downloadUrl = product.abstract_file;
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.download = `${product.title}-abstract.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }}
+>
+  📄 Download Abstract
+</Button>
+
           </div>
 
           {/* Features */}

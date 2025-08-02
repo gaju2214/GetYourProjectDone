@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import api from "./api"; // Adjust the path based on your file structure
-//const VITE_BACKEND_URL= 'https://pretty-adventure-production.up.railway.app';
-
-//const API_BASE = 'http://localhost:5000'; // Use this for local development
+import api from "./api";
 
 const ProjectAdminPanel = () => {
   const [categoryName, setCategoryName] = useState("");
@@ -11,9 +7,6 @@ const ProjectAdminPanel = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
-  const [imageFile, setImageFile] = useState(null);
-  const [blockDiagramFile, setBlockDiagramFile] = useState(null);
-  const [abstractFile, setAbstractFile] = useState(null);
 
   const [projectData, setProjectData] = useState({
     title: "",
@@ -22,9 +15,13 @@ const ProjectAdminPanel = () => {
     categoryId: "",
     subcategoryId: "",
     components: [], // array of strings
+    details: "",
   });
 
-  // Fetch all categories on mount
+  const [imageFile, setImageFile] = useState(null);
+  const [blockDiagramFile, setBlockDiagramFile] = useState(null);
+  const [abstractFile, setAbstractFile] = useState(null);
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -38,7 +35,6 @@ const ProjectAdminPanel = () => {
     fetchCategories();
   }, []);
 
-  // Fetch subcategories when selectedCategoryId changes
   useEffect(() => {
     const fetchSubcategories = async () => {
       if (!projectData.categoryId) {
@@ -87,29 +83,25 @@ const ProjectAdminPanel = () => {
     }
   };
 
-  // New state for abstract file
-
-  const uploadToCloudinary = async (file) => {
+  const uploadToHostinger = async (file) => {
     const data = new FormData();
     data.append("file", file);
-    data.append("upload_preset", import.meta.env.VITE_CLOUDINARY_PRESET);
-    data.append("cloud_name", import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
 
     try {
-      const res = await fetch(
-        `https://api.cloudinary.com/v1_1/${
-          import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
-        }/upload`,
-        {
-          method: "POST",
-          body: data,
-        }
-      );
+      const res = await fetch("https://myuploads.getyourprojectdone.in/upload.php", {
+        method: "POST",
+        body: data,
+      });
 
       const result = await res.json();
-      return result.secure_url; // Returns the uploaded file's URL
+
+      if (result.url) {
+        return result.url;
+      } else {
+        throw new Error("Upload failed");
+      }
     } catch (err) {
-      console.error("Cloudinary upload failed:", err);
+      console.error("Hostinger upload failed:", err);
       return null;
     }
   };
@@ -118,19 +110,18 @@ const ProjectAdminPanel = () => {
     try {
       let imageUrl = null;
       let blockDiagramUrl = null;
-      let abstractUrl = null; // New variable for abstract URL
+      let abstractUrl = null;
 
       if (imageFile) {
-        imageUrl = await uploadToCloudinary(imageFile);
+        imageUrl = await uploadToHostinger(imageFile);
       }
 
       if (blockDiagramFile) {
-        blockDiagramUrl = await uploadToCloudinary(blockDiagramFile);
+        blockDiagramUrl = await uploadToHostinger(blockDiagramFile);
       }
 
-      // Upload abstract file to Cloudinary if selected
       if (abstractFile) {
-        abstractUrl = await uploadToCloudinary(abstractFile);
+        abstractUrl = await uploadToHostinger(abstractFile);
       }
 
       const payload = {
@@ -138,11 +129,10 @@ const ProjectAdminPanel = () => {
         components: JSON.stringify(projectData.components),
         image: imageUrl,
         block_diagram: blockDiagramUrl,
-        abstract_file: abstractUrl, // Add abstract file URL to payload
+        abstract_file: abstractUrl,
       };
 
       await api.post("/api/projects/create-project", payload);
-      console.log(payload);
 
       alert("Project added!");
 
@@ -152,10 +142,13 @@ const ProjectAdminPanel = () => {
         price: "",
         categoryId: "",
         subcategoryId: "",
+        components: [],
+        details: "",
       });
+
       setImageFile(null);
       setBlockDiagramFile(null);
-      setAbstractFile(null); // Reset abstract file state
+      setAbstractFile(null);
     } catch (error) {
       console.error(error);
       alert("Error adding project");
@@ -265,6 +258,7 @@ const ProjectAdminPanel = () => {
             setProjectData({ ...projectData, price: e.target.value })
           }
         />
+
         <h3 className="font-semibold mb-2">Add Project Image</h3>
         <input
           type="file"
@@ -272,6 +266,7 @@ const ProjectAdminPanel = () => {
           className="border p-2 w-full mb-2"
           onChange={(e) => setImageFile(e.target.files[0])}
         />
+
         <h3 className="font-semibold mb-2">Add Block Diagram</h3>
         <input
           type="file"
@@ -280,7 +275,6 @@ const ProjectAdminPanel = () => {
           onChange={(e) => setBlockDiagramFile(e.target.files[0])}
         />
 
-        {/* New Abstract File Upload Section */}
         <h3 className="font-semibold mb-2">Add Project Abstract File (PDF)</h3>
         <input
           type="file"
@@ -301,7 +295,7 @@ const ProjectAdminPanel = () => {
             setProjectData({
               ...projectData,
               categoryId: e.target.value,
-              subcategoryId: "", // reset subcategory when category changes
+              subcategoryId: "",
             })
           }
         >
@@ -338,6 +332,7 @@ const ProjectAdminPanel = () => {
 };
 
 export default ProjectAdminPanel;
+
 
 // import React, { useState, useEffect } from "react";
 // import axios from "axios";
