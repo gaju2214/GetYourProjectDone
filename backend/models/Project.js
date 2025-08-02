@@ -1,55 +1,61 @@
 module.exports = (sequelize, DataTypes) => {
-  const Project = sequelize.define('Project', {
-    title: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    description: {
-      type: DataTypes.TEXT,
-      allowNull: false
-    },
-    price: {
-      type: DataTypes.FLOAT,
-      allowNull: false
-    },
-    image: {
-      type: DataTypes.STRING
-    },
- components: {
-  type: DataTypes.ARRAY(DataTypes.STRING),
-  allowNull: true
-},
+  const Project = sequelize.define(
+    "Project",
+    {
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      description: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+      },
+      price: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+      },
+      image: {
+        type: DataTypes.STRING,
+      },
+      components: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: true,
+      },
 
-
-   
-    block_diagram: {
-      type: DataTypes.STRING, // Store filename or URL
-      allowNull: true
+      block_diagram: {
+        type: DataTypes.STRING, // Store filename or URL
+        allowNull: true,
+      },
+      abstract_file: {
+        type: DataTypes.STRING, // Store filename or URL
+        allowNull: true,
+      },
+      details: {
+        type: DataTypes.TEXT,
+      },
+      review: {
+        type: DataTypes.TEXT, // Can change to a Review model later if needed
+      },
+      subcategoryId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      slug: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+      },
     },
-    details: {
-      type: DataTypes.TEXT
-    },
-    review: {
-      type: DataTypes.TEXT // Can change to a Review model later if needed
-    },
-    subcategoryId: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    slug: {
-      type: DataTypes.STRING,
-      unique: true,
-      allowNull: false
+    {
+      tableName: "Projects",
+      freezeTableName: true,
     }
-  }, {
-    tableName: 'Projects',
-    freezeTableName: true
-  });
+  );
 
-  Project.associate = models => {
+  Project.associate = (models) => {
     Project.belongsTo(models.Subcategory, {
-      foreignKey: 'subcategoryId',
-      as: 'subcategory'
+      foreignKey: "subcategoryId",
+      as: "subcategory",
     });
   };
 

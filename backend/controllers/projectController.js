@@ -46,62 +46,19 @@ exports.createProject = async (req, res) => {
       subcategoryId,
       components: JSON.parse(components || "[]"), // Parse stringified array
       block_diagram, // Cloudinary URL
-      abstract_file, // Cloudinary URL
+      abstract_file: abstract_file, // Cloudinary URL
       details,
       review,
     });
 
     res.status(201).json(project);
+    console.log(project);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to create project" });
   }
 };
 
-// exports.createProject = async (req, res) => {
-//   const { title, description, price, subcategoryId, components, details, review } = req.body;
-// const imageFile = req.files['image']?.[0];
-// const blockDiagramFile = req.files['block_diagram']?.[0];
-
-// const image = imageFile ? imageFile.filename : null;
-// const block_diagram = blockDiagramFile ? blockDiagramFile.filename : null;
-// console.log("Image:", image);
-// console.log("Block Diagram:", block_diagram);
-
-//   try {
-//     const subcategory = await Subcategory.findByPk(subcategoryId);
-//     if (!subcategory) {
-//       return res.status(404).json({ error: 'Subcategory not found' });
-//     }
-//   let slug = slugify(title);
-//     let counter = 1;
-//     let originalSlug = slug;
-//       while (true) {
-//       const existing = await Project.findOne({ where: { slug } });
-//       if (!existing) break;
-//       slug = `${originalSlug}-${counter}`;
-//       counter++;
-//     }
-//     const project = await Project.create({
-//   title,
-//   slug,
-//   description,
-//   price,
-//   image,
-//   subcategoryId,
-//   components: JSON.parse(components || '[]'),  // Parse stringified array
-//   block_diagram,
-//   details,
-//   review
-// });
-//     res.status(201).json(project);
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: 'Failed to create project' });
-//   }
-// };
-
-// Get all projects (with optional subcategory filtering)
 exports.getAllProjects = async (req, res) => {
   try {
     const projects = await Project.findAll({
@@ -112,8 +69,6 @@ exports.getAllProjects = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch projects" });
   }
 };
-
-// Get single project by ID
 
 // Get single project by ID
 exports.getProjectById = async (req, res) => {

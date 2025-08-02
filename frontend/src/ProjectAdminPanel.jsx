@@ -11,6 +11,9 @@ const ProjectAdminPanel = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
+  const [imageFile, setImageFile] = useState(null);
+  const [blockDiagramFile, setBlockDiagramFile] = useState(null);
+  const [abstractFile, setAbstractFile] = useState(null);
 
   const [projectData, setProjectData] = useState({
     title: "",
@@ -84,9 +87,7 @@ const ProjectAdminPanel = () => {
     }
   };
 
-  const [imageFile, setImageFile] = useState(null);
-  const [blockDiagramFile, setBlockDiagramFile] = useState(null);
-  const [abstractFile, setAbstractFile] = useState(null); // New state for abstract file
+  // New state for abstract file
 
   const uploadToCloudinary = async (file) => {
     const data = new FormData();
@@ -141,6 +142,7 @@ const ProjectAdminPanel = () => {
       };
 
       await api.post("/api/projects/create-project", payload);
+      console.log(payload);
 
       alert("Project added!");
 
