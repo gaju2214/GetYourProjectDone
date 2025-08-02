@@ -14,7 +14,9 @@ import CategoryPage from "./components/Subcategory";
 import ProjectList from "./pages/ProjectList"; // or correct path
 import ProjectAdminPanel from "./ProjectAdminPanel";
 import Account from "./pages/Account";
-import AuthSuccess from "./pages/AuthSuccess";
+
+import ProfilePage from "./pages/Profile";
+import AdminLogin from "./pages/Adlogin";
 
 function App() {
   return (
@@ -23,14 +25,15 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route
-          path="/getyourprojectdoneadmin"
+          path="/getproject"
           element={<ProjectAdminPanel />}
         />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/success" element={<SuccessPage />} />
-        <Route path="/authsuccess" element={<AuthSuccess />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/adlogin" element={<AdminLogin/>} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/categories/:category" element={<CategoryPage />} />

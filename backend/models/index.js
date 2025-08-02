@@ -11,7 +11,7 @@ db.Category = require('./Category')(sequelize, Sequelize);
 db.Subcategory = require('./Subcategory')(sequelize, Sequelize);
 db.CartItem = require('./CartItem')(sequelize, Sequelize); // ✅
 db.CartItem = require('./CartItem')(sequelize, Sequelize);
-
+db.Admin= require('./Admin')(sequelize, Sequelize);
 // Add Order and OrderItem models
 db.Order = require('./Order')(sequelize, Sequelize);
 db.OrderItem = require('./OrderItem')(sequelize, Sequelize);
@@ -24,7 +24,7 @@ if (db.Project.associate) db.Project.associate(db);
 if (db.CartItem.associate) db.CartItem.associate(db);
 if (db.Order.associate) db.Order.associate(db);         // <-- Added
 if (db.OrderItem.associate) db.OrderItem.associate(db); // <-- Added
-
+if (db.Admin.associate) db.Admin.associate(db)
 // Optional: cart-user relation
 db.User.hasOne(db.Cart);
 db.Cart.belongsTo(db.User);
@@ -39,5 +39,6 @@ module.exports = {
   User: db.User,  
   CartItem: db.CartItem,
   Order: db.Order,           // <-- Added
-  OrderItem: db.OrderItem,   // <-- Added
+  OrderItem: db.OrderItem,
+  Admin: db.Admin   // <-- Added
 };

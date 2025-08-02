@@ -74,10 +74,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-const session = require("express-session");
-const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
-const sequelize = require("./config/db");
 const passport = require("./config/passport");
 const authRoutes = require("./routes/authRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
@@ -85,6 +82,10 @@ const subcategoryRoutes = require("./routes/subcategoryRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const protectedRoutes = require("./routes/protectedRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+const cookieParser = require("cookie-parser");
+const authenticateUser = require("./middleware/auth");
 
 const app = express();
 
@@ -123,26 +124,9 @@ app.use(
   })
 );
 
-// Session Configuration
-const sessionStore = new SequelizeStore({ db: sequelize });
-
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: sessionStore,
-    cookie: {
-      secure: process.env.NODE_ENV === "production",
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    },
-  })
-);
-
-// Passport Middleware
 app.use(passport.initialize());
-app.use(passport.session());
+
+app.use(cookieParser());
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -153,14 +137,19 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/uploads", express.static("uploads"));
 
+app.get("/protected", authenticateUser, (req, res) => {
+  res.json({ message: "This is protected", user: req.user });
+});
+
+// existing middlewares and routes...
+app.use("/api/protected", protectedRoutes);
+app.use("/api/admin", adminRoutes);
 // Root Route
 app.get("/", (req, res) => res.send("Server is running 🚀"));
 
 // Server Start
 const PORT = process.env.PORT || 5000;
-sequelize.sync({ force: false }).then(() => {
-  sessionStore.sync();
-  app.listen(PORT, () => {
-    console.log(`✅ Server running on port ${PORT}`);
-  });
+
+app.listen(PORT, () => {
+  console.log(`✅ Server running on port ${PORT}`);
 });

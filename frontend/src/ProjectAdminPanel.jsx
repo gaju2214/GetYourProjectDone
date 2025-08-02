@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "./api";
+import { useNavigate } from "react-router-dom";
 
 const ProjectAdminPanel = () => {
   const [categoryName, setCategoryName] = useState("");
@@ -7,7 +8,8 @@ const ProjectAdminPanel = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
-
+const [isAuthenticated, setIsAuthenticated] = useState(false);
+const [isLoading, setIsLoading] = useState(true);
   const [projectData, setProjectData] = useState({
     title: "",
     description: "",
@@ -22,7 +24,38 @@ const ProjectAdminPanel = () => {
   const [blockDiagramFile, setBlockDiagramFile] = useState(null);
   const [abstractFile, setAbstractFile] = useState(null);
 
+
+  const navigate = useNavigate();
+
+  
   useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await api.get("/api/protected/checkAuth"); // token is in cookie
+
+        // if (res.data.message === 'authenticated' && res.data.success===true) {
+        //   setIsAuthenticated(true);
+
+        if (res.data.status === 200 && res.data.success === true) {
+          setIsAuthenticated(true);
+        } else {
+          console.log("Auth failed: Unexpected response", res.data);
+          navigate("/auth/login");
+        }
+      } catch (err) {
+        console.error("User not authenticated:", err);
+        navigate("/auth/login");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
     const fetchCategories = async () => {
       try {
         const catRes = await api.get("/api/categories/getallcategory");
@@ -33,27 +66,35 @@ const ProjectAdminPanel = () => {
     };
 
     fetchCategories();
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
-    const fetchSubcategories = async () => {
-      if (!projectData.categoryId) {
-        setSubcategories([]);
-        return;
-      }
+    if (!isAuthenticated || !projectData.categoryId) {
+      setSubcategories([]);
+      return;
+    }
 
+    const fetchSubcategories = async () => {
       try {
         const res = await api.get(
           `/api/subcategories/by-category/${projectData.categoryId}`
         );
         setSubcategories(res.data);
       } catch (error) {
-        console.error("Failed to load subcategories", error);
+        console.error("Failed to load subcategories:", error);
       }
     };
 
     fetchSubcategories();
-  }, [projectData.categoryId]);
+  }, [projectData.categoryId, isAuthenticated]);
+
+  if (isLoading) {
+    return <p>Checking authentication...</p>;
+  }
+
+  if (!isAuthenticated) {
+    return <p>Redirecting to login...</p>;
+  }
 
   const handleAddCategory = async () => {
     try {
