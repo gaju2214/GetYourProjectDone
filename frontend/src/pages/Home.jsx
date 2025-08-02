@@ -212,7 +212,7 @@ const HomePage = () => {
               "Mechanical",
               "Electrical",
               "Software",
-              "Civil",
+              "AI & ML",
               "Mechatronics",
             ].map((category) => (
               <motion.div
