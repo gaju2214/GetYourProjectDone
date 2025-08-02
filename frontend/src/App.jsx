@@ -38,6 +38,7 @@ function App() {
         <Route path="/*" element={<NotFoundPage />} />
         <Route path="/projects/:category" element={<CategoryPage />} />
         <Route path="/account" element={<Account />} />
+        {/* just for fun */}
       </Routes>
     </>
   );
