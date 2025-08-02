@@ -237,7 +237,7 @@ export default function ProductDetailPage() {
               size="lg"
               className="w-full mt-2 bg-orange-500 text-white hover:bg-orange-600 transition duration-300 shadow-md"
               onClick={() => {
-                if (user) {
+                if (!user) {
                   // Save download intent in localStorage
                   localStorage.setItem(
                     "downloadAfterLogin",
