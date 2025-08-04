@@ -20,7 +20,7 @@ const networkData = [
       "mechanical",
       "electrical",
       "software",
-      "civil",
+      "AI & ML ",
       "mechatronics",
       "support",
       "documentation",
@@ -42,7 +42,7 @@ const networkData = [
       "mechanical",
       "electrical",
       "software",
-      "civil",
+      "AI & ML ",
       "mechatronics",
     ],
   },
@@ -519,12 +519,12 @@ export default function EngiProNetwork({ isOpen, onClose }) {
                           y={node.y + scaledSize + 10}
                           textAnchor="middle"
                           fill="#1f2937"
-                           fontSize={
+                          fontSize={
                             (node.category === "hub"
                               ? 18
                               : node.category === "main"
-                              ? 14
-                              : 11) * SCALE_FACTOR
+                                ? 14
+                                : 11) * SCALE_FACTOR
                           }
                           fontWeight="500"
                           fontFamily="Inter, sans-serif"
