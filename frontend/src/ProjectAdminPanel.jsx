@@ -93,7 +93,7 @@ const ProjectAdminPanel = () => {
     return (
       <div className="max-w-md mx-auto mt-20 p-6 bg-white shadow-md rounded text-center">
         <p className="mb-4 text-red-600 font-semibold">
-          You are not logged in.
+          You are not logged in..!
         </p>
         <button
           onClick={() => navigate("/auth/login")}
@@ -140,10 +140,13 @@ const ProjectAdminPanel = () => {
     data.append("file", file);
 
     try {
-      const res = await fetch("https://myuploads.getyourprojectdone.in/upload.php", {
-        method: "POST",
-        body: data,
-      });
+      const res = await fetch(
+        "https://myuploads.getyourprojectdone.in/upload.php",
+        {
+          method: "POST",
+          body: data,
+        }
+      );
 
       const result = await res.json();
 
@@ -382,7 +385,6 @@ const ProjectAdminPanel = () => {
 };
 
 export default ProjectAdminPanel;
-
 
 // import React, { useState, useEffect } from "react";
 // import axios from "axios";
