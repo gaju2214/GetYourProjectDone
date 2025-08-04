@@ -1,6 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
   const Admin = sequelize.define('Admin', {
-    
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true
+    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -11,15 +15,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        len: [6, 100] // Optional: enforce strong password length
-      }
-    },
-   
+      allowNull: false
+    }
   }, {
-    tableName: 'Admins',
-    timestamps: true,
+    tableName: 's3cr3t_admins', // secret table name
+    timestamps: true
   });
 
   return Admin;

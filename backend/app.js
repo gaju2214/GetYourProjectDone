@@ -86,6 +86,7 @@ const protectedRoutes = require("./routes/protectedRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const cookieParser = require("cookie-parser");
 const authenticateUser = require("./middleware/auth");
+const sequelize = require("./config/db");
 
 const app = express();
 
@@ -149,6 +150,13 @@ app.get("/", (req, res) => res.send("Server is running 🚀"));
 
 // Server Start
 const PORT = process.env.PORT || 5000;
+
+
+
+// Sync database
+sequelize.sync({ alter: true })
+  .then(() => console.log('Database synced'))
+  .catch(err => console.log('Error syncing database:', err));
 
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
