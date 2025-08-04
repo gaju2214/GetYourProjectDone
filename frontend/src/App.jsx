@@ -24,16 +24,13 @@ function App() {
       <Navigation />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route
-          path="/getproject"
-          element={<ProjectAdminPanel />}
-        />
+        <Route path="/getproject" element={<ProjectAdminPanel />} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/adlogin" element={<AdminLogin/>} />
+        <Route path="/adlogin" element={<AdminLogin />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/categories/:category" element={<CategoryPage />} />

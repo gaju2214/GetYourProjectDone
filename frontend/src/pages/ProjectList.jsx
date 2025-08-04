@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { ProductCard } from "../components/ProductCard"; // adjust path if needed
-import api from '../api'; // adjust path based on file location
+import api from "../api"; // adjust path based on file location
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
 
   useEffect(() => {
-    api.get('/api/projects')
+    api
+      .get("/api/projects")
       .then((res) => {
-        const mappedProjects = res.data.map(project => ({
+        const mappedProjects = res.data.map((project) => ({
           ...project,
           originalPrice: Math.floor(project.price * 1.5), // fake discount
           rating: 4.5, // optional
@@ -19,7 +20,7 @@ const ProjectList = () => {
         }));
         setProjects(mappedProjects);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Error fetching projects:", err);
       });
   }, []);

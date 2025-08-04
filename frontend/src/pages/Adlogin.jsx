@@ -1,52 +1,51 @@
-import React, { useState } from 'react';
-import { User, Lock, Eye, EyeOff, Shield } from 'lucide-react';
+import React, { useState } from "react";
+import { User, Lock, Eye, EyeOff, Shield } from "lucide-react";
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = async () => {
-  setIsLoading(true);
-  try {
-    const res = await fetch('http://localhost:5000/api/admin/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
-    });
+    setIsLoading(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-    const data = await res.json();
-    if (res.ok) {
-      alert(data.message);
-      console.log(data.admin); // or save token/session
-    } else {
-      alert(data.message);
+      const data = await res.json();
+      if (res.ok) {
+        alert(data.message);
+        console.log(data.admin); // or save token/session
+      } else {
+        alert(data.message);
+      }
+    } catch (err) {
+      alert("Login failed");
+    } finally {
+      setIsLoading(false);
     }
-  } catch (err) {
-    alert('Login failed');
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-orange-50 to-yellow-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative overflow-hidden">
         {/* Top accent bar */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-orange-600"></div>
-        
+
         {/* Logo Section */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-3 mb-4">
@@ -55,17 +54,18 @@ const AdminLogin = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-800">Admin Portal</h1>
-             
             </div>
           </div>
-        
         </div>
 
         {/* Login Form */}
         <div className="space-y-6">
           {/* Email Field */}
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="email"
+              className="block text-sm font-medium text-gray-700"
+            >
               Email Address
             </label>
             <div className="relative">
@@ -87,7 +87,10 @@ const AdminLogin = () => {
 
           {/* Password Field */}
           <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
               Password
             </label>
             <div className="relative">
@@ -131,12 +134,11 @@ const AdminLogin = () => {
                 Signing in...
               </div>
             ) : (
-              'Sign In as Admin'
+              "Sign In as Admin"
             )}
           </button>
         </div>
 
-      
         {/* Background decoration */}
         <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full opacity-20"></div>
         <div className="absolute -top-10 -left-10 w-24 h-24 bg-gradient-to-br from-orange-100 to-yellow-100 rounded-full opacity-20"></div>

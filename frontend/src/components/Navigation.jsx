@@ -19,7 +19,7 @@ const Navigation = () => {
   const [hasShadow, setHasShadow] = useState(false);
   const searchRef = useRef();
   const searchRefDesktop = useRef(); // ✅ Added
-  const searchRefMobile = useRef();  // ✅ Added
+  const searchRefMobile = useRef(); // ✅ Added
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -69,7 +69,11 @@ const Navigation = () => {
 
   return (
     <>
-      <nav className={`sticky top-0 z-50 w-full bg-white/90 backdrop-blur transition-shadow duration-300 ${hasShadow ? "shadow-md" : ""}`}>
+      <nav
+        className={`sticky top-0 z-50 w-full bg-white/90 backdrop-blur transition-shadow duration-300 ${
+          hasShadow ? "shadow-md" : ""
+        }`}
+      >
         <div className="flex items-center justify-between gap-y-2 h-auto py-2">
           {/* Logo and Icons */}
           <div className="flex items-center justify-between w-full">
@@ -92,15 +96,20 @@ const Navigation = () => {
                 { label: "Home", to: "/", key: "home" },
                 { label: "Project Kits", to: "/categories", key: "categories" },
                 {
-                  label: "IoT Platform", to: "https://getyourprojectdone.in/iot_platform/", key: "projectKits"
+                  label: "IoT Platform",
+                  to: "https://getyourprojectdone.in/iot_platform/",
+                  key: "projectKits",
                 },
               ].map((item) => (
                 <Link to={item.to} key={item.key}>
                   <Button
                     variant="ghost"
                     onClick={() => setActiveNav(item.key)}
-                    className={`whitespace-nowrap min-w-[120px] text-center px-4 text-gray-700 hover:text-gray-900 hover:scale-105 transition-transform duration-200 ${activeNav === item.key ? "font-semibold text-black-600" : ""
-                      }`}
+                    className={`whitespace-nowrap min-w-[120px] text-center px-4 text-gray-700 hover:text-gray-900 hover:scale-105 transition-transform duration-200 ${
+                      activeNav === item.key
+                        ? "font-semibold text-black-600"
+                        : ""
+                    }`}
                   >
                     {item.label}
                   </Button>
@@ -108,7 +117,10 @@ const Navigation = () => {
               ))}
 
               {/* Desktop Search */}
-              <div className="flex items-center space-x-2 relative" ref={searchRefDesktop}>
+              <div
+                className="flex items-center space-x-2 relative"
+                ref={searchRefDesktop}
+              >
                 <Button
                   variant="ghost"
                   size="icon"
@@ -141,8 +153,6 @@ const Navigation = () => {
                   </div>
                 )}
               </div>
-
-
             </div>
 
             {/* Right Side Buttons (Icons) */}
@@ -173,7 +183,6 @@ const Navigation = () => {
                   )}
                 </Button>
               </Link>
-
 
               {/* Search Icon - Mobile Only */}
               <div className="block md:hidden relative z-50" ref={searchRef}>
@@ -217,9 +226,11 @@ const Navigation = () => {
                 )}
               </div>
 
-
               {/* User Icon */}
-              <Link to={user ? "/account" : "/auth/login"} className="flex-shrink-0 md:ml-5">
+              <Link
+                to={user ? "/account" : "/auth/login"}
+                className="flex-shrink-0 md:ml-5"
+              >
                 <Button
                   variant="ghost"
                   size="icon"
@@ -228,7 +239,6 @@ const Navigation = () => {
                   <User className="h-4 w-4 sm:h-5 sm:w-5 transition-transform duration-300 hover:scale-110" />
                 </Button>
               </Link>
-
 
               {/* Menu Icon */}
               <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
@@ -326,10 +336,13 @@ const Navigation = () => {
             </div>
           </div>
         </div>
-      </nav >
+      </nav>
 
       {/* Network Modal */}
-      < EngiProNetwork isOpen={isNetworkOpen} onClose={() => setIsNetworkOpen(false)} />
+      <EngiProNetwork
+        isOpen={isNetworkOpen}
+        onClose={() => setIsNetworkOpen(false)}
+      />
     </>
   );
 };
