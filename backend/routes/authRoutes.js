@@ -119,12 +119,12 @@ router.put("/profile", authenticateUser, async (req, res) => {
   }
 });
 
-router.get("/logout", (req, res) => {
+router.post("/logout", (req, res) => {
   try {
     req.logout(() => {
       req.session?.destroy?.();
       res.clearCookie("token");
-      res.status(200).json({ message: "Logout successful" }); // ✅ JSON response
+      res.status(200).json({ message: "Logout successful" }); 
     });
   } catch (error) {
     console.error("Error during logout:", error);

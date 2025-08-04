@@ -8,15 +8,16 @@ const ProjectAdminPanel = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
-const [isAuthenticated, setIsAuthenticated] = useState(false);
-const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [projectData, setProjectData] = useState({
     title: "",
     description: "",
     price: "",
     categoryId: "",
     subcategoryId: "",
-    components: [], // array of strings
+    components: [],
     details: "",
   });
 
@@ -24,34 +25,30 @@ const [isLoading, setIsLoading] = useState(true);
   const [blockDiagramFile, setBlockDiagramFile] = useState(null);
   const [abstractFile, setAbstractFile] = useState(null);
 
-
   const navigate = useNavigate();
 
-  
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await api.get("/api/protected/checkAuth"); // token is in cookie
-
-        // if (res.data.message === 'authenticated' && res.data.success===true) {
-        //   setIsAuthenticated(true);
-
+        const res = await api.get("/api/protected/checkAuth"); // token in cookie
         if (res.data.status === 200 && res.data.success === true) {
           setIsAuthenticated(true);
+          setShowLoginPrompt(false);
         } else {
-          console.log("Auth failed: Unexpected response", res.data);
-          navigate("/auth/login");
+          setIsAuthenticated(false);
+          setShowLoginPrompt(true);
         }
       } catch (err) {
         console.error("User not authenticated:", err);
-        navigate("/auth/login");
+        setIsAuthenticated(false);
+        setShowLoginPrompt(true);
       } finally {
         setIsLoading(false);
       }
     };
 
     checkAuth();
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -92,8 +89,20 @@ const [isLoading, setIsLoading] = useState(true);
     return <p>Checking authentication...</p>;
   }
 
-  if (!isAuthenticated) {
-    return <p>Redirecting to login...</p>;
+  if (!isAuthenticated && showLoginPrompt) {
+    return (
+      <div className="max-w-md mx-auto mt-20 p-6 bg-white shadow-md rounded text-center">
+        <p className="mb-4 text-red-600 font-semibold">
+          You are not logged in.
+        </p>
+        <button
+          onClick={() => navigate("/auth/login")}
+          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+        >
+          Go to Login
+        </button>
+      </div>
+    );
   }
 
   const handleAddCategory = async () => {
@@ -103,6 +112,7 @@ const [isLoading, setIsLoading] = useState(true);
       });
       alert("Category added!");
       setCategoryName("");
+      // Optionally reload categories here
     } catch (error) {
       console.error(error);
       alert("Error adding category");
@@ -118,6 +128,7 @@ const [isLoading, setIsLoading] = useState(true);
       alert("Subcategory added!");
       setSubcategoryName("");
       setSelectedCategoryId("");
+      // Optionally reload subcategories here
     } catch (error) {
       console.error(error);
       alert("Error adding subcategory");
@@ -268,7 +279,6 @@ const [isLoading, setIsLoading] = useState(true);
             setProjectData({ ...projectData, description: e.target.value })
           }
         />
-        {/* Project Details */}
         <textarea
           className="border p-2 w-full mb-2"
           placeholder="Project Details"
@@ -278,7 +288,6 @@ const [isLoading, setIsLoading] = useState(true);
           }
         />
 
-        {/* Components (comma separated) */}
         <input
           className="border p-2 w-full mb-2"
           type="text"
