@@ -31,34 +31,21 @@ import {
 } from "lucide-react";
 import { OrderButton } from "../components/OrderButton";
 
-import { useAuth } from "../context/AuthContext"; // ✅
+
+// import { useAuth } from "../context/AuthContext"; // ✅
 
 export default function CartPage() {
-  const { user } = useAuth(); // ✅
-  const userId = user?.id; // ✅
+const navigate = useNavigate();
+  // const { user, loading } = useUserAuth();
+  // const userId = user?.userId;
+const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const navigate = useNavigate();
+
   const [cartItems, setCartItems] = useState([]);
   const [itemCount, setItemCount] = useState(0);
   const [total, setTotal] = useState(0);
-
-  useEffect(() => {
-
-
-    api
-      .get(`/api/cart/${userId}`)
-      .then((res) => {
-        setCartItems(res.data);
-        setItemCount(res.data.reduce((sum, item) => sum + item.quantity, 0));
-        setTotal(
-          res.data.reduce(
-            (sum, item) => sum + (item.price || 0) * item.quantity,
-            0
-          )
-        );
-      })
-      .catch((err) => console.error("Error fetching cart:", err));
-  }, [userId]);
 
   const [deliveryInfo, setDeliveryInfo] = useState({
     name: "",
@@ -72,6 +59,62 @@ export default function CartPage() {
   });
 
   const [paymentMethod, setPaymentMethod] = useState("");
+  // Extract userId safely
+  const userId = user?.userId;
+
+  // Check auth on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await api.get("/api/protected/checkAuth");
+        if (res.data?.success === true && res.data?.status === 200) {
+          setUser(res.data.user);
+          setIsAuthenticated(true);
+        } else {
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Authentication check failed:", error);
+        setUser(null);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  // Redirect to login if not authenticated after loading
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/auth/login", { replace: true });
+    }
+  }, [loading, user, navigate]);
+
+  // Fetch cart only when userId is available
+  useEffect(() => {
+    if (!userId) return;
+
+    api
+      .get(`/api/cart/${userId}`)
+      .then((res) => {
+        setCartItems(res.data);
+        setItemCount(res.data.reduce((sum, item) => sum + item.quantity, 0));
+        setTotal(
+          res.data.reduce((sum, item) => sum + (item.price || 0) * item.quantity, 0)
+        );
+      })
+      .catch((err) => console.error("Error fetching cart:", err));
+  }, [userId]);
+
+  if (loading) return <div>Loading...</div>;
+  if (!user) return null; // or fallback UI
+  
+ 
+
+ 
+ 
   const updateQuantity = (cartId, newQuantity) => {
     if (newQuantity < 1) return;
 
@@ -288,7 +331,140 @@ export default function CartPage() {
           </div>
 
           <div className="xl:col-span-2 space-y-6">
-            {/* Delivery info, payment method, and order summary go here as-is */}
+          //special
+            <Card className="shadow-lg border-0">
+              <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-t-lg">
+                <CardTitle className="text-xl">Payment Method</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-3">
+                  {[
+                    {
+                      id: "upi",
+                      icon: Smartphone,
+                      label: "UPI Payment",
+                      color: "text-blue-600",
+                    },
+                    {
+                      id: "card",
+                      icon: CreditCard,
+                      label: "Debit/Credit Card",
+                      color: "text-green-600",
+                    },
+                    {
+                      id: "netbanking",
+                      icon: Banknote,
+                      label: "Net Banking",
+                      color: "text-purple-600",
+                    },
+                    {
+                      id: "wallet",
+                      icon: Wallet,
+                      label: "Digital Wallet",
+                      color: "text-orange-600",
+                    },
+                    {
+                      id: "cod",
+                      icon: Banknote,
+                      label: "Cash on Delivery",
+                      color: "text-gray-600",
+                    },
+                  ].map((method) => (
+                    <div
+                      key={method.id}
+                      className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md ${paymentMethod === method.id
+                        ? "border-blue-500 bg-blue-50 shadow-md"
+                        : "border-gray-200 hover:border-gray-300"
+                        }`}
+                      onClick={() => setPaymentMethod(method.id)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <method.icon className={`h-6 w-6 ${method.color}`} />
+                        <span className="font-semibold text-gray-900">
+                          {method.label}
+                        </span>
+                        {paymentMethod === method.id && (
+                          <div className="ml-auto w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                            <div className="w-2 h-2 bg-white rounded-full"></div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+            {/* Order Summary */}
+            <Card className="shadow-lg border-0">
+              <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-t-lg">
+                <CardTitle className="text-xl">Order Summary</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-4">
+                <div className="space-y-3">
+                  <div className="flex justify-between text-lg">
+                    <span>Subtotal ({itemCount} items)</span>
+                    <span className="font-semibold">
+                      ₹{total.toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between text-green-600">
+                    <span>Discount (5%)</span>
+                    <span className="font-semibold">
+                      -₹{discount.toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <span>GST (18%)</span>
+                    <span className="font-semibold">
+                      ₹{gstAmount.toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <span>Delivery Charges</span>
+                    <span
+                      className={`font-semibold ${deliveryCharge === 0 ? "text-green-600" : ""
+                        }`}
+                    >
+                      {deliveryCharge === 0 ? "FREE" : `₹${deliveryCharge}`}
+                    </span>
+                  </div>
+
+                  <Separator className="my-4" />
+
+                  <div className="flex justify-between text-xl font-bold">
+                    <span>Total Amount</span>
+                    <span className="text-green-600">
+                      ₹{finalTotal.toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="pt-4 flex justify-center">
+                  <OrderButton
+                    onOrderComplete={handleCheckout}
+                    disabled={!paymentMethod}
+                  />
+                </div>
+
+                <div className="text-center text-sm text-gray-500 mt-4">
+                  <p>🔒 Your payment information is secure and encrypted</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
+
+  {/* Delivery info, payment method, and order summary go here as-is */}
             {/* <Card className="shadow-lg border-0">
               <CardHeader className="bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-t-lg">
                 <CardTitle className="text-xl flex items-center gap-2">
@@ -441,131 +617,3 @@ export default function CartPage() {
             </Card> */}
 
             {/* Payment Method */}
-            <Card className="shadow-lg border-0">
-              <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-t-lg">
-                <CardTitle className="text-xl">Payment Method</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="space-y-3">
-                  {[
-                    {
-                      id: "upi",
-                      icon: Smartphone,
-                      label: "UPI Payment",
-                      color: "text-blue-600",
-                    },
-                    {
-                      id: "card",
-                      icon: CreditCard,
-                      label: "Debit/Credit Card",
-                      color: "text-green-600",
-                    },
-                    {
-                      id: "netbanking",
-                      icon: Banknote,
-                      label: "Net Banking",
-                      color: "text-purple-600",
-                    },
-                    {
-                      id: "wallet",
-                      icon: Wallet,
-                      label: "Digital Wallet",
-                      color: "text-orange-600",
-                    },
-                    {
-                      id: "cod",
-                      icon: Banknote,
-                      label: "Cash on Delivery",
-                      color: "text-gray-600",
-                    },
-                  ].map((method) => (
-                    <div
-                      key={method.id}
-                      className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md ${paymentMethod === method.id
-                        ? "border-blue-500 bg-blue-50 shadow-md"
-                        : "border-gray-200 hover:border-gray-300"
-                        }`}
-                      onClick={() => setPaymentMethod(method.id)}
-                    >
-                      <div className="flex items-center gap-3">
-                        <method.icon className={`h-6 w-6 ${method.color}`} />
-                        <span className="font-semibold text-gray-900">
-                          {method.label}
-                        </span>
-                        {paymentMethod === method.id && (
-                          <div className="ml-auto w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                            <div className="w-2 h-2 bg-white rounded-full"></div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-            {/* Order Summary */}
-            <Card className="shadow-lg border-0">
-              <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-t-lg">
-                <CardTitle className="text-xl">Order Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <div className="space-y-3">
-                  <div className="flex justify-between text-lg">
-                    <span>Subtotal ({itemCount} items)</span>
-                    <span className="font-semibold">
-                      ₹{total.toLocaleString()}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between text-green-600">
-                    <span>Discount (5%)</span>
-                    <span className="font-semibold">
-                      -₹{discount.toLocaleString()}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span>GST (18%)</span>
-                    <span className="font-semibold">
-                      ₹{gstAmount.toLocaleString()}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span>Delivery Charges</span>
-                    <span
-                      className={`font-semibold ${deliveryCharge === 0 ? "text-green-600" : ""
-                        }`}
-                    >
-                      {deliveryCharge === 0 ? "FREE" : `₹${deliveryCharge}`}
-                    </span>
-                  </div>
-
-                  <Separator className="my-4" />
-
-                  <div className="flex justify-between text-xl font-bold">
-                    <span>Total Amount</span>
-                    <span className="text-green-600">
-                      ₹{finalTotal.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="pt-4 flex justify-center">
-                  <OrderButton
-                    onOrderComplete={handleCheckout}
-                    disabled={!paymentMethod}
-                  />
-                </div>
-
-                <div className="text-center text-sm text-gray-500 mt-4">
-                  <p>🔒 Your payment information is secure and encrypted</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { User, Lock, Eye, EyeOff, Shield } from "lucide-react";
-
+import { useNavigate } from "react-router-dom"; 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -8,7 +8,7 @@ const AdminLogin = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+const navigate = useNavigate();
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -24,6 +24,7 @@ const AdminLogin = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
+         credentials: 'include',
       });
 
       const data = await res.json();
@@ -32,6 +33,7 @@ const AdminLogin = () => {
         console.log(data.admin); // or save token/session
       } else {
         alert(data.message);
+         navigate("/getproject");
       }
     } catch (err) {
       alert("Login failed");

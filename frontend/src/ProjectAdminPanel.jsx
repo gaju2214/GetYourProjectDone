@@ -30,8 +30,8 @@ const ProjectAdminPanel = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const res = await api.get("/api/protected/checkAuth"); // token in cookie
-        if (res.data.status === 200 && res.data.success === true) {
+        const res = await api.get("/api/admin/checkAdmin"); // token in cookie
+        if (res.data.status === 200 && res.data.admin.role === "admin") {
           setIsAuthenticated(true);
           setShowLoginPrompt(false);
         } else {
@@ -96,7 +96,7 @@ const ProjectAdminPanel = () => {
           You are not logged in..!
         </p>
         <button
-          onClick={() => navigate("/auth/login")}
+          onClick={() => navigate("/adlogin")}
           className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
         >
           Go to Login

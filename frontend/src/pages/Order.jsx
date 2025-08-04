@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Package, Truck, CheckCircle, Clock, X, Eye } from "lucide-react";
 
+import { Link, useNavigate } from "react-router-dom";
+import { Package, Truck, CheckCircle, Clock, X, Eye } from "lucide-react";
+import { useState, useEffect } from "react";
+import api from '../api'; 
 // Replace these imports with local component implementations or from a UI library
 import {
   Card,
@@ -20,8 +21,45 @@ import {
 import { mockOrders } from "../lib/mock-data";
 import { InvoiceDownload } from "../components/InvoiceDownload";
 
+
 export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState(null);
+const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+
+
+
+  // Check auth on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await api.get("/api/protected/checkAuth");
+        if (res.data?.success === true && res.data?.status === 200) {
+          setUser(res.data.user);
+          setIsAuthenticated(true);
+        } else {
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Authentication check failed:", error);
+        setUser(null);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  // Redirect to login if not authenticated after loading
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/auth/login", { replace: true });
+    }
+  }, [loading, user, navigate]);
 
   const getStatusIcon = (status) => {
     switch (status) {
