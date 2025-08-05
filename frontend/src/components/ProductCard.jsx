@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../components/ui/Botton";
 import { Card, CardContent, CardFooter } from "../components/ui/Card";
 import { Badge } from "./ui/Badge";
 import { Star, ShoppingCart, Check } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext"; // ✅ Import useCart
 import axios from "axios";
 import api from "../api"; // adjust path based on file location
@@ -13,13 +13,47 @@ export function ProductCard({ product }) {
   const [isAdding, setIsAdding] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
   const { dispatch } = useCart();
-  const { user } = useAuth(); // 👈 get logged-in user
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
 
+  // const { user } = useAuth(); // 👈 get logged-in user
+// Check auth on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await api.get("/api/protected/checkAuth");
+        if (res.data?.success === true && res.data?.status === 200) {
+          setUser(res.data.user);
+          setIsAuthenticated(true);
+        } else {
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Authentication check failed:", error);
+        setUser(null);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuth();
+  }, []);  // Redirect to login if not authenticated after loading
+  
+  
   const handleAddToCart = async () => {
-    if (!user) {
-      alert("Please log in to add items to cart.");
-      return;
-    }
+    // if (!user) {
+    //   alert("Please log in to add items to cart.");
+    //   return;
+    // }
+
+  if (!user) {
+    alert("Please log in to add items to cart.");
+    navigate("/auth/login");
+    return;
+  }
 
     try {
       const cartItem = {
@@ -34,13 +68,13 @@ export function ProductCard({ product }) {
       const response = await api.post("/api/cart/add", cartItem);
 
       if (response.status === 200 || response.status === 201) {
-        alert("✅ Item added to cart!");
+        alert("Item added to cart!");
       } else {
-        alert("❌ Failed to add item to cart.");
+        alert("Failed to add item to cart.");
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
-      alert("⚠️ Error adding to cart.");
+      alert("Error adding to cart.");
     }
 
     setIsAdding(true);
