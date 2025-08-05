@@ -33,7 +33,7 @@ const navigate = useNavigate();
     } else {
       alert(res.data.message);
     }
-  } catch (err) {
+  } catch (err) { 
     alert("Registration failed");
     console.error(err); // For debugging
   } finally {
