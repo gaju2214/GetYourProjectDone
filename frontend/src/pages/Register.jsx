@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import api from "../api"; // adjust path based on file location
 import { User, Lock, Eye, EyeOff, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom"; 
 const AdminRegister = () => {
@@ -20,25 +21,23 @@ const navigate = useNavigate();
   const handleSubmit = async () => {
   setIsLoading(true);
   try {
-    const res = await fetch("http://localhost:5000/api/admin/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+    const res = await api.post("/api/admin/register", formData, {
+      withCredentials: true,
     });
 
-    const data = await res.json();
-    if (res.ok) {
-      alert(data.message);
-      console.log(data.admin);
-      window.location.href("/getproject"); // ✅ Redirect after success
+    // Axios returns data directly
+    if (res.status === 200) {
+      alert(res.data.message);
+      console.log(res.data.admin);
+      navigate("/getproject"); // ✅ Soft redirect using React Router
     } else {
-      alert(data.message);
+      alert(res.data.message);
     }
   } catch (err) {
     alert("Registration failed");
+    console.error(err); // For debugging
   } finally {
     setIsLoading(false);
-   
   }
 };
 
