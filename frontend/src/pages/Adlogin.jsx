@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { User, Lock, Eye, EyeOff, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom"; 
+import api from '../api'; //adjust path based on file location
 const AdminLogin = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -17,30 +18,28 @@ const navigate = useNavigate();
     }));
   };
 
-  const handleSubmit = async () => {
-    setIsLoading(true);
-    try {
-      const res = await fetch("http://localhost:5000/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-         credentials: 'include',
-      });
+ const handleSubmit = async () => {
+  setIsLoading(true);
+  try {
+    const res = await api.post("/api/admin/login", formData, {
+      withCredentials: true, // ✅ if you need to send cookies
+    });
 
-      const data = await res.json();
-      if (res.ok) {
-        alert(data.message);
-        console.log(data.admin); // or save token/session
-      } else {
-        alert(data.message);
-         navigate("/getproject");
-      }
-    } catch (err) {
-      alert("Login failed");
-    } finally {
-      setIsLoading(false);
+    if (res.status === 200) {
+      alert(res.data.message);
+      console.log(res.data.admin); // or save token/session
+      navigate("/getproject");     // ✅ Navigate on success
+    } else {
+      alert(res.data.message);
     }
-  };
+  } catch (err) {
+    alert("Login failed");
+    console.error(err); // Debug log
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-orange-50 to-yellow-50 flex items-center justify-center p-4">
