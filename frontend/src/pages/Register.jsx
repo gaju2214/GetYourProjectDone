@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { User, Lock, Eye, EyeOff, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom"; 
-const AdminLogin = () => {
+const AdminRegister = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -20,11 +20,11 @@ const navigate = useNavigate();
   const handleSubmit = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/admin/login", {
+      const res = await fetch("http://localhost:5000/api/admin/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-         credentials: 'include',
+      
       });
 
       const data = await res.json();
@@ -36,7 +36,7 @@ const navigate = useNavigate();
          navigate("/getproject");
       }
     } catch (err) {
-      alert("Login failed");
+      alert("registration failed failed");
     } finally {
       setIsLoading(false);
     }
@@ -139,7 +139,6 @@ const navigate = useNavigate();
               "Sign In as Admin"
             )}
           </button>
-
         </div>
         {/* Register Link */}
 <div className="text-center mt-4">
@@ -147,9 +146,9 @@ const navigate = useNavigate();
     Don’t have an account?{" "}
     <span
       className="text-orange-600 font-medium cursor-pointer hover:underline"
-      onClick={() => navigate("/adregister")}
+      onClick={() => navigate("/adlogin")}
     >
-      Register here
+     login here
     </span>
   </p>
 </div>
@@ -160,8 +159,7 @@ const navigate = useNavigate();
         <div className="absolute -top-10 -left-10 w-24 h-24 bg-gradient-to-br from-orange-100 to-yellow-100 rounded-full opacity-20"></div>
       </div>
     </div>
-
   );
 };
 
-export default AdminLogin;
+export default AdminRegister ;

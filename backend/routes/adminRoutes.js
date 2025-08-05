@@ -49,6 +49,31 @@ router.post("/login", async (req, res) => {
   }
 });
 
+
+
+
+router.post('/register', async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password)
+    return res.status(400).json({ message: 'Email and password required' });
+
+  try {
+    const existingAdmin = await Admin.findOne({ where: { email } });
+    if (existingAdmin) {
+      return res.status(400).json({ message: 'Admin already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const admin = await Admin.create({ email, password: hashedPassword });
+
+    return res.status(201).json({ message: 'Admin registered', admin });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // GET /api/admin/checkAdmin
 router.get('/checkAdmin', authenticateAdmin, (req, res) => {
   res.status(200).json({
