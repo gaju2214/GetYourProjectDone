@@ -57,26 +57,31 @@ const HomePage = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-[240px] text-lg text-white px-8 py-3 bg-red-600 hover:bg-red-700 rounded-md transition-all duration-300 active:border active:border-orange-400 active:ring-2 active:ring-orange-300 flex items-center justify-center gap-2"
-              >
-                Explore Projects{" "}
-                <span className="text-white transition-all duration-300">
-                  →
-                </span>
-              </motion.button>
-
               <Link to="/categories">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="w-[240px] text-lg text-white px-8 py-3 bg-red-600 hover:bg-red-700 rounded-md transition-all duration-300 active:border active:border-orange-400 active:ring-2 active:ring-orange-300 flex items-center justify-center gap-2"
+                >
+                  Explore Project{" "}
+                  <span className="text-white transition-all duration-300">→</span>
+                </motion.button>
+              </Link>
+
+              <a
+                href="https://getyourprojectdone.in/iot_platform/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="w-[240px] relative overflow-hidden px-8 py-3 text-lg font-semibold text-white bg-gradient-to-r from-orange-500 to-orange-600 border-none rounded-md shadow-md transition-all duration-300 hover:from-white hover:to-white hover:text-orange-600 hover:ring-2 hover:ring-orange-500 active:scale-95 flex items-center justify-center gap-2"
                 >
-                  View Categories
+                  IoT Platform
                 </motion.button>
-              </Link>
+              </a>
+
             </div>
 
             <div className="mt-8 p-4 bg-orange-50 rounded-lg border border-orange-200">
