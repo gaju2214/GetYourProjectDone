@@ -17,8 +17,6 @@ import Account from "./pages/Account";
 
 import ProfilePage from "./pages/Profile";
 import AdminLogin from "./pages/Adlogin";
-import AdminRegister from "./pages/Register";
-// import AdminRegister from "./pages/Register";
 
 function App() {
   return (
@@ -26,14 +24,16 @@ function App() {
       <Navigation />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/getproject" element={<ProjectAdminPanel />} />
+        <Route
+          path="/getproject"
+          element={<ProjectAdminPanel />}
+        />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/adlogin" element={<AdminLogin />} />
-         <Route path="/adregister" element={<AdminRegister/>} />
+        <Route path="/adlogin" element={<AdminLogin/>} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/categories/:category" element={<CategoryPage />} />
@@ -46,5 +46,4 @@ function App() {
     </>
   );
 }
-
 export default App;
