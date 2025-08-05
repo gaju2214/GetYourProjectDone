@@ -18,29 +18,29 @@ const navigate = useNavigate();
   };
 
   const handleSubmit = async () => {
-    setIsLoading(true);
-    try {
-      const res = await fetch("http://localhost:5000/api/admin/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      
-      });
+  setIsLoading(true);
+  try {
+    const res = await fetch("http://localhost:5000/api/admin/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
 
-      const data = await res.json();
-      if (res.ok) {
-        alert(data.message);
-        console.log(data.admin); // or save token/session
-      } else {
-        alert(data.message);
-         navigate("/getproject");
-      }
-    } catch (err) {
-      alert("registration failed failed");
-    } finally {
-      setIsLoading(false);
+    const data = await res.json();
+    if (res.ok) {
+      alert(data.message);
+      console.log(data.admin);
+      window.location.href("/getproject"); // ✅ Redirect after success
+    } else {
+      alert(data.message);
     }
-  };
+  } catch (err) {
+    alert("Registration failed");
+  } finally {
+    setIsLoading(false);
+   
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-orange-50 to-yellow-50 flex items-center justify-center p-4">

@@ -74,6 +74,19 @@ router.post('/register', async (req, res) => {
   }
 });
 
+router.post("/logout", (req, res) => {
+  try {
+    req.logout(() => {
+      req.session?.destroy?.();
+      res.clearCookie("admin");
+      res.status(200).json({ message: "Logout successful" }); 
+    });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    res.status(500).json({ message: "Logout failed" });
+  }
+});
+
 // GET /api/admin/checkAdmin
 router.get('/checkAdmin', authenticateAdmin, (req, res) => {
   res.status(200).json({
