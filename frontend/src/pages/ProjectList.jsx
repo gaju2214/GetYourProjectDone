@@ -13,8 +13,8 @@ const ProjectList = () => {
         const mappedProjects = res.data.map((project) => ({
           ...project,
           originalPrice: Math.floor(project.price * 1.5), // fake discount
-          rating: 4.5,
-          reviews: 12,
+          rating: 4.5, // optional
+          reviews: 12, // optional
           difficulty: "Beginner", // optional
           components: ["Code", "Docs", "Support"], // optional
         }));
