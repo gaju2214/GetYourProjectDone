@@ -25,7 +25,7 @@ const Navigation = () => {
 
   const handleSearchKeyDown = (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`/projects?q=${encodeURIComponent(searchQuery.trim())}`);
       setShowSearch(false);
     }
   };

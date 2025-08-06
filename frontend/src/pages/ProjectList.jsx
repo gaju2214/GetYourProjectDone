@@ -13,8 +13,8 @@ const ProjectList = () => {
         const mappedProjects = res.data.map((project) => ({
           ...project,
           originalPrice: Math.floor(project.price * 1.5), // fake discount
-          rating: 4.5, // optional
-          reviews: 12, // optional
+          rating: 4.5,
+          reviews: 12,
           difficulty: "Beginner", // optional
           components: ["Code", "Docs", "Support"], // optional
         }));
@@ -27,7 +27,6 @@ const ProjectList = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
-   
       {projects.map((project) => (
         <ProductCard key={project.id} product={project} />
       ))}

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import axios from "axios";
 import api from "../api"; // adjust path based on file location
 
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "../components/ui/Botton";
 import { Badge } from "../components/ui/Badge";
 import { Card, CardContent } from "../components/ui/Card";
@@ -29,9 +29,38 @@ import { useAuth } from "../context/AuthContext"; // Adjust path as needed
 export default function ProductDetailPage() {
   const { id } = useParams();
   const { dispatch } = useCart();
-  const { user } = useAuth(); // ✅
+
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState(null);
+
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const navigate = useNavigate();
+
+  // const { user } = useAuth(); // 👈 get logged-in user
+  // Check auth on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await api.get("/api/protected/checkAuth");
+        if (res.data?.success === true && res.data?.status === 200) {
+          setUser(res.data.user);
+          setIsAuthenticated(true);
+        } else {
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Authentication check failed:", error);
+        setUser(null);
+        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuth();
+  }, []); // Redirect to login if not authenticated after loading
 
   useEffect(() => {
     const slug = window.location.pathname.split("/").pop();
