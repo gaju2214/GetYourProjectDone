@@ -159,17 +159,25 @@ export function ProductCard({ product }) {
             </div>
 
             <div className="flex flex-wrap gap-2 mb-4">
-              {Array.isArray(product.components) &&
-              product.components.length > 0 ? (
-                product.components.slice(0, 3).map((component, index) => (
-                  <Badge key={index} className="text-sm">
-                    {component}
-                  </Badge>
-                ))
-              ) : (
-                <p className="text-gray-400 text-sm">No components listed</p>
-              )}
-            </div>
+  {(() => {
+    const components = Array.isArray(product.components)
+      ? product.components
+      : typeof product.components === "string"
+      ? parsePostgresArray(product.components)
+      : [];
+
+    return components.length > 0 ? (
+      components.slice(0, 3).map((component, index) => (
+        <Badge key={index} className="text-sm">
+          {component}
+        </Badge>
+      ))
+    ) : (
+      <p className="text-gray-400 text-sm">No components listed</p>
+    );
+  })()}
+</div>
+
           </div>
         </CardContent>
       </Link>

@@ -11,58 +11,23 @@ const ProjectList = () => {
   const name = queryParams.get("q");
 
   useEffect(() => {
-    console.log(name);
-    if (!name) {
-      api
-        .get("/api/projects")
-        .then((res) => {
-          const mappedProjects = res.data.map((project) => ({
-            ...project,
-            originalPrice: Math.floor(project.price * 1.5), // fake discount
-            rating: 4.5,
-            reviews: 12,
-            difficulty: "Beginner", // optional
-            components: ["Code", "Docs", "Support"], // optional
-          }));
-          setProjects(mappedProjects);
-        })
-        .catch((err) => {
-          console.error("Error fetching projects:", err);
-        });
-    } else {
-      api
-        .get(`/api/projects/by-slug/${name}`)
-        .then((res) => {
-          const p = res.data.data; // <-- FIXED
-          setProjects({
-            ...p,
-            originalPrice: Math.floor(p.price * 1.5),
-            rating: 4.5,
-            reviews: 12,
-            difficulty: "Beginner", // optional
-            components: ["Code", "Docs", "Support"], // optional
-          });
-        })
-        .catch((err) => {
-          console.error("Error fetching project:", err);
-        });
-    }
+    api
+      .get("/api/projects")
+      .then((res) => {
+        const mappedProjects = res.data.map((project) => ({
+          ...project,
+          originalPrice: Math.floor(project.price * 1.5), // fake discount
+          rating: 4.5,
+          reviews: 12,
+          difficulty: "Beginner", // optional
+          components: ["Code", "Docs", "Support"], // optional
+        }));
+        setProjects(mappedProjects);
+      })
+      .catch((err) => {
+        console.error("Error fetching projects:", err);
+      });
   }, []);
-
-  // useEffect(() => {
-  //   api
-  //     .get(`/api/projects/by-slug/${name}`)
-  //     .then((res) => {
-  //       const p = res.data.data; // <-- FIXED
-  //       setProjects({
-  //         ...p,
-  //         originalPrice: Math.floor(p.price * 1.5),
-  //       });
-  //     })
-  //     .catch((err) => {
-  //       console.error("Error fetching project:", err);
-  //     });
-  // }, [id]);
 
   return (
     <>
