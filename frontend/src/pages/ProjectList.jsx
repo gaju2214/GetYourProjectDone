@@ -6,9 +6,6 @@ import { useLocation } from "react-router-dom";
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const name = queryParams.get("q");
 
   useEffect(() => {
     api
@@ -17,8 +14,8 @@ const ProjectList = () => {
         const mappedProjects = res.data.map((project) => ({
           ...project,
           originalPrice: Math.floor(project.price * 1.5), // fake discount
-          rating: 4.5,
-          reviews: 12,
+          rating: 4.5, // optional
+          reviews: 12, // optional
           difficulty: "Beginner", // optional
           components: ["Code", "Docs", "Support"], // optional
         }));

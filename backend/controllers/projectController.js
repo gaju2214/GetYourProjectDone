@@ -1,5 +1,6 @@
 const { Project, Subcategory } = require("../models");
 const slugify = require("slugify");
+const { Op } = require("sequelize");
 
 // Create a new project
 exports.createProject = async (req, res) => {
@@ -59,13 +60,70 @@ exports.createProject = async (req, res) => {
   }
 };
 
+// exports.getAllProjects = async (req, res) => {
+//   try {
+//     const projects = await Project.findAll({
+//       include: { model: Subcategory, as: "subcategory" },
+//     });
+//     res.json(projects);
+//   } catch (err) {
+//     res.status(500).json({ error: "Failed to fetch projects" });
+//   }
+// };
+
 exports.getAllProjects = async (req, res) => {
+  const { q } = req.query;
+
   try {
+    // If search query is provided
+    if (q && q.trim() !== "") {
+      let projects = await Project.findAll({
+        where: {
+          title: {
+            [Op.iLike]: `%${q}%`, // Case-insensitive match on title
+          },
+        },
+        include: { model: Subcategory, as: "subcategory" },
+      });
+
+      if (projects.length > 0) {
+        return res.json(projects); // Found by title
+      }
+
+      // Try matching by subcategory name
+      const subcategory = await Subcategory.findOne({
+        where: {
+          name: {
+            [Op.iLike]: `%${q}%`,
+          },
+        },
+      });
+
+      if (subcategory) {
+        projects = await Project.findAll({
+          where: {
+            subcategoryId: subcategory.id,
+          },
+          include: { model: Subcategory, as: "subcategory" },
+        });
+
+        if (projects.length > 0) {
+          return res.json(projects); // Found by subcategory
+        }
+      }
+
+      //  No match found
+      return res.status(404).json({ error: "No projects found for your search query." });
+    }
+
+    // If no search query provided, return all projects
     const projects = await Project.findAll({
       include: { model: Subcategory, as: "subcategory" },
     });
-    res.json(projects);
+
+    return res.json(projects);
   } catch (err) {
+    console.error("Error fetching projects:", err);
     res.status(500).json({ error: "Failed to fetch projects" });
   }
 };
