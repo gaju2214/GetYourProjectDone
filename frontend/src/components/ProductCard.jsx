@@ -17,7 +17,7 @@ export function ProductCard({ product }) {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
-
+  const [randomRating, setRandomRating] = useState(0);
   // const { user } = useAuth(); // 👈 get logged-in user
 // Check auth on mount
   useEffect(() => {
@@ -39,6 +39,8 @@ export function ProductCard({ product }) {
         setLoading(false);
       }
     };
+      const rating = (Math.random() * 0.9 + 4.0).toFixed(1); // Generates 4.0 to 4.9
+    setRandomRating(rating);
     checkAuth();
   }, []);  // Redirect to login if not authenticated after loading
   
@@ -135,8 +137,10 @@ export function ProductCard({ product }) {
           <div className="p-6">
             <div className="flex items-center gap-1 mb-3">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-              <span className="text-sm font-medium">{product.rating}</span>
-              <span className="text-sm text-gray-500">({product.reviews})</span>
+              <span className="text-sm font-medium">{randomRating}</span>
+
+              {/* <span className="text-sm font-medium">{product.rating}</span> */}
+              {/* <span className="text-sm text-gray-500">({product.reviews})</span> */}
             </div>
 
             <h3 className="font-bold text-lg mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
