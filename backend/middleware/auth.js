@@ -17,8 +17,8 @@
 const jwt = require("jsonwebtoken");
 
 const authenticateUser = (req, res, next) => {
-  console.log(" Request Headers:", req.headers);
-  console.log("Request Cookies:", req.cookies);
+  // console.log(" Request Headers:", req.headers);
+  // console.log("Request Cookies:", req.cookies);
 
   let token = req.headers.authorization?.split(" ")[1];
 
@@ -31,15 +31,15 @@ const authenticateUser = (req, res, next) => {
     return res.status(401).json({ error: "Unauthorized: No token provided" });
   }
 
-  console.log("Token received:", token);
+  // console.log("Token received:", token);
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(" Token decoded successfully:", decoded);
+    // console.log(" Token decoded successfully:", decoded);
     req.user = decoded;
     next();
   } catch (err) {
-    console.log("Token verification failed:", err.message);
+    // console.log("Token verification failed:", err.message);
     return res.status(401).json({ error: "Unauthorized: Invalid token" });
   }
 };

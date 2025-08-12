@@ -59,7 +59,7 @@ export function ProductCard({ product }) {
 
     try {
       const cartItem = {
-        userId: user?.id, //1,
+        userId: user?.userId, //1,
         projectId: product.id,
         quantity: 1,
       };

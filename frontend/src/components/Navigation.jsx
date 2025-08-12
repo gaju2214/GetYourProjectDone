@@ -7,7 +7,8 @@ import { Sheet, SheetContent, SheetTrigger } from "../components/ui/Sheet";
 import { Menu, ShoppingCart, User, Search, Home } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import EngiProNetwork from "./EngiproNetwork";
-import { useAuth } from "../context/AuthContext";
+import api from '../api';
+// import { useAuth } from "../context/AuthContext";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -20,8 +21,13 @@ const Navigation = () => {
   const searchRef = useRef();
   const searchRefDesktop = useRef(); // ✅ Added
   const searchRefMobile = useRef(); // ✅ Added
-  const { user, logout } = useAuth();
+  // const { user, logout } = useAuth();
   const navigate = useNavigate();
+  
+const [user, setUser] = useState(null);
+  
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
 
   const handleSearchKeyDown = (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
@@ -29,6 +35,27 @@ const Navigation = () => {
       setShowSearch(false);
     }
   };
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await api.get("/api/protected/checkAuth");
+        if (res.data?.success === true && res.data?.status === 200) {
+          setUser(res.data.user);
+          setIsAuthenticated(true);
+        } else {
+          setUser(null);
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Authentication check failed:", error);
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -228,7 +255,7 @@ const Navigation = () => {
 
               {/* User Icon */}
               <Link
-                to={user ? "/account" : "/auth/login"}
+                to={user ? "/profile" : "/auth/login"}
                 className="flex-shrink-0 md:ml-5"
               >
                 <Button
