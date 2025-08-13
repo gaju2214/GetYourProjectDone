@@ -2,6 +2,7 @@ const { CartItem, Project } = require('../models');
 
 // Add item to cart
 // filepath: /home/gaju/Getprojectdonebackend/backend/controllers/cartController.js
+// filepath: /home/gaju/GetYourProjectDone/backend/controllers/cartController.js
 exports.addToCart = async (req, res) => {
   if (!req.body || !req.body.userId) {
     return res.status(400).json({ message: 'Missing userId in request body' });
@@ -9,7 +10,13 @@ exports.addToCart = async (req, res) => {
   const { userId, projectId, quantity } = req.body;
 
   try {
-    console.log('Adding to cart:', { userId, projectId, quantity }); // Debug log
+    console.log('Adding to cart:', { userId, projectId, quantity });
+    
+    // Check if CartItem model is available
+    if (!CartItem) {
+      console.error('CartItem model not found');
+      return res.status(500).json({ error: 'CartItem model not available' });
+    }
     
     const existing = await CartItem.findOne({ where: { userId, projectId } });
 
@@ -22,7 +29,11 @@ exports.addToCart = async (req, res) => {
     const cartItem = await CartItem.create({ userId, projectId, quantity: quantity || 1 });
     res.status(201).json(cartItem);
   } catch (err) {
-    console.error('Cart error:', err); // Log the actual error
+    console.error('Cart error details:', {
+      message: err.message,
+      stack: err.stack,
+      name: err.name
+    });
     res.status(500).json({ error: 'Failed to add to cart', details: err.message });
   }
 };
