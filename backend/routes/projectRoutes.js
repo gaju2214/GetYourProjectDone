@@ -17,8 +17,26 @@ router.get(
   projectController.getProjectsBySubcategory
 );
 
+
+//from here
 // Get single project by ID
 router.get("/:id", projectController.getProjectById);
+router.put("/:id", projectController.updateProject)
+// // // Projects
+// router.get("/project/:id", projectController.getProjectById);
+
+
+
+// Categories
+router.get("/category/:id", projectController.getCategoryById);
+router.put("/category/:id", projectController.updateCategory);
+
+// Subcategories
+// router.get("/subcategory/:subcategoryId", projectController.getProjectsBySubcategory);
+router.get("/subcategory/:id", projectController.getSubCategoryById);
+router.put("/subcategory/:id", projectController.updateSubcategory);
+
+
 
 module.exports = router;
 

@@ -1,4 +1,4 @@
-const { Project, Subcategory } = require("../models");
+const { Project, Subcategory, Category } = require("../models");
 const slugify = require("slugify");
 const { Op } = require("sequelize");
 
@@ -129,29 +129,29 @@ exports.getAllProjects = async (req, res) => {
 };
 
 // Get single project by ID
-exports.getProjectById = async (req, res) => {
-  const { id } = req.params;
-  try {
-    const project = await Project.findByPk(id, {
-      include: { model: Subcategory, as: "subcategory" },
-    });
+// exports.getProjectById = async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     const project = await Project.findByPk(id, {
+//       include: { model: Subcategory, as: "subcategory" },
+//     });
 
-    if (!project) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Project not found" });
-    }
+//     if (!project) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "Project not found" });
+//     }
 
-    res.json({ success: true, data: project });
-  } catch (err) {
-    console.error("Error fetching project:", err.message);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch project",
-      error: err.message,
-    });
-  }
-};
+//     res.json({ success: true, data: project });
+//   } catch (err) {
+//     console.error("Error fetching project:", err.message);
+//     res.status(500).json({
+//       success: false,
+//       message: "Failed to fetch project",
+//       error: err.message,
+//     });
+//   }
+// };
 // Get all projects (with optional subcategory filtering)
 exports.getAllProjects = async (req, res) => {
   const { subcategoryId } = req.query;
@@ -203,6 +203,150 @@ exports.getProjectBySlug = async (req, res) => {
       success: false,
       message: "Failed to fetch project",
       error: err.message,
+    });
+  }
+};
+
+
+
+//from here
+
+// Get single project by ID (edit)
+exports.getProjectById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const project = await Project.findByPk(id); // Sequelize method
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    res.json(project);
+  } catch (error) {
+    console.error("Error fetching project:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+exports.getCategoryById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const category = await Category.findByPk(id);
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    res.json(category);
+  } catch (error) {
+    console.error("Error fetching category:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+
+
+exports.getSubCategoryById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const subcategory = await Subcategory.findByPk(id); // ✅ Use Subcategory model
+    if (!subcategory) {
+      return res.status(404).json({ message: "Subcategory not found" });
+    }
+
+    res.json(subcategory);
+  } catch (error) {
+    console.error("Error fetching subcategory:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+
+
+// exports.getProjectsBySubcategory = async (req, res) => {
+//   try {
+//     const { subcategoryId } = req.params;
+
+//     const projects = await Project.findAll({
+//       where: { subcategoryId: subcategoryId }
+//     });
+
+//     if (projects.length === 0) {
+//       return res.status(404).json({ message: "No projects found for this subcategory" });
+//     }
+
+//     res.json(projects);
+//   } catch (error) {
+//     console.error("Error fetching projects by subcategory:", error);
+//     res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// };
+
+
+
+
+// update code from here
+exports.updateProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    const project = await Project.findByPk(id);
+    if (!project) return res.status(404).json({ message: "Project not found" });
+
+    await project.update(updatedData);
+
+    res.json({ message: "Project updated successfully", project });
+  } catch (error) {
+    console.error("Error updating project:", error);
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+      details: error.errors || null
+    });
+  }
+};
+exports.updateCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    const category = await Category.findByPk(id);
+    if (!category) return res.status(404).json({ message: "Category not found" });
+
+    await category.update(updatedData);
+
+    res.json({ message: "Category updated successfully", category });
+  } catch (error) {
+    console.error("Error updating category:", error);
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+      details: error.errors || null
+    });
+  }
+};
+
+exports.updateSubcategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    const subcategory = await Subcategory.findByPk(id);
+    if (!subcategory) return res.status(404).json({ message: "Subcategory not found" });
+
+    await subcategory.update(updatedData);
+
+    res.json({ message: "Subcategory updated successfully", subcategory });
+  } catch (error) {
+    console.error("Error updating subcategory:", error);
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+      details: error.errors || null
     });
   }
 };

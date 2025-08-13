@@ -3,7 +3,7 @@ import "./App.css";
 import Navigation from "./components/Navigation";
 import OrdersPage from "./pages/Order";
 import NotFoundPage from "./pages/404";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useParams } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import CartPage from "./pages/Cart";
 import LoginPage from "./pages/Auth";
@@ -19,12 +19,16 @@ import ProfilePage from "./pages/Profile";
 import AdminLogin from "./pages/Adlogin";
 import AdminRegister from "./pages/Register";
 
+
+
 function App() {
+
   return (
     <>
       <Navigation />
       <Routes>
         <Route path="/" element={<HomePage />} />
+       
         <Route path="/getproject" element={<ProjectAdminPanel />} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/cart" element={<CartPage />} />
