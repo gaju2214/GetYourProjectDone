@@ -13,11 +13,21 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     }
+  }, {
+    tableName: 'CartItems', // Ensure correct table name
+    freezeTableName: true
   });
 
   CartItem.associate = models => {
-    CartItem.belongsTo(models.User, { foreignKey: 'userId' });
-    CartItem.belongsTo(models.Project, { foreignKey: 'projectId' });
+    // Make sure this references the correct table name
+    CartItem.belongsTo(models.User, { 
+      foreignKey: 'userId',
+      targetKey: 'id' // Explicitly specify the target key
+    });
+    CartItem.belongsTo(models.Project, { 
+      foreignKey: 'projectId',
+      targetKey: 'id'
+    });
   };
 
   return CartItem;

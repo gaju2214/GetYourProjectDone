@@ -1,8 +1,10 @@
-const { CartItem, Project } = require('../models');
 
 // Add item to cart
 // filepath: /home/gaju/Getprojectdonebackend/backend/controllers/cartController.js
 // filepath: /home/gaju/GetYourProjectDone/backend/controllers/cartController.js
+// filepath: /home/gaju/GetYourProjectDone/backend/controllers/cartController.js
+const { CartItem, Project, User } = require('../models'); // Fix: User not user
+
 exports.addToCart = async (req, res) => {
   if (!req.body || !req.body.userId) {
     return res.status(400).json({ message: 'Missing userId in request body' });
@@ -12,10 +14,16 @@ exports.addToCart = async (req, res) => {
   try {
     console.log('Adding to cart:', { userId, projectId, quantity });
     
-    // Check if CartItem model is available
-    if (!CartItem) {
-      console.error('CartItem model not found');
-      return res.status(500).json({ error: 'CartItem model not available' });
+    // Check if user exists
+    const userRecord = await User.findByPk(userId); // Rename variable to avoid conflict
+    if (!userRecord) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Check if project exists
+    const project = await Project.findByPk(projectId);
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found' });
     }
     
     const existing = await CartItem.findOne({ where: { userId, projectId } });
