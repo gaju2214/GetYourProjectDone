@@ -21,7 +21,6 @@ export default function AllProjectsSection() {
           <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-6">
             Explore a wide range of innovative and tested project kits built for
             Electrical, Mechanical, IoT, Robotics, AI,ML and Mechatronics domains.
-
           </p>
 
           <input

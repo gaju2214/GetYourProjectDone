@@ -9,6 +9,8 @@ exports.addToCart = async (req, res) => {
   const { userId, projectId, quantity } = req.body;
 
   try {
+    console.log('Adding to cart:', { userId, projectId, quantity }); // Debug log
+    
     const existing = await CartItem.findOne({ where: { userId, projectId } });
 
     if (existing) {
@@ -20,7 +22,8 @@ exports.addToCart = async (req, res) => {
     const cartItem = await CartItem.create({ userId, projectId, quantity: quantity || 1 });
     res.status(201).json(cartItem);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to add to cart' });
+    console.error('Cart error:', err); // Log the actual error
+    res.status(500).json({ error: 'Failed to add to cart', details: err.message });
   }
 };
 
