@@ -87,34 +87,43 @@ export default function ProductDetailPage() {
 
   // Make API call to backend
   const handleAddToCart = async () => {
-    for (let i = 0; i < quantity; i++) {
-      dispatch({ type: "ADD_ITEM", payload: product });
-    }
-    if (!user) {
-      alert("Please log in to add items to cart.");
-      return;
-    }
+  if (!user) {
+    alert("Please log in to add items to cart.");
+    return;
+  }
+console.log("User object:", user);
 
-    try {
-      const cartItem = {
-        userId: user.id, //1, ✅ dynamic user ID from context
-        projectId: product.id,
-        quantity: quantity,
-      };
-      console.log("Cart item payload:", cartItem);
+  try {
+    const cartItem = {
+  userId: user?.userId,  // 👈 from backend
+  projectId: product.id,
+  quantity: 1,
+};
 
-      const response = await api.post("/api/cart/add", cartItem);
+    console.log("Cart item payload:", cartItem);
 
-      if (response.status === 200 || response.status === 201) {
-        alert("✅ Item added to cart!");
-      } else {
-        alert("❌ Failed to add item to cart.");
-      }
-    } catch (error) {
-      console.error("Error adding to cart:", error);
-      alert("⚠️ Error adding to cart.");
+   const response = await api.post("/api/cart/add", cartItem, {
+  headers: { "Content-Type": "application/json" },
+  withCredentials: true,
+});
+
+    console.log("Cart add response:", response.data);
+
+    if (response.status === 200 || response.status === 201) {
+      alert("✅ Item added to cart!");
+    } else {
+      alert("❌ Failed to add item to cart.");
     }
-  };
+  } catch (error) {
+    if (error.response) {
+      console.error("Error adding to cart:", error.response.data);
+      alert("⚠️ Error: " + JSON.stringify(error.response.data));
+    } else {
+      console.error("Error adding to cart:", error.message);
+      alert("⚠️ Something went wrong.");
+    }
+  }
+};
 
   const discountPercentage = Math.round(
     ((product.originalPrice - product.price) / product.originalPrice) * 100
