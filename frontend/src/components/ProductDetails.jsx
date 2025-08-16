@@ -245,14 +245,15 @@ console.log("User object:", user);
             </div>
 
             <div className="flex flex-wrap gap-3 justify-center sm:justify-start w-full">
-              <Button
-                size="lg"
-                className="flex items-center justify-center bg-blue-600 text-white px-6 py-3 flex-grow sm:flex-grow-0 sm:w-auto hover:bg-blue-700 transition duration-300 shadow-sm hover:shadow-md"
-                onClick={handleAddToCart}
-              >
-                <ShoppingCart className="h-5 w-5 mr-2" />
-                Add to Cart
-              </Button>
+             <Button
+  size="lg"
+  disabled={loading}   // 👈 don't allow clicks until auth check finishes
+  className="flex items-center justify-center bg-blue-600 text-white px-6 py-3 flex-grow sm:flex-grow-0 sm:w-auto hover:bg-blue-700 transition duration-300 shadow-sm hover:shadow-md disabled:opacity-50"
+  onClick={handleAddToCart}
+>
+  <ShoppingCart className="h-5 w-5 mr-2" />
+  {loading ? "Checking login..." : "Add to Cart"}
+</Button>
 
               <Button
                 size="lg"
