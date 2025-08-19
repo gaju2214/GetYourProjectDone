@@ -243,11 +243,11 @@ const [user, setUser] = useState(null);
                   >
                     <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                       <div className="relative">
-                        <img
-                          src={`${api.defaults.baseURL}/uploads/${item.image}`}
-                          alt={item.title}
-                          className="w-full sm:w-[120px] sm:h-[120px] object-cover rounded-xl shadow-md"
-                        />
+                       <img
+                            src={item.image}
+                            alt={item.title}
+                            className="w-full sm:w-[120px] sm:h-[120px] object-cover rounded-xl shadow-md"
+                          />
 
                         <Badge className="absolute -top-2 -right-2 bg-blue-600">
                           {item.difficulty}
