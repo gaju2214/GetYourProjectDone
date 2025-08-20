@@ -1,8 +1,7 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { Package, Truck, CheckCircle, Clock, X, Eye } from "lucide-react";
 import { useState, useEffect } from "react";
-import api from '../api'; 
+import api from '../api';
 // Replace these imports with local component implementations or from a UI library
 import {
   Card,
@@ -24,7 +23,7 @@ import { InvoiceDownload } from "../components/InvoiceDownload";
 
 export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState(null);
-const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
@@ -132,15 +131,6 @@ const [user, setUser] = useState(null);
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
       <div className="max-w-6xl mx-auto px-4">
-        {/* ✅ Back to Home Button */}
-        <div className="mb-4">
-          <Link to="/">
-            <button className="bg-green-600 text-white px-3 py-1.5 rounded-lg hover:bg-green-800 transition-colors duration-300">
-              ← Back to Home
-            </button>
-          </Link>
-        </div>
-
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">My Orders</h1>
           <p className="text-gray-600 text-lg">

@@ -12,8 +12,8 @@ export default function CategoryPage() {
   const params = useParams();
   const category = params.category;
   const [viewMode, setViewMode] = useState("grid");
- const [sortBy, setSortBy] = useState("popular");
-const [categoryName, setCategoryName] = useState("");
+  const [sortBy, setSortBy] = useState("popular");
+  const [categoryName, setCategoryName] = useState("");
 
 
   //const categoryName = category.charAt(0).toUpperCase() + category.slice(1);
@@ -25,30 +25,30 @@ const [categoryName, setCategoryName] = useState("");
   // Fetch subcategories using category slug
 
 
-useEffect(() => {
-  const fetchSubcategoriesAndCategory = async () => {
-    try {
-      // Fetch category name using slug
-      const categoryRes = await api.get(`/api/categories/${category}`);
-      setCategoryName(categoryRes.data.name);
+  useEffect(() => {
+    const fetchSubcategoriesAndCategory = async () => {
+      try {
+        // Fetch category name using slug
+        const categoryRes = await api.get(`/api/categories/${category}`);
+        setCategoryName(categoryRes.data.name);
 
-      // Fetch subcategories using slug
-      const subRes = await api.get(
-        `/api/categories/subcategories/by-slug/${category}`
-      );
-      setSubcategories(subRes.data);
+        // Fetch subcategories using slug
+        const subRes = await api.get(
+          `/api/categories/subcategories/by-slug/${category}`
+        );
+        setSubcategories(subRes.data);
 
-      // Set default selected subcategory if available
-      if (subRes.data.length > 0) {
-        setSelectedSubcategoryId(subRes.data[0].id);
+        // Set default selected subcategory if available
+        if (subRes.data.length > 0) {
+          setSelectedSubcategoryId(subRes.data[0].id);
+        }
+      } catch (err) {
+        console.error("Failed to fetch category or subcategories", err);
       }
-    } catch (err) {
-      console.error("Failed to fetch category or subcategories", err);
-    }
-  };
+    };
 
-  fetchSubcategoriesAndCategory();
-}, [category]);
+    fetchSubcategoriesAndCategory();
+  }, [category]);
 
 
 
@@ -57,7 +57,7 @@ useEffect(() => {
     const fetchProjects = async () => {
       if (!selectedSubcategoryId) return;
       try {
-        const res =  await api.get(
+        const res = await api.get(
           `/api/projects/by-subcategory/${selectedSubcategoryId}`
         );
         setProducts(res.data);
@@ -80,7 +80,7 @@ useEffect(() => {
       </div>
     );
   }
-  
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
@@ -110,9 +110,8 @@ useEffect(() => {
                 key={sub.id}
                 variant="outline"
                 onClick={() => setSelectedSubcategoryId(sub.id)}
-                className={`px-4 py-2 text-sm hover:bg-blue-50 cursor-pointer ${
-                  selectedSubcategoryId === sub.id ? "bg-blue-100" : ""
-                }`}
+                className={`px-4 py-2 text-sm hover:bg-blue-50 cursor-pointer ${selectedSubcategoryId === sub.id ? "bg-blue-100" : ""
+                  }`}
               >
                 {sub.name}
               </Badge>
@@ -120,61 +119,12 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* Filters and Controls */}
-        <Card className="shadow-lg border-0 mb-8">
-          <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <div className="flex items-center gap-4">
-                <Button
-                  variant="outline"
-                  className="flex items-center gap-2 bg-transparent"
-                >
-                  <Filter className="h-4 w-4" />
-                  Filters
-                </Button>
-                <Button
-                  variant="outline"
-                  className="flex items-center gap-2 bg-transparent"
-                >
-                  <SortAsc className="h-4 w-4" />
-                  Sort by: {sortBy}
-                </Button>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">
-                  {products.length} projects found
-                </span>
-                <div className="flex border rounded-lg">
-                  <Button
-                    variant={viewMode === "grid" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("grid")}
-                    className="rounded-r-none"
-                  >
-                    <Grid className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === "list" ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => setViewMode("list")}
-                    className="rounded-l-none"
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Products Grid */}
         <div
-          className={`grid gap-8 ${
-            viewMode === "grid"
-              ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-              : "grid-cols-1"
-          }`}
+          className={`grid gap-8 ${viewMode === "grid"
+            ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+            : "grid-cols-1"
+            }`}
         >
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />

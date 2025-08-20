@@ -29,7 +29,7 @@ function App() {
       <Navigation />
       <Routes>
         <Route path="/" element={<HomePage />} />
-       <Route path="/delete/:id" element={<DeleteProject Id={1} />} />
+        <Route path="/delete/:id" element={<DeleteProject Id={1} />} />
         <Route path="/getproject" element={<ProjectAdminPanel />} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/cart" element={<CartPage />} />

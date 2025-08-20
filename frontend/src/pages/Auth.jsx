@@ -86,21 +86,13 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-  window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/google`;
-};
+    window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/google`;
+  };
 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium text-orange-600 bg-orange-100 rounded-full hover:bg-orange-200 hover:text-orange-700 transition-all duration-300 shadow-sm"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Home
-        </Link>
-
         <Card className="shadow-xl">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
