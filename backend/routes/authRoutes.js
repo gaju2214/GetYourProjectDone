@@ -3,7 +3,7 @@ const express = require("express");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
-const { User } = require("../models");
+const { User, UserInfo } = require("../models");
 const bcrypt = require("bcrypt");
 const authenticateUser = require("../middleware/auth"); // Import your middleware
 
@@ -156,4 +156,28 @@ router.post("/logout", (req, res) => {
 //     res.status(500).json({ error: 'Internal server error' });
 //   }
 // });
+
+
+
+router.post("/userinfo", async (req, res) => {
+  try {
+    const { name, phoneNumber } = req.body;
+
+    // validation (optional, extra safety)
+    if (!name) {
+      return res.status(400).json({ error: "Name is required" });
+    }
+
+    const newUserInfo = await UserInfo.create({
+      name,
+      phoneNumber,
+    });
+
+    res.status(201).json(newUserInfo);
+  } catch (error) {
+    console.error("Error creating user info:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;
