@@ -49,7 +49,7 @@ router.get(
         maxAge: 3600000, // 1 hour
       });
 
-      res.redirect(`${process.env.CLIENT_URL}/profile`);
+      res.redirect(`${process.env.CLIENT_URL}/account`);
     } catch (error) {
       console.error("Error during Google callback:", error);
       res.redirect(`${process.env.CLIENT_URL}/auth/login?error=callback_error`);
@@ -59,7 +59,7 @@ router.get(
 
 
 router.get("/profile", authenticateUser, async (req, res) => {
-  console.log("📩 Profile route hit");
+  // console.log("📩 Profile route hit");
   try {
     // req.user is available from the middleware
     const user = await User.findOne({ where: { id: req.user.userId } });
@@ -73,6 +73,8 @@ router.get("/profile", authenticateUser, async (req, res) => {
       email: user.email,
       name: user.name,
       phoneNumber: user.phoneNumber,
+      dob: user.dob,        
+      gender: user.gender,  
       avatar: user.avatar,
       provider: user.provider,
     });
@@ -91,10 +93,13 @@ router.put("/profile", authenticateUser, async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const { phoneNumber, password, name } = req.body;
+    const { phoneNumber, password, name, dob, gender } = req.body;
 
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (name) user.name = name;
+    if (dob) user.dob = dob;            
+    if (gender) user.gender = gender;   
+
     if (password) {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
@@ -109,6 +114,8 @@ router.put("/profile", authenticateUser, async (req, res) => {
         email: user.email,
         name: user.name,
         phoneNumber: user.phoneNumber,
+        dob: user.dob,          
+        gender: user.gender,     
         avatar: user.avatar,
         provider: user.provider,
       },

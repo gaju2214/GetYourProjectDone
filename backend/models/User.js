@@ -15,8 +15,6 @@
 //   return User;
 // };
 
-
-
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     id: {
@@ -37,26 +35,25 @@ module.exports = (sequelize, DataTypes) => {
         isEmail: true,
       },
     },
-   password: {
+    password: {
       type: DataTypes.STRING,
-      allowNull: true, // Change this from false to true
+      allowNull: true, // allow for Google auth users
       validate: {
-        len: [6, 100]
-      }
+        len: [6, 100],
+      },
     },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-   
-phoneNumber: {
-  type: DataTypes.STRING(20),
-  allowNull: true,
-  unique: false, // Allow multiple nulls but unique non-null values
-  validate: {
-    is: /^\+?[\d\s\-\(\)]{10,}$/
-  }
-},
+    phoneNumber: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      unique: false, // multiple nulls allowed, non-null should be validated
+      validate: {
+        is: /^\+?[\d\s\-\(\)]{10,}$/, // simple regex for phone numbers
+      },
+    },
     avatar: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -65,6 +62,17 @@ phoneNumber: {
       type: DataTypes.ENUM('google', 'local'),
       defaultValue: 'local',
     },
+
+    // ✅ New fields
+    dob: {
+      type: DataTypes.DATEONLY, // only YYYY-MM-DD
+      allowNull: true,
+    },
+    gender: {
+      type: DataTypes.ENUM('male', 'female', 'other'),
+      allowNull: true,
+    },
+
   }, {
     tableName: 'users',
     timestamps: true,
