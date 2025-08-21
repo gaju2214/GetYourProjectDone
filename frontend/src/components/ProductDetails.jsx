@@ -505,6 +505,9 @@ import {
   Truck,
   Shield,
   RotateCcw,
+  Headphones,
+  
+  X, 
 } from "lucide-react";
 //import { mockProducts } from "../lib/mock-data";
 import { useCart } from "../context/CartContext";
