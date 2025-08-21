@@ -102,7 +102,8 @@ const allowedOrigins = [
   "https://getyourprojectdone-frontend.onrender.com",
   "https://getyourprojectdone.up.railway.app",
   "https://getyourprojectdone-backend.up.railway.app",
-  "https://master.getyourprojectdone.in"
+  "https://master.getyourprojectdone.in",
+  "http://localhost:3000"
 ];
 
 // Middleware
