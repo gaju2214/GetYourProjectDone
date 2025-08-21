@@ -19,7 +19,7 @@ export function ProductCard({ product }) {
   const navigate = useNavigate();
   const [randomRating, setRandomRating] = useState(0);
   // const { user } = useAuth(); // 👈 get logged-in user
-// Check auth on mount
+  // Check auth on mount
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -39,23 +39,23 @@ export function ProductCard({ product }) {
         setLoading(false);
       }
     };
-      const rating = (Math.random() * 0.9 + 4.0).toFixed(1); // Generates 4.0 to 4.9
+    const rating = (Math.random() * 0.9 + 4.0).toFixed(1); // Generates 4.0 to 4.9
     setRandomRating(rating);
     checkAuth();
   }, []);  // Redirect to login if not authenticated after loading
-  
-  
+
+
   const handleAddToCart = async () => {
     // if (!user) {
     //   alert("Please log in to add items to cart.");
     //   return;
     // }
 
-  if (!user) {
-    alert("Please log in to add items to cart.");
-    navigate("/auth/login");
-    return;
-  }
+    if (!user) {
+      alert("Please log in to add items to cart.");
+      navigate("/auth/login");
+      return;
+    }
 
     try {
       const cartItem = {
@@ -101,21 +101,26 @@ export function ProductCard({ product }) {
       <Link to={`/product/${product.slug}`}>
         <CardContent className="p-0">
           <div className="relative overflow-hidden rounded-t-lg">
-            <img
+            {/* <img
               src={`${product.image}`}
               alt={product.title}
               width={400}
               height={300}
               className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-            />
+            /> */}
 
+            <img
+              src={product.image}
+              alt={product.title}
+              className="w-full max-h-60 object-contain bg-gray-100 rounded-t-lg"
+            />
             {typeof product.price === "number" && (
               <Badge className="text-white absolute top-3 left-3 bg-red-500 hover:bg-red-600">
                 {`${Math.round(
                   100 -
-                    (product.price /
-                      (product.originalPrice || product.price / 0.6)) *
-                      100
+                  (product.price /
+                    (product.originalPrice || product.price / 0.6)) *
+                  100
                 )}% OFF`}
               </Badge>
             )}
@@ -126,8 +131,8 @@ export function ProductCard({ product }) {
                 product.difficulty === "Beginner"
                   ? "secondary"
                   : product.difficulty === "Intermediate"
-                  ? "default"
-                  : "destructive"
+                    ? "default"
+                    : "destructive"
               }
             >
               {product.difficulty}
@@ -138,9 +143,6 @@ export function ProductCard({ product }) {
             <div className="flex items-center gap-1 mb-3">
               <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
               <span className="text-sm font-medium">{randomRating}</span>
-
-              {/* <span className="text-sm font-medium">{product.rating}</span> */}
-              {/* <span className="text-sm text-gray-500">({product.reviews})</span> */}
             </div>
 
             <h3 className="font-bold text-lg mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
@@ -163,24 +165,24 @@ export function ProductCard({ product }) {
             </div>
 
             <div className="flex flex-wrap gap-2 mb-4">
-  {(() => {
-    const components = Array.isArray(product.components)
-      ? product.components
-      : typeof product.components === "string"
-      ? parsePostgresArray(product.components)
-      : [];
+              {(() => {
+                const components = Array.isArray(product.components)
+                  ? product.components
+                  : typeof product.components === "string"
+                    ? parsePostgresArray(product.components)
+                    : [];
 
-    return components.length > 0 ? (
-      components.slice(0, 3).map((component, index) => (
-        <Badge key={index} className="text-sm">
-          {component}
-        </Badge>
-      ))
-    ) : (
-      <p className="text-gray-400 text-sm">No components listed</p>
-    );
-  })()}
-</div>
+                return components.length > 0 ? (
+                  components.slice(0, 3).map((component, index) => (
+                    <Badge key={index} className="text-sm">
+                      {component}
+                    </Badge>
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-sm">No components listed</p>
+                );
+              })()}
+            </div>
 
           </div>
         </CardContent>
@@ -188,11 +190,10 @@ export function ProductCard({ product }) {
 
       <CardFooter className="p-6 pt-0">
         <Button
-          className={`w-full transition-all duration-300 ${
-            isAdded
-              ? "focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-              : "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          }`}
+          className={`w-full transition-all duration-300 ${isAdded
+            ? "focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+            : "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            }`}
           onClick={handleAddToCart}
           disabled={isAdding}
         >

@@ -35,10 +35,10 @@ import { OrderButton } from "../components/OrderButton";
 // import { useAuth } from "../context/AuthContext"; // ✅
 
 export default function CartPage() {
-const navigate = useNavigate();
+  const navigate = useNavigate();
   // const { user, loading } = useUserAuth();
   // const userId = user?.userId;
-const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -110,11 +110,11 @@ const [user, setUser] = useState(null);
 
   if (loading) return <div>Loading...</div>;
   if (!user) return null; // or fallback UI
-  
- 
 
- 
- 
+
+
+
+
   const updateQuantity = (cartId, newQuantity) => {
     if (newQuantity < 1) return;
 
@@ -461,11 +461,8 @@ const [user, setUser] = useState(null);
   );
 }
 
-
-
-
-  {/* Delivery info, payment method, and order summary go here as-is */}
-            {/* <Card className="shadow-lg border-0">
+{/* Delivery info, payment method, and order summary go here as-is */ }
+{/* <Card className="shadow-lg border-0">
               <CardHeader className="bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-t-lg">
                 <CardTitle className="text-xl flex items-center gap-2">
                   <MapPin className="h-6 w-6" />
@@ -616,4 +613,4 @@ const [user, setUser] = useState(null);
               </CardContent>
             </Card> */}
 
-            {/* Payment Method */}
+{/* Payment Method */ }

@@ -485,6 +485,8 @@ import { useEffect } from "react";
 import axios from "axios";
 import api from "../api"; // adjust path based on file location
 
+
+
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "../components/ui/Botton";
 import { Badge } from "../components/ui/Badge";
@@ -503,7 +505,6 @@ import {
   Truck,
   Shield,
   RotateCcw,
-  X,
 } from "lucide-react";
 //import { mockProducts } from "../lib/mock-data";
 import { useCart } from "../context/CartContext";
@@ -704,6 +705,7 @@ export default function ProductDetailPage() {
   const totalPrice = product.price + gstAmount;
 
   return (
+
     <div className="container mx-auto px-4 py-8">
       {/* Download Form Modal */}
       {showDownloadForm && (
@@ -826,8 +828,8 @@ export default function ProductDetailPage() {
                   product.difficulty === "Beginner"
                     ? "secondary"
                     : product.difficulty === "Intermediate"
-                    ? "default"
-                    : "destructive"
+                      ? "default"
+                      : "destructive"
                 }
               >
                 {product.difficulty}
@@ -837,16 +839,6 @@ export default function ProductDetailPage() {
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
               {product.title}
             </h1>
-
-            <div className="flex items-center gap-4 mb-4">
-              <div className="flex items-center gap-1">
-                <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                <span className="font-medium">{product.rating}</span>
-                <span className="text-gray-500">
-                  ({product.reviews} reviews)
-                </span>
-              </div>
-            </div>
 
             <p className="text-gray-600 text-lg">{product.description}</p>
           </div>
@@ -905,31 +897,41 @@ export default function ProductDetailPage() {
             </div>
 
             <div className="flex flex-wrap gap-3 justify-center sm:justify-start w-full">
-              <Button
-                size="lg"
-                disabled={loading}   // 👈 don't allow clicks until auth check finishes
-                className="flex items-center justify-center bg-blue-600 text-white px-6 py-3 flex-grow sm:flex-grow-0 sm:w-auto hover:bg-blue-700 transition duration-300 shadow-sm hover:shadow-md disabled:opacity-50"
-                onClick={handleAddToCart}
-              >
-                <ShoppingCart className="h-5 w-5 mr-2" />
-                {loading ? "Checking login..." : "Add to Cart"}
-              </Button>
+             <Button
+  size="lg"
+  disabled={loading}   // 👈 don't allow clicks until auth check finishes
+  className="flex items-center justify-center bg-blue-600 text-white px-6 py-3 flex-grow sm:flex-grow-0 sm:w-auto hover:bg-blue-700 transition duration-300 shadow-sm hover:shadow-md disabled:opacity-50"
+  onClick={handleAddToCart}
+>
+  <ShoppingCart className="h-5 w-5 mr-2" />
+  {loading ? "Checking login..." : "Add to Cart"}
+</Button>
 
               <Button
                 size="lg"
                 variant="outline"
                 className="flex items-center justify-center px-6 py-3 sm:w-auto"
+                onClick={() => {
+                  if (navigator.share) {
+                    navigator
+                      .share({
+                        title: product.title,
+                        text: `Check out this project: ${product.title}`,
+                        url: window.location.href,
+                      })
+                      .then(() => console.log("Shared successfully"))
+                      .catch((err) => console.error("Share failed:", err));
+                  } else {
+                    // fallback for browsers that don't support navigator.share
+                    alert("Sharing is not supported in this browser. Copying link instead.");
+                    navigator.clipboard.writeText(window.location.href);
+                  }
+                }}
               >
-                <Heart className="h-5 w-5" />
+                <Share2 className="h-5 w-5 mr-2" />
+                Share
               </Button>
 
-              <Button
-                size="lg"
-                variant="outline"
-                className="flex items-center justify-center px-6 py-3 sm:w-auto"
-              >
-                <Share2 className="h-5 w-5" />
-              </Button>
             </div>
 
           <Button
@@ -955,23 +957,29 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Features */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Free Shipping */}
             <div className="text-center p-4 bg-blue-50 rounded-lg">
               <Truck className="h-6 w-6 text-blue-600 mx-auto mb-2" />
               <div className="text-sm font-medium">Free Shipping</div>
               <div className="text-xs text-gray-600">On orders above ₹2000</div>
             </div>
+
+            {/* 100% Tested Project */}
             <div className="text-center p-4 bg-green-50 rounded-lg">
               <Shield className="h-6 w-6 text-green-600 mx-auto mb-2" />
-              <div className="text-sm font-medium">1 Year Warranty</div>
-              <div className="text-xs text-gray-600">Manufacturing defects</div>
+              <div className="text-sm font-medium">100% Tested Project</div>
+              <div className="text-xs text-gray-600">Quality checked & verified</div>
             </div>
+
+            {/* 24×7 Support */}
             <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <RotateCcw className="h-6 w-6 text-purple-600 mx-auto mb-2" />
-              <div className="text-sm font-medium">Easy Returns</div>
-              <div className="text-xs text-gray-600">7 days return policy</div>
+              <Headphones className="h-6 w-6 text-purple-600 mx-auto mb-2" />
+              <div className="text-sm font-medium">24×7 Support</div>
+              <div className="text-xs text-gray-600">Always available for you</div>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -1057,9 +1065,8 @@ export default function ProductDetailPage() {
                     ].map(([label, value], i) => (
                       <div
                         key={i}
-                        className={`grid grid-cols-2 gap-4 py-2 ${
-                          i < 10 ? "border-b border-blue-100" : ""
-                        }`}
+                        className={`grid grid-cols-2 gap-4 py-2 ${i < 10 ? "border-b border-blue-100" : ""
+                          }`}
                       >
                         <span className="font-medium">{label}:</span>
                         <span>{value}</span>
