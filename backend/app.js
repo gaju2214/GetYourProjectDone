@@ -84,6 +84,7 @@ const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const protectedRoutes = require("./routes/protectedRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+
 const cookieParser = require("cookie-parser");
 const authenticateUser = require("./middleware/auth");
 const sequelize = require("./config/db");
@@ -132,6 +133,7 @@ app.use(cookieParser());
 
 // Routes
 app.use("/api/auth", authRoutes);
+
 app.use("/api/categories", categoryRoutes);
 app.use("/api/subcategories", subcategoryRoutes);
 app.use("/api/projects", projectRoutes);

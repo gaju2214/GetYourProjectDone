@@ -36,7 +36,7 @@ function App() {
         <Route path="/cart" element={<CartPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/success" element={<SuccessPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/profile" element={<Account />} />
         <Route path="/adlogin" element={<AdminLogin />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/categories" element={<CategoriesPage />} />
@@ -45,7 +45,7 @@ function App() {
         <Route path="/projects" element={<ProjectList />} />
         <Route path="/*" element={<NotFoundPage />} />
         <Route path="/projects/:category" element={<CategoryPage />} />
-        <Route path="/account" element={<Account />} />
+       
         {/* just for fun */}
       </Routes>
     </>

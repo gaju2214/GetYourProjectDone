@@ -11,12 +11,69 @@ const authenticateUser = require("../middleware/auth"); // Import your middlewar
 router.post("/register", authController.register);
 router.post("/login", authController.login);
 
-// Google OAuth routes
-router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
+// // Google OAuth routes
+// router.get(
+//   "/google",
+//   passport.authenticate("google", { scope: ["profile", "email"] })
+// );
 
+// router.get(
+//   "/google/callback",
+//   passport.authenticate("google", {
+//     session: false,
+//     failureRedirect: `${process.env.CLIENT_URL}/auth/login`,
+//   }),
+//   (req, res) => {
+//     try {
+//       const user = req.user;
+
+//       if (!user || !user.id) {
+//         return res.redirect(
+//           `${process.env.CLIENT_URL}/auth/login?error=auth_failed`
+//         );
+//       }
+
+//       const token = jwt.sign(
+//         {
+//           userId: user.id,
+//           email: user.email,
+//         },
+//         process.env.JWT_SECRET,
+//         { expiresIn: "1h" }
+//       );
+
+//       res.cookie("token", token, {
+//         httpOnly: true,
+//         secure: process.env.NODE_ENV === "production",
+//         sameSite: "Lax",
+//         maxAge: 3600000, // 1 hour
+//       });
+
+//       res.redirect(`${process.env.CLIENT_URL}/account`);
+//     } catch (error) {
+//       console.error("Error during Google callback:", error);
+//       res.redirect(`${process.env.CLIENT_URL}/auth/login?error=callback_error`);
+//     }
+//   }
+// );
+
+// Google OAuth entry
+router.get("/google", (req, res, next) => {
+  const returnUrl = req.query.returnUrl;
+
+  if (returnUrl) {
+    res.cookie("returnUrl", returnUrl, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
+      maxAge: 5 * 60 * 1000, // 5 minutes
+    });
+  }
+
+  passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
+});
+
+// Google OAuth callback
 router.get(
   "/google/callback",
   passport.authenticate("google", {
@@ -28,16 +85,11 @@ router.get(
       const user = req.user;
 
       if (!user || !user.id) {
-        return res.redirect(
-          `${process.env.CLIENT_URL}/auth/login?error=auth_failed`
-        );
+        return res.redirect(`${process.env.CLIENT_URL}/auth/login?error=auth_failed`);
       }
 
       const token = jwt.sign(
-        {
-          userId: user.id,
-          email: user.email,
-        },
+        { userId: user.id, email: user.email },
         process.env.JWT_SECRET,
         { expiresIn: "1h" }
       );
@@ -49,7 +101,29 @@ router.get(
         maxAge: 3600000, // 1 hour
       });
 
-      res.redirect(`${process.env.CLIENT_URL}/account`);
+      // Get returnUrl from cookie (if set)
+      const redirectUrl = req.cookies.returnUrl;
+      res.clearCookie("returnUrl");
+
+      // Validate returnUrl
+      const isValidReturnUrl = (url) => {
+        if (!url) return false;
+        try {
+          const parsedUrl = new URL(url);
+          const clientUrl = new URL(process.env.CLIENT_URL);
+          return parsedUrl.hostname === clientUrl.hostname;
+        } catch {
+          return false;
+        }
+      };
+
+      if (isValidReturnUrl(redirectUrl)) {
+        console.log(`✅ Redirecting to stored URL: ${redirectUrl}`);
+        res.redirect(redirectUrl);
+      } else {
+        console.log("⚠️ No valid returnUrl, redirecting to /account");
+        res.redirect(`${process.env.CLIENT_URL}/account`);
+      }
     } catch (error) {
       console.error("Error during Google callback:", error);
       res.redirect(`${process.env.CLIENT_URL}/auth/login?error=callback_error`);
