@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+
 import api from "../api"; // adjust path based on file location
 
 import { useNavigate } from "react-router-dom";
@@ -134,13 +134,12 @@ export default function CartPage() {
   if (loading) return <div>Loading...</div>;
   if (!user) return null; // or fallback UI
 
-<<<<<<< HEAD
-=======
 
 
 
 
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
+
+
   const updateQuantity = (cartId, newQuantity) => {
     if (newQuantity < 1) return;
 
@@ -512,8 +511,8 @@ export default function CartPage() {
     </div>
   );
 }
-<<<<<<< HEAD
-=======
+
+
 
 {/* Delivery info, payment method, and order summary go here as-is */ }
 {/* <Card className="shadow-lg border-0">
@@ -668,4 +667,4 @@ export default function CartPage() {
             </Card> */}
 
 {/* Payment Method */ }
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
+

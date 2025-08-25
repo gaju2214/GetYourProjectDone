@@ -275,7 +275,6 @@
 // }
 
 
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -296,39 +295,13 @@ import { Button } from "../components/ui/Botton";
 
 export default function Account() {
   const navigate = useNavigate();
-<<<<<<< HEAD
-  const [activeTab, setActiveTab] = useState("profile");
-  const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState(null);
-
-  const [name, setname] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [dob, setDob] = useState("");
-  const [gender, setGender] = useState("female");
-
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (!storedUser) return navigate("/login");
-
-    setUser(storedUser);
-    const [f, l] = storedUser.name?.split(" ") || ["", ""];
-    setname(f);
-    setLastName(l);
-    setEmail(storedUser.email || "");
-    setPhone(storedUser.phone || "");
-    setDob(storedUser.dob || "");
-    setGender(storedUser.gender || "female");
-  }, [navigate]);
-=======
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const [activeTab, setActiveTab] = useState("profile");
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState(null);
 
-  // form fields
+  // Profile fields
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -336,10 +309,16 @@ export default function Account() {
   const [dob, setDob] = useState("");
   const [gender, setGender] = useState("female");
 
+  // Address fields
+  const [city, setCity] = useState("");
+  const [pincode, setPincode] = useState("");
+  const [state, setState] = useState("");
+  const [country, setCountry] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // ✅ Fetch profile from backend instead of localStorage
+  // ✅ Fetch profile (with addresses)
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
@@ -349,6 +328,7 @@ export default function Account() {
         });
         const u = res.data;
         setUser(u);
+
         const [f, l] = u.name?.split(" ") || ["", ""];
         setFirstName(f);
         setLastName(l);
@@ -356,6 +336,13 @@ export default function Account() {
         setPhone(u.phoneNumber || "");
         setDob(u.dob || "");
         setGender(u.gender || "female");
+
+        // address fields
+        setCity(u.city || "");
+        setPincode(u.pincode || "");
+        setState(u.state || "");
+        setCountry(u.country || "");
+
         setError(null);
       } catch (err) {
         console.error("Profile fetch failed:", err);
@@ -367,35 +354,22 @@ export default function Account() {
     };
     fetchProfile();
   }, [backendUrl]);
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
 
   const handleSave = async () => {
     const updatedUser = {
       ...user,
-<<<<<<< HEAD
-      name: `${name} ${lastName}`.trim(),
-      email,
-      phone,
-=======
       name: `${firstName} ${lastName}`.trim(),
       email,
       phoneNumber: phone,
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
       dob,
       gender,
+      city,
+      pincode,
+      state,
+      country,
     };
 
     try {
-<<<<<<< HEAD
-      const response = await axios.put("/api/user/profile", updatedUser);
-      localStorage.setItem("user", JSON.stringify(response.data));
-      setUser(response.data);
-      setIsEditing(false);
-      alert("Profile updated successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to update profile.");
-=======
       setLoading(true);
       const res = await axios.put(`${backendUrl}/api/auth/profile`, updatedUser, {
         withCredentials: true,
@@ -408,34 +382,27 @@ export default function Account() {
       alert("Failed to update profile.");
     } finally {
       setLoading(false);
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
     }
   };
 
   const handleCancel = () => {
-<<<<<<< HEAD
-    const [f, l] = user.name?.split(" ") || ["", ""];
-    setname(f);
-    setLastName(l);
-    setEmail(user.email || "");
-    setPhone(user.phone || "");
-=======
     if (!user) return;
     const [f, l] = user.name?.split(" ") || ["", ""];
     setFirstName(f);
     setLastName(l);
     setEmail(user.email || "");
     setPhone(user.phoneNumber || "");
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
     setDob(user.dob || "");
     setGender(user.gender || "female");
+
+    setCity(user.city || "");
+    setPincode(user.pincode || "");
+    setState(user.state || "");
+    setCountry(user.country || "");
+
     setIsEditing(false);
   };
 
-<<<<<<< HEAD
-  if (!user) return null;
-
-=======
   const handleLogout = async () => {
     try {
       await axios.post(`${backendUrl}/api/auth/logout`, {}, { withCredentials: true });
@@ -471,7 +438,6 @@ export default function Account() {
 
   if (!user) return null;
 
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
   const sidebarItems = [
     { tab: "profile", label: "Profile", icon: User },
     { tab: "orders", label: "Orders", icon: PackageCheck },
@@ -507,14 +473,7 @@ export default function Account() {
               </div>
             ))}
             <Button
-<<<<<<< HEAD
-              onClick={() => {
-                localStorage.removeItem("user");
-                navigate("/login");
-              }}
-=======
               onClick={handleLogout}
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
               className="w-full mt-4 bg-gradient-to-r from-red-100 to-orange-200 text-red-700 border border-red-200 hover:shadow-md rounded-xl py-2 font-semibold flex items-center justify-center gap-2"
             >
               <LogOut className="w-4 h-4" /> Logout
@@ -523,15 +482,12 @@ export default function Account() {
 
           {/* Main Content */}
           <div className="w-full md:w-3/4 p-4 sm:p-8 space-y-6">
+            {/* Profile */}
             {activeTab === "profile" && (
               <>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                   <div className="text-xl font-bold text-orange-700 mb-4 sm:mb-0">
-<<<<<<< HEAD
-                    Hello, {name}!
-=======
                     Hello, {firstName}!
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
                   </div>
                   {!isEditing ? (
                     <button
@@ -558,21 +514,14 @@ export default function Account() {
                   )}
                 </div>
 
-<<<<<<< HEAD
-=======
                 {/* Profile Form */}
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {/* Name */}
                   <div>
                     <label className="text-sm text-gray-600">First Name</label>
                     <input
-<<<<<<< HEAD
-                      value={name}
-                      onChange={(e) => setname(e.target.value)}
-=======
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
                       readOnly={!isEditing}
                       className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
                         isEditing
@@ -594,6 +543,8 @@ export default function Account() {
                       }`}
                     />
                   </div>
+
+                  {/* Email & Phone */}
                   <div>
                     <label className="text-sm text-gray-600 flex gap-1 items-center">
                       <Mail className="w-4 h-4 text-blue-400" /> Email
@@ -624,6 +575,8 @@ export default function Account() {
                       }`}
                     />
                   </div>
+
+                  {/* DOB & Gender */}
                   <div>
                     <label className="text-sm text-gray-600 flex gap-1 items-center">
                       <Calendar className="w-4 h-4 text-blue-400" /> DOB
@@ -644,14 +597,7 @@ export default function Account() {
                     <label className="text-sm text-gray-600">Gender</label>
                     <div className="mt-2 space-x-6">
                       {["male", "female"].map((g) => (
-<<<<<<< HEAD
-                        <label
-                          key={g}
-                          className="inline-flex items-center gap-2"
-                        >
-=======
                         <label key={g} className="inline-flex items-center gap-2">
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
                           <input
                             type="radio"
                             value={g}
@@ -669,6 +615,7 @@ export default function Account() {
               </>
             )}
 
+            {/* Orders */}
             {activeTab === "orders" && (
               <div>
                 <h2 className="text-xl font-semibold text-orange-600 mb-2">
@@ -678,17 +625,70 @@ export default function Account() {
               </div>
             )}
 
+            {/* Addresses */}
             {activeTab === "addresses" && (
               <div>
-                <h2 className="text-xl font-semibold text-orange-600 mb-2">
-                  🏠 Saved Addresses
+                <h2 className="text-xl font-semibold text-orange-600 mb-4">
+                  🏠 Saved Address
                 </h2>
-                <p className="text-gray-500">
-                  You haven't added any address yet.
-                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="text-sm text-gray-600">City</label>
+                    <input
+                      value={city}
+                      onChange={(e) => setCity(e.target.value)}
+                      readOnly={!isEditing}
+                      className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
+                        isEditing
+                          ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
+                          : "bg-gray-100 border-transparent"
+                      }`}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-600">Pincode</label>
+                    <input
+                      value={pincode}
+                      onChange={(e) => setPincode(e.target.value)}
+                      readOnly={!isEditing}
+                      className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
+                        isEditing
+                          ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
+                          : "bg-gray-100 border-transparent"
+                      }`}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-600">State</label>
+                    <input
+                      value={state}
+                      onChange={(e) => setState(e.target.value)}
+                      readOnly={!isEditing}
+                      className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
+                        isEditing
+                          ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
+                          : "bg-gray-100 border-transparent"
+                      }`}
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-600">Country</label>
+                    <input
+                      value={country}
+                      onChange={(e) => setCountry(e.target.value)}
+                      readOnly={!isEditing}
+                      className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
+                        isEditing
+                          ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
+                          : "bg-gray-100 border-transparent"
+                      }`}
+                    />
+                  </div>
+                </div>
               </div>
             )}
 
+            {/* FAQ */}
             {activeTab === "faq" && (
               <div>
                 <h2 className="text-xl font-semibold text-orange-600 mb-2">

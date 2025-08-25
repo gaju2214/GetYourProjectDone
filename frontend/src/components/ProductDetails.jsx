@@ -679,11 +679,11 @@ export default function ProductDetailPage() {
 
     try {
       const cartItem = {
-<<<<<<< HEAD
+
         userId: user.userId, //1, ✅ dynamic user ID from context
-=======
+
         userId: user?.userId,
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
+
         projectId: product.id,
         quantity: 1,
       };

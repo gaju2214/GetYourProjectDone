@@ -162,17 +162,15 @@ router.get("/profile", authenticateUser, async (req, res) => {
     res.status(500).json({ error: "Failed to fetch profile" });
   }
 });
-
+// Update profile
 router.put("/profile", authenticateUser, async (req, res) => {
   try {
-    // req.user is available from the middleware
     const user = await User.findOne({ where: { id: req.user.userId } });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-<<<<<<< HEAD
     const {
       phoneNumber,
       password,
@@ -183,10 +181,9 @@ router.put("/profile", authenticateUser, async (req, res) => {
       pincode,
       state,
       country,
+      dob,
+      gender,
     } = req.body;
-=======
-    const { phoneNumber, password, name, dob, gender } = req.body;
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
 
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (address) user.address = address;
@@ -195,13 +192,10 @@ router.put("/profile", authenticateUser, async (req, res) => {
     if (state) user.state = state;
     if (country) user.country = country;
     if (name) user.name = name;
-<<<<<<< HEAD
     if (lastname) user.lastname = lastname;
-=======
-    if (dob) user.dob = dob;            
-    if (gender) user.gender = gender;   
+    if (dob) user.dob = dob;
+    if (gender) user.gender = gender;
 
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
     if (password) {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
@@ -217,8 +211,8 @@ router.put("/profile", authenticateUser, async (req, res) => {
         name: user.name,
         lastname: user.lastname,
         phoneNumber: user.phoneNumber,
-        dob: user.dob,          
-        gender: user.gender,     
+        dob: user.dob,
+        gender: user.gender,
         avatar: user.avatar,
         provider: user.provider,
         address: user.address,
@@ -233,6 +227,7 @@ router.put("/profile", authenticateUser, async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 });
+
 
 router.post("/logout", (req, res) => {
   try {

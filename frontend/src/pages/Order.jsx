@@ -1,11 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import { Package, Truck, CheckCircle, Clock, X, Eye } from "lucide-react";
 import { useState, useEffect } from "react";
-<<<<<<< HEAD
-import api from "../api";
-=======
+
+
+
 import api from '../api';
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
+
 // Replace these imports with local component implementations or from a UI library
 import {
   Card,

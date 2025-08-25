@@ -20,13 +20,13 @@ router.get(
 //from here
 // Get single project by ID
 router.get("/:id", projectController.getProjectById);
-<<<<<<< HEAD
+
 router.put("/:id", projectController.updateProject);
-=======
+
 router.put("/:id", projectController.updateProject)
 router.delete("/:id", projectController.deleteProject);
 
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
+
 // // // Projects
 // router.get("/project/:id", projectController.getProjectById);
 
