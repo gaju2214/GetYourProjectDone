@@ -57,7 +57,6 @@ router.get(
   }
 );
 
-
 router.get("/profile", authenticateUser, async (req, res) => {
   console.log("📩 Profile route hit");
   try {
@@ -72,9 +71,15 @@ router.get("/profile", authenticateUser, async (req, res) => {
       id: user.id,
       email: user.email,
       name: user.name,
+      lastname: user.lastname,
       phoneNumber: user.phoneNumber,
       avatar: user.avatar,
       provider: user.provider,
+      address: user.address,
+      city: user.city,
+      pincode: user.pincode,
+      state: user.state,
+      country: "India",
     });
   } catch (error) {
     console.error("Get profile error:", error);
@@ -91,10 +96,26 @@ router.put("/profile", authenticateUser, async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const { phoneNumber, password, name } = req.body;
+    const {
+      phoneNumber,
+      password,
+      name,
+      lastname,
+      address,
+      city,
+      pincode,
+      state,
+      country,
+    } = req.body;
 
     if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (address) user.address = address;
+    if (city) user.city = city;
+    if (pincode) user.pincode = pincode;
+    if (state) user.state = state;
+    if (country) user.country = country;
     if (name) user.name = name;
+    if (lastname) user.lastname = lastname;
     if (password) {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
@@ -108,9 +129,15 @@ router.put("/profile", authenticateUser, async (req, res) => {
         id: user.id,
         email: user.email,
         name: user.name,
+        lastname: user.lastname,
         phoneNumber: user.phoneNumber,
         avatar: user.avatar,
         provider: user.provider,
+        address: user.address,
+        city: user.city,
+        pincode: user.pincode,
+        state: user.state,
+        country: user.country,
       },
     });
   } catch (error) {
@@ -124,7 +151,7 @@ router.post("/logout", (req, res) => {
     req.logout(() => {
       req.session?.destroy?.();
       res.clearCookie("token");
-      res.status(200).json({ message: "Logout successful" }); 
+      res.status(200).json({ message: "Logout successful" });
     });
   } catch (error) {
     console.error("Error during logout:", error);

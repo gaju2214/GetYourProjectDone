@@ -23,7 +23,8 @@ export default function SuccessPage() {
     orderId: orderId,
     orderDate: new Date().toLocaleDateString("en-IN"),
     customerInfo: {
-      name: "John Doe",
+      name: "Nikhil",
+      lastname: "Kandhare",
       email: "john.doe@example.com",
       mobile: "+91-9876543210",
       address: "123 Tech Street, Innovation Hub",
@@ -144,9 +145,7 @@ export default function SuccessPage() {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link to="/">
-            <button
-              className="w-full sm:w-auto transition-colors py-3 text-lg px-5 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-md dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-            >
+            <button className="w-full sm:w-auto transition-colors py-3 text-lg px-5 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-md dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
               Continue Shopping
             </button>
           </Link>
@@ -159,7 +158,6 @@ export default function SuccessPage() {
               Track Order
             </Button>
           </Link>
-
         </div>
 
         {/* Additional Info */}

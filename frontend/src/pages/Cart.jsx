@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import api from '../api'; // adjust path based on file location
+import api from "../api"; // adjust path based on file location
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Botton";
 import {
-
   Card,
   CardContent,
   CardHeader,
@@ -31,17 +30,16 @@ import {
 } from "lucide-react";
 import { OrderButton } from "../components/OrderButton";
 
-
 // import { useAuth } from "../context/AuthContext"; // ✅
 
 export default function CartPage() {
-const navigate = useNavigate();
+  const navigate = useNavigate();
   // const { user, loading } = useUserAuth();
   // const userId = user?.userId;
-const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const [profile, setProfile] = useState(null);
 
   const [cartItems, setCartItems] = useState([]);
   const [itemCount, setItemCount] = useState(0);
@@ -49,6 +47,7 @@ const [user, setUser] = useState(null);
 
   const [deliveryInfo, setDeliveryInfo] = useState({
     name: "",
+    lastname: "",
     mobile: "",
     pincode: "",
     city: "",
@@ -58,9 +57,30 @@ const [user, setUser] = useState(null);
     address: "",
   });
 
-  const [paymentMethod, setPaymentMethod] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("op");
+  const [error, setError] = useState(null);
+
   // Extract userId safely
   const userId = user?.userId;
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get(`/api/auth/profile`, {
+          withCredentials: true,
+        });
+        setProfile(res.data);
+
+        setError(null);
+        console.log(res.data);
+      } catch (err) {
+        console.error("Profile fetch failed:", err);
+        setError("You must be logged in to view your profile.");
+        setProfile(null);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   // Check auth on mount
   useEffect(() => {
@@ -102,7 +122,10 @@ const [user, setUser] = useState(null);
         setCartItems(res.data);
         setItemCount(res.data.reduce((sum, item) => sum + item.quantity, 0));
         setTotal(
-          res.data.reduce((sum, item) => sum + (item.price || 0) * item.quantity, 0)
+          res.data.reduce(
+            (sum, item) => sum + (item.price || 0) * item.quantity,
+            0
+          )
         );
       })
       .catch((err) => console.error("Error fetching cart:", err));
@@ -110,37 +133,41 @@ const [user, setUser] = useState(null);
 
   if (loading) return <div>Loading...</div>;
   if (!user) return null; // or fallback UI
-  
- 
 
- 
- 
   const updateQuantity = (cartId, newQuantity) => {
     if (newQuantity < 1) return;
 
-    api.put(`/api/cart/update/${cartId}`, {
-      quantity: newQuantity
-    })
-      .then(res => {
-        const updatedCart = cartItems.map(item =>
+    api
+      .put(`/api/cart/update/${cartId}`, {
+        quantity: newQuantity,
+      })
+      .then((res) => {
+        const updatedCart = cartItems.map((item) =>
           item.id === cartId ? { ...item, quantity: newQuantity } : item
         );
 
         setCartItems(updatedCart);
 
         // Optional: update totals
-        const newTotal = updatedCart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-        const newItemCount = updatedCart.reduce((sum, i) => sum + i.quantity, 0);
+        const newTotal = updatedCart.reduce(
+          (sum, i) => sum + i.price * i.quantity,
+          0
+        );
+        const newItemCount = updatedCart.reduce(
+          (sum, i) => sum + i.quantity,
+          0
+        );
         setTotal(newTotal);
         setItemCount(newItemCount);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Failed to update quantity:", err);
       });
   };
 
   const removeItem = (id) => {
-    api.delete(`/api/cart/${id}`)
+    api
+      .delete(`/api/cart/${id}`)
       .then(() => {
         setCartItems((prev) => prev.filter((item) => item.id !== id));
       })
@@ -176,16 +203,41 @@ const [user, setUser] = useState(null);
     }
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
     if (!paymentMethod) {
       alert("Please select a payment method");
       return;
     }
-    // Optionally: send order to backend here
-    setCartItems([]);
-    setItemCount(0);
-    setTotal(0);
-    navigate("/success");
+    try {
+      const orderData = {
+        orderId: `ORD-${Date.now()}`,
+        user_id: profile?.id,
+        mobile: profile?.phoneNumber,
+        customerName: `${profile?.name} ${profile?.lastname || ""}`,
+        productId: cartItems[0]?.id,
+        shippingAddress: profile?.address,
+        paymentMethod: paymentMethod,
+        totalAmount: total,
+      };
+
+      const response = await fetch("http://localhost:5000/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      });
+
+      const result = await response.json();
+      console.log("Order Saved:", result);
+
+      setCartItems([]);
+      setItemCount(0);
+      setTotal(0);
+
+      navigate("/success");
+    } catch (error) {
+      console.error("Error placing order:", error);
+      alert("Failed to place order");
+    }
   };
 
   if (cartItems.length === 0) {
@@ -238,8 +290,9 @@ const [user, setUser] = useState(null);
                 {cartItems.map((item, index) => (
                   <div
                     key={item.id}
-                    className={`p-6 ${index !== cartItems.length - 1 ? "border-b" : ""
-                      }`}
+                    className={`p-6 ${
+                      index !== cartItems.length - 1 ? "border-b" : ""
+                    }`}
                   >
                     <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                       <div className="relative">
@@ -331,7 +384,7 @@ const [user, setUser] = useState(null);
           </div>
 
           <div className="xl:col-span-2 space-y-6">
-          //special
+            {/* special */}
             <Card className="shadow-lg border-0">
               <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-t-lg">
                 <CardTitle className="text-xl">Payment Method</CardTitle>
@@ -340,29 +393,12 @@ const [user, setUser] = useState(null);
                 <div className="space-y-3">
                   {[
                     {
-                      id: "upi",
+                      id: "op",
                       icon: Smartphone,
-                      label: "UPI Payment",
+                      label: "Online Payment",
                       color: "text-blue-600",
                     },
-                    {
-                      id: "card",
-                      icon: CreditCard,
-                      label: "Debit/Credit Card",
-                      color: "text-green-600",
-                    },
-                    {
-                      id: "netbanking",
-                      icon: Banknote,
-                      label: "Net Banking",
-                      color: "text-purple-600",
-                    },
-                    {
-                      id: "wallet",
-                      icon: Wallet,
-                      label: "Digital Wallet",
-                      color: "text-orange-600",
-                    },
+
                     {
                       id: "cod",
                       icon: Banknote,
@@ -372,10 +408,11 @@ const [user, setUser] = useState(null);
                   ].map((method) => (
                     <div
                       key={method.id}
-                      className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md ${paymentMethod === method.id
-                        ? "border-blue-500 bg-blue-50 shadow-md"
-                        : "border-gray-200 hover:border-gray-300"
-                        }`}
+                      className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md ${
+                        paymentMethod === method.id
+                          ? "border-blue-500 bg-blue-50 shadow-md"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
                       onClick={() => setPaymentMethod(method.id)}
                     >
                       <div className="flex items-center gap-3">
@@ -425,8 +462,9 @@ const [user, setUser] = useState(null);
                   <div className="flex justify-between">
                     <span>Delivery Charges</span>
                     <span
-                      className={`font-semibold ${deliveryCharge === 0 ? "text-green-600" : ""
-                        }`}
+                      className={`font-semibold ${
+                        deliveryCharge === 0 ? "text-green-600" : ""
+                      }`}
                     >
                       {deliveryCharge === 0 ? "FREE" : `₹${deliveryCharge}`}
                     </span>
@@ -445,7 +483,14 @@ const [user, setUser] = useState(null);
                 <div className="pt-4 flex justify-center">
                   <OrderButton
                     onOrderComplete={handleCheckout}
+                    finalTotal={finalTotal}
                     disabled={!paymentMethod}
+                    paymentMethod={paymentMethod}
+                    cartItems={cartItems}
+                    total={total}
+                    setError={setError}
+                    setProfile={setProfile}
+                    profile={profile}
                   />
                 </div>
 
@@ -460,160 +505,3 @@ const [user, setUser] = useState(null);
     </div>
   );
 }
-
-
-
-
-  {/* Delivery info, payment method, and order summary go here as-is */}
-            {/* <Card className="shadow-lg border-0">
-              <CardHeader className="bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-t-lg">
-                <CardTitle className="text-xl flex items-center gap-2">
-                  <MapPin className="h-6 w-6" />
-                  Delivery Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="name"
-                    className="text-sm font-semibold flex items-center gap-2"
-                  >
-                    <User className="h-4 w-4" />
-                    Full Name
-                  </Label>
-                  <Input
-                    id="name"
-                    placeholder="Enter your full name"
-                    value={deliveryInfo.name}
-                    onChange={(e) =>
-                      setDeliveryInfo((prev) => ({
-                        ...prev,
-                        name: e.target.value,
-                      }))
-                    }
-                    className="h-12"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="mobile"
-                    className="text-sm font-semibold flex items-center gap-2"
-                  >
-                    <Phone className="h-4 w-4" />
-                    Mobile Number
-                  </Label>
-                  <Input
-                    id="mobile"
-                    placeholder="Enter 10-digit mobile number"
-                    value={deliveryInfo.mobile}
-                    onChange={(e) =>
-                      setDeliveryInfo((prev) => ({
-                        ...prev,
-                        mobile: e.target.value,
-                      }))
-                    }
-                    className="h-12"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="email"
-                    className="text-sm font-semibold flex items-center gap-2"
-                  >
-                    <Mail className="h-4 w-4" />
-                    Email Address
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={deliveryInfo.email}
-                    onChange={(e) =>
-                      setDeliveryInfo((prev) => ({
-                        ...prev,
-                        email: e.target.value,
-                      }))
-                    }
-                    className="h-12"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="pincode" className="text-sm font-semibold">
-                    Pincode
-                  </Label>
-                  <Input
-                    id="pincode"
-                    placeholder="Enter 6-digit pincode"
-                    value={deliveryInfo.pincode}
-                    onChange={(e) => handlePincodeChange(e.target.value)}
-                    className="h-12"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="city" className="text-sm font-semibold">
-                      City
-                    </Label>
-                    <Input
-                      id="city"
-                      value={deliveryInfo.city}
-                      readOnly
-                      className="h-12 bg-gray-50"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="state" className="text-sm font-semibold">
-                      State
-                    </Label>
-                    <Input
-                      id="state"
-                      value={deliveryInfo.state}
-                      readOnly
-                      className="h-12 bg-gray-50"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="address" className="text-sm font-semibold">
-                    Full Address
-                  </Label>
-                  <Input
-                    id="address"
-                    placeholder="House/Flat, Street, Area"
-                    value={deliveryInfo.address}
-                    onChange={(e) =>
-                      setDeliveryInfo((prev) => ({
-                        ...prev,
-                        address: e.target.value,
-                      }))
-                    }
-                    className="h-12"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="landmark" className="text-sm font-semibold">
-                    Landmark (Optional)
-                  </Label>
-                  <Input
-                    id="landmark"
-                    placeholder="Nearby landmark"
-                    value={deliveryInfo.landmark}
-                    onChange={(e) =>
-                      setDeliveryInfo((prev) => ({
-                        ...prev,
-                        landmark: e.target.value,
-                      }))
-                    }
-                    className="h-12"
-                  />
-                </div>
-              </CardContent>
-            </Card> */}
-
-            {/* Payment Method */}

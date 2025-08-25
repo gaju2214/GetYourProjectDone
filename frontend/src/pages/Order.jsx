@@ -1,8 +1,7 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { Package, Truck, CheckCircle, Clock, X, Eye } from "lucide-react";
 import { useState, useEffect } from "react";
-import api from '../api'; 
+import api from "../api";
 // Replace these imports with local component implementations or from a UI library
 import {
   Card,
@@ -21,15 +20,12 @@ import {
 import { mockOrders } from "../lib/mock-data";
 import { InvoiceDownload } from "../components/InvoiceDownload";
 
-
 export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState(null);
-const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
-
-
 
   // Check auth on mount
   useEffect(() => {
@@ -100,7 +96,8 @@ const [user, setUser] = useState(null);
     orderId: order.id,
     orderDate: new Date(order.date).toLocaleDateString("en-IN"),
     customerInfo: {
-      name: "John Doe",
+      name: "Nikhil",
+      lastname: "Kandhare",
       email: "john.doe@example.com",
       mobile: "+91-9876543210",
       address: "123 Tech Street, Innovation Hub",
