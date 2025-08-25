@@ -107,7 +107,6 @@ export function OrderButton({
         profile?.name &&
         profile?.lastname &&
         profile?.state &&
-        profile?.country &&
         profile?.city &&
         profile?.phoneNumber ? (
           <div>
