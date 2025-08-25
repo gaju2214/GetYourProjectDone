@@ -681,9 +681,6 @@ export default function ProductDetailPage() {
       const cartItem = {
 
         userId: user.userId, //1, ✅ dynamic user ID from context
-
-        userId: user?.userId,
-
         projectId: product.id,
         quantity: 1,
       };

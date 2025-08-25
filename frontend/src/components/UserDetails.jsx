@@ -58,7 +58,7 @@ const BillingFormPopup = ({ isPopupOpen, setIsPopupOpen, profile }) => {
         newErrors.name = "First name is required";
       }
       if (!formData.lastname.trim()) {
-        newErrors.lastname = "First name is required";
+        newErrors.lastname = "Last nane is required";
       }
     }
 
@@ -192,7 +192,7 @@ const BillingFormPopup = ({ isPopupOpen, setIsPopupOpen, profile }) => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  First Name *
+                  Last Name *
                 </label>
                 <input
                   type="text"
