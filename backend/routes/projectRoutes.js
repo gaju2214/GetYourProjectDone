@@ -20,17 +20,26 @@ router.get(
 //from here
 // Get single project by ID
 router.get("/:id", projectController.getProjectById);
+<<<<<<< HEAD
 router.put("/:id", projectController.updateProject);
+=======
+router.put("/:id", projectController.updateProject)
+router.delete("/:id", projectController.deleteProject);
+
+>>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
 // // // Projects
 // router.get("/project/:id", projectController.getProjectById);
 
 // Categories
 router.get("/category/:id", projectController.getCategoryById);
 router.put("/category/:id", projectController.updateCategory);
+router.delete("/category/:id", projectController.deleteCategory);  
+
 
 // Subcategories
 // router.get("/subcategory/:subcategoryId", projectController.getProjectsBySubcategory);
 router.get("/subcategory/:id", projectController.getSubCategoryById);
 router.put("/subcategory/:id", projectController.updateSubcategory);
+ router.delete("/subcategory/:id", projectController.deleteSubcategory);
 
 module.exports = router;

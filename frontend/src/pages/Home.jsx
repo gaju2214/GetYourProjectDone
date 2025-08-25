@@ -51,7 +51,7 @@ const HomePage = () => {
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Complete project solutions for Electronics, Mechanical,
-              Electrical, Software, AI & ML, and Mechatronics students. Build,
+              Electrical, Software, Robotics, and Mechatronics students. Build,
               Learn, and Excel in your engineering journey with Get Your Project
               Done.
             </p>
@@ -217,7 +217,7 @@ const HomePage = () => {
               "Mechanical",
               "Electrical",
               "Software",
-              "AI & ML",
+              "Robotics",
               "Mechatronics",
             ].map((category) => (
               <motion.div

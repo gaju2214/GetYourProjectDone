@@ -80,36 +80,12 @@ export default function CategoriesPage() {
           </p>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-          <div className="text-center p-6 bg-white rounded-xl shadow-lg">
-            <Users className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900">10,000+</div>
-            <div className="text-gray-600">Students</div>
-          </div>
-          <div className="text-center p-6 bg-white rounded-xl shadow-lg">
-            <Award className="h-8 w-8 text-green-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900">500+</div>
-            <div className="text-gray-600">Projects</div>
-          </div>
-          <div className="text-center p-6 bg-white rounded-xl shadow-lg">
-            <Clock className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900">24/7</div>
-            <div className="text-gray-600">Support</div>
-          </div>
-          <div className="text-center p-6 bg-white rounded-xl shadow-lg">
-            <Zap className="h-8 w-8 text-orange-600 mx-auto mb-2" />
-            <div className="text-2xl font-bold text-gray-900">4.8/5</div>
-            <div className="text-gray-600">Rating</div>
-          </div>
-        </div>
-
         {/* Categories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {categoriesData.map((categoryObj) => {
             const category = categoryObj.name;
             const categoryId = categoryObj.id;
-            const categorySlug = categoryObj.slug; // ✅ define slug
+            const categorySlug = categoryObj.slug;
             const subcategories = categoryObj.subcategories || [];
             const icon = categoryIcons[category] || "📦";
             const gradient =
@@ -166,7 +142,6 @@ export default function CategoriesPage() {
                       </div>
                     </div>
 
-                    {/* ✅ Fixed this line by defining categoryId above */}
                     {category && categorySlug && (
                       <Link to={`/projects/${categorySlug}`}>
                         <Button className="text-white mt-4 grouptext-lg px-20 bg-red-500 hover:bg-red-700">
@@ -180,7 +155,32 @@ export default function CategoriesPage() {
             );
           })}
         </div>
+
+        {/* ✅ Stats Section (AFTER the cards) */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+          <div className="text-center p-6 bg-white rounded-xl shadow-lg">
+            <Users className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+            <div className="text-2xl font-bold text-gray-900">10,000+</div>
+            <div className="text-gray-600">Students</div>
+          </div>
+          <div className="text-center p-6 bg-white rounded-xl shadow-lg">
+            <Award className="h-8 w-8 text-green-600 mx-auto mb-2" />
+            <div className="text-2xl font-bold text-gray-900">500+</div>
+            <div className="text-gray-600">Projects</div>
+          </div>
+          <div className="text-center p-6 bg-white rounded-xl shadow-lg">
+            <Clock className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+            <div className="text-2xl font-bold text-gray-900">24/7</div>
+            <div className="text-gray-600">Support</div>
+          </div>
+          <div className="text-center p-6 bg-white rounded-xl shadow-lg">
+            <Zap className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+            <div className="text-2xl font-bold text-gray-900">4.8/5</div>
+            <div className="text-gray-600">Rating</div>
+          </div>
+        </div>
       </div>
     </div>
   );
+
 }

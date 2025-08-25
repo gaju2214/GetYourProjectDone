@@ -13,6 +13,7 @@ db.CartItem = require('./CartItem')(sequelize, Sequelize);
 db.Admin = require('./Admin')(sequelize, Sequelize);
 db.Order = require('./Order')(sequelize, Sequelize);
 db.OrderItem = require('./OrderItem')(sequelize, Sequelize);
+db.UserInfo = require('./UserInfo')(sequelize, Sequelize);
 
 // Call associate methods
 if (db.Category.associate) db.Category.associate(db);
@@ -22,6 +23,7 @@ if (db.CartItem.associate) db.CartItem.associate(db);
 if (db.Order.associate) db.Order.associate(db);
 if (db.OrderItem.associate) db.OrderItem.associate(db);
 if (db.Admin.associate) db.Admin.associate(db);
+if (db.UserInfo.associate) db.UserInfo.associate(db);
 
 // Define user-cart relationship
 db.User.hasOne(db.Cart);
@@ -38,5 +40,6 @@ module.exports = {
   CartItem: db.CartItem,
   Order: db.Order,
   OrderItem: db.OrderItem,
-  Admin: db.Admin
+  Admin: db.Admin,
+  UserInfo:db.UserInfo
 };

@@ -1,4 +1,4 @@
-const { Project, Subcategory, Category } = require("../models");
+const { Project, Subcategory, Category, CartItem } = require("../models");
 const slugify = require("slugify");
 const { Op } = require("sequelize");
 
@@ -113,7 +113,9 @@ exports.getAllProjects = async (req, res) => {
       }
 
       //  No match found
-      return res.status(404).json({ error: "No projects found for your search query." });
+      return res
+        .status(404)
+        .json({ error: "No projects found for your search query." });
     }
 
     // If no search query provided, return all projects
@@ -209,7 +211,8 @@ exports.getProjectBySlug = async (req, res) => {
 
 
 
-//from here
+
+//from here get project , category , subcategory
 
 // Get single project by ID (edit)
 exports.getProjectById = async (req, res) => {
@@ -228,7 +231,6 @@ exports.getProjectById = async (req, res) => {
   }
 };
 
-
 exports.getCategoryById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -245,9 +247,6 @@ exports.getCategoryById = async (req, res) => {
   }
 };
 
-
-
-
 exports.getSubCategoryById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -263,8 +262,6 @@ exports.getSubCategoryById = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
-
 
 // exports.getProjectsBySubcategory = async (req, res) => {
 //   try {
@@ -305,7 +302,7 @@ exports.updateProject = async (req, res) => {
     res.status(500).json({
       message: "Server error",
       error: error.message,
-      details: error.errors || null
+      details: error.errors || null,
     });
   }
 };
@@ -315,7 +312,8 @@ exports.updateCategory = async (req, res) => {
     const updatedData = req.body;
 
     const category = await Category.findByPk(id);
-    if (!category) return res.status(404).json({ message: "Category not found" });
+    if (!category)
+      return res.status(404).json({ message: "Category not found" });
 
     await category.update(updatedData);
 
@@ -325,7 +323,7 @@ exports.updateCategory = async (req, res) => {
     res.status(500).json({
       message: "Server error",
       error: error.message,
-      details: error.errors || null
+      details: error.errors || null,
     });
   }
 };
@@ -336,7 +334,8 @@ exports.updateSubcategory = async (req, res) => {
     const updatedData = req.body;
 
     const subcategory = await Subcategory.findByPk(id);
-    if (!subcategory) return res.status(404).json({ message: "Subcategory not found" });
+    if (!subcategory)
+      return res.status(404).json({ message: "Subcategory not found" });
 
     await subcategory.update(updatedData);
 
@@ -346,7 +345,87 @@ exports.updateSubcategory = async (req, res) => {
     res.status(500).json({
       message: "Server error",
       error: error.message,
-      details: error.errors || null
+      details: error.errors || null,
     });
+  }
+};
+
+
+
+//  from here delete
+
+// exports.deleteProject = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+
+//     const project = await Project.findByPk(id);
+//     if (!project) {
+//       return res.status(404).json({ message: "Project not found" });
+//     }
+
+//     await project.destroy();
+//     res.json({ message: "Project deleted successfully" });
+//   } catch (error) {
+//     console.error("Error deleting project:", error);
+//     res.status(500).json({
+//       message: "Server error",
+//       error: error.message
+//     });
+//   }
+// };
+
+exports.deleteProject = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const project = await Project.findByPk(id);
+    if (!project) {
+      return res.status(404).json({ message: "Project not found" });
+    }
+
+    await CartItem.destroy({
+      where: {
+        projectId: id,
+      },
+    });
+
+    await project.destroy();
+    res.json({ message: "Project deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+exports.deleteCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Delete from DB
+    const result = await Category.destroy({ where: { id } });
+
+    if (result === 0) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+    res.json({ message: "Category deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting category:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.deleteSubcategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await Subcategory.destroy({ where: { id } });
+    if (result === 0) {
+      return res.status(404).json({ message: "Subcategory not found" });
+    }
+    res.json({ message: "Subcategory deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting subcategory:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };

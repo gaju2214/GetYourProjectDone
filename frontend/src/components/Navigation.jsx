@@ -255,7 +255,7 @@ const [user, setUser] = useState(null);
 
               {/* User Icon */}
               <Link
-                to={user ? "/profile" : "/auth/login"}
+                to={user ? "/account" : "/auth/login"}
                 className="flex-shrink-0 md:ml-5"
               >
                 <Button

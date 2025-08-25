@@ -18,6 +18,7 @@ import Account from "./pages/Account";
 import ProfilePage from "./pages/Profile";
 import AdminLogin from "./pages/Adlogin";
 import AdminRegister from "./pages/Register";
+import DeleteProject from "./pages/Editproject";
 
 
 
@@ -28,13 +29,14 @@ function App() {
       <Navigation />
       <Routes>
         <Route path="/" element={<HomePage />} />
-       
+        <Route path="/account" element={<Account/>} />
+       <Route path="/delete/:id" element={<DeleteProject Id={1} />} />
         <Route path="/getproject" element={<ProjectAdminPanel />} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/success" element={<SuccessPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/profile" element={<Account />} />
         <Route path="/adlogin" element={<AdminLogin />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/categories" element={<CategoriesPage />} />
@@ -43,7 +45,7 @@ function App() {
         <Route path="/projects" element={<ProjectList />} />
         <Route path="/*" element={<NotFoundPage />} />
         <Route path="/projects/:category" element={<CategoryPage />} />
-        <Route path="/account" element={<Account />} />
+       
         {/* just for fun */}
       </Routes>
     </>
