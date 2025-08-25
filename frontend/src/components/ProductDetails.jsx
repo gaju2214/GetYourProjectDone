@@ -654,11 +654,6 @@ export default function ProductDetailPage() {
   window.location.href = `${api.defaults.baseURL}/api/auth/google?returnUrl=${encodedRedirectUrl}`;
   };
 
-  // Handle regular login redirect
-  const handleLoginRedirect = () => {
-    setShowGoogleLoginModal(false);
-    navigate('/auth/login');
-  };
 
   if (!product) {
     return (
@@ -682,7 +677,7 @@ export default function ProductDetailPage() {
 
         userId: user.userId, //1, ✅ dynamic user ID from context
 
-        userId: user?.userId,
+       
 
         projectId: product.id,
         quantity: 1,
@@ -757,40 +752,13 @@ export default function ProductDetailPage() {
                   Continue with Google
                 </Button>
 
-                {/* Divider */}
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-300" />
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500">or</span>
-                  </div>
-                </div>
+             
 
-                {/* Regular Login Button */}
-                <Button
-                  onClick={handleLoginRedirect}
-                  variant="outline"
-                  className="w-full border-gray-300 text-gray-700 hover:bg-gray-50 font-medium py-3 px-4 rounded-lg transition duration-300"
-                >
-                  Login with Email
-                </Button>
+               
+              
               </div>
 
-              <div className="mt-4 text-center">
-                <p className="text-sm text-gray-500">
-                  Don't have an account? 
-                  <button 
-                    onClick={() => {
-                      setShowGoogleLoginModal(false);
-                      navigate('/register');
-                    }}
-                    className="text-orange-600 hover:text-orange-500 ml-1 font-medium"
-                  >
-                    Sign up here
-                  </button>
-                </p>
-              </div>
+              
             </div>
           </div>
         </div>
