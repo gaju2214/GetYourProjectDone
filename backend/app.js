@@ -11,11 +11,9 @@ const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const protectedRoutes = require("./routes/protectedRoutes");
 const adminRoutes = require("./routes/adminRoutes");
-<<<<<<< HEAD
-const paymentRoutes = require("./routes/paymentRoutes"); // ✅ Added Razorpay routes
-=======
 
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
+const paymentRoutes = require("./routes/paymentRoutes");
+
 const cookieParser = require("cookie-parser");
 const authenticateUser = require("./middleware/auth");
 const sequelize = require("./config/db");
@@ -36,10 +34,8 @@ const allowedOrigins = [
   "https://getyourprojectdone.up.railway.app",
   "https://getyourprojectdone-backend.up.railway.app",
   "https://master.getyourprojectdone.in",
-<<<<<<< HEAD
-=======
-  "http://localhost:3000"
->>>>>>> 52ced836ae1abeb2257b7e3dd348edd6ac78f5e0
+
+  "http://localhost:3000",
 ];
 
 // Middleware
