@@ -243,7 +243,7 @@ export default function CartPage() {
       setItemCount(0);
       setTotal(0);
 
-      alert(`Successfully placed ${cartItems.length} orders!`);
+      alert(`Successfully placed orders!`);
       // navigate("/success");
     } catch (error) {
       console.error("Error placing orders:", error);
