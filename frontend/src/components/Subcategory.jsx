@@ -73,9 +73,9 @@ export default function CategoryPage() {
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Category Not Found
+           Loading...
           </h1>
-          <p className="text-gray-600">The requested category doesn't exist.</p>
+          <p className="text-gray-600">Please wait while we fetch the category details.</p>
         </div>
       </div>
     );

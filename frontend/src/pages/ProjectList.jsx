@@ -11,14 +11,14 @@ const ProjectList = () => {
     api
       .get("/api/projects")
       .then((res) => {
-        const mappedProjects = res.data.map((project) => ({
-          ...project,
-          originalPrice: Math.floor(project.price * 1.5), // fake discount
-          rating: 4.5, // optional
-          reviews: 12, // optional
-          difficulty: "Beginner", // optional
-          components: ["Code", "Docs", "Support"], // optional
-        }));
+    const mappedProjects = res.data.map((project) => ({
+      ...project,
+      originalPrice: Math.floor(project.price * 1.5), // fake discount
+      rating: (Math.random() * 0.9 + 4.0).toFixed(1), // Generates 4.0 to 4.9
+      // reviews: 12, // optional
+      // difficulty: "Beginner", // optional
+      components: ["Code", "Docs", "Support"], // optional
+    }));
         setProjects(mappedProjects);
       })
       .catch((err) => {
