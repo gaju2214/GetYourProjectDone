@@ -123,6 +123,7 @@ export function ProductCard({ product }) {
               <img
                 src={product.image}
                 alt={product.title}
+                loading="lazy"
                 className="w-full max-h-60 object-contain bg-gray-100 rounded-t-lg"
               />
               {typeof product.price === "number" && (

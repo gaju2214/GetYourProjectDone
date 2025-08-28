@@ -856,6 +856,7 @@ export default function ProductDetailPage() {
             <img
               src={`${product.image}`}
               alt={product.title}
+              loading="lazy"
               className="w-full h-96 object-cover"
             />
 

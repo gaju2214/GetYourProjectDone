@@ -310,6 +310,8 @@ export default function CartPage() {
                         <img
                           src={item.image}
                           alt={item.title}
+                          loading="lazy"
+
                           className="w-full sm:w-[120px] sm:h-[120px] object-cover rounded-xl shadow-md"
                         />
 
