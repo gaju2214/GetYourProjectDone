@@ -1,7 +1,5 @@
 const { Order, OrderItem, CartItem, Project } = require("../models");
 
-// const { Order } = require("../models");
-
 exports.addOrder = async (req, res) => {
   try {
     const {
@@ -15,6 +13,7 @@ exports.addOrder = async (req, res) => {
       totalAmount,
       status,
       paymentStatus,
+      quantity,
     } = req.body;
 
     const newOrder = await Order.create({
@@ -28,6 +27,7 @@ exports.addOrder = async (req, res) => {
       totalAmount,
       status,
       paymentStatus,
+      quantity,
     });
 
     res.status(201).json({
@@ -94,8 +94,6 @@ exports.getOrdersByUser = async (req, res) => {
   }
 };
 
-// controllers/orderController.js
-
 exports.addOrder = async (req, res) => {
   try {
     const {
@@ -109,6 +107,7 @@ exports.addOrder = async (req, res) => {
       totalAmount,
       status,
       paymentStatus,
+      quantity,
     } = req.body;
 
     const newOrder = await Order.create({
@@ -122,6 +121,7 @@ exports.addOrder = async (req, res) => {
       totalAmount,
       status,
       paymentStatus,
+      quantity,
     });
 
     res.status(201).json({
@@ -146,6 +146,7 @@ exports.createOrder = async (req, res) => {
       shippingAddress,
       paymentMethod,
       totalAmount,
+      quantity,
     } = req.body;
 
     const newOrder = await Order.create({
@@ -158,6 +159,7 @@ exports.createOrder = async (req, res) => {
       paymentMethod,
       totalAmount,
       status: "pending",
+      quantity,
       paymentStatus: paymentMethod === "cod" ? "pending" : "initiated",
     });
 
@@ -167,3 +169,34 @@ exports.createOrder = async (req, res) => {
     res.status(500).json({ error: "Failed to create order" });
   }
 };
+
+// exports.createOrder = async (req, res) => {
+//   try {
+//     const {
+//       orderId,
+//       user_id,
+//       mobile,
+//       customerName,
+//       shippingAddress,
+//       paymentMethod,
+//       totalAmount,
+//       products,
+//     } = req.body;
+
+//     const order = await Order.create({
+//       orderId,
+//       user_id,
+//       mobile,
+//       customerName,
+//       shippingAddress,
+//       paymentMethod,
+//       totalAmount,
+//       products, // 👈 saves entire array as JSON
+//     });
+
+//     res.status(201).json({ success: true, order });
+//   } catch (error) {
+//     console.error("Order creation failed:", error);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// };

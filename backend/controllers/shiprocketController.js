@@ -36,16 +36,19 @@ exports.createShiprocketOrder = async (req, res) => {
       billing_email: profile?.email || "email",
       billing_phone: profile?.phoneNumber || "phoneNumber",
       shipping_is_billing: shipping_is_billing || true,
-      order_items: [
-        {
-          name: cartItems[0].title || "title",
-          sku: cartItems[0].projectId || "00165",
-          units: cartItems[0].quantity || 1,
-          selling_price: cartItems[0].price || 1,
-        },
-      ],
+
+      // ✅ Map through all products in cartItems
+      order_items: cartItems.map((item, index) => ({
+        name: item.title || `Product-${index + 1}`,
+        sku: item.projectId || `SKU-${index + 1}`,
+        units: item.quantity || 1,
+        selling_price: item.price || 1,
+      })),
+
       payment_method: payment_method || "pay method",
       sub_total: total || "total",
+
+      // you can also calculate total weight/dimensions dynamically if needed
       length: 10,
       breadth: 10,
       height: 10,

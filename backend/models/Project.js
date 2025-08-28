@@ -58,6 +58,17 @@ module.exports = (sequelize, DataTypes) => {
       as: "subcategory",
     });
   };
+  Project.associate = (models) => {
+    Project.belongsTo(models.Subcategory, {
+      foreignKey: "subcategoryId",
+      as: "subcategory",
+    });
+
+    // ✅ One project can appear in many OrderItems
+    Project.hasMany(models.OrderItem, {
+      foreignKey: "projectId",
+    });
+  };
 
   return Project;
 };

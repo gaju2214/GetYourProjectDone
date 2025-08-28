@@ -58,10 +58,10 @@ export function OrderButton({
         name: "Electrosoft System",
         description: "Buy Prduct form getyourprojectdone",
         order_id: data.id,
-        handler: async function () {
+        handler: async function (response) {
           if (response) createShiprocketOrder();
-          await createShiprocketOrder();
-          alert(`Payment Successful!`);
+          // await createShiprocketOrder();
+          // alert(`Payment Successful!`);
         },
         theme: { color: "#3399cc" },
       };

@@ -134,12 +134,6 @@ export default function CartPage() {
   if (loading) return <div>Loading...</div>;
   if (!user) return null; // or fallback UI
 
-
-
-
-
-
-
   const updateQuantity = (cartId, newQuantity) => {
     if (newQuantity < 1) return;
 
@@ -214,35 +208,46 @@ export default function CartPage() {
       alert("Please select a payment method");
       return;
     }
-    try {
-      const orderData = {
-        orderId: `ORD-${Date.now()}`,
-        user_id: profile?.id,
-        mobile: profile?.phoneNumber,
-        customerName: `${profile?.name} ${profile?.lastname || ""}`,
-        productId: cartItems[0]?.id,
-        shippingAddress: profile?.address,
-        paymentMethod: paymentMethod,
-        totalAmount: total,
-      };
 
-      const response = await fetch("http://localhost:5000/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
+    try {
+      // Create an array to store all order promises
+      const orderPromises = cartItems.map(async (item) => {
+        const orderData = {
+          orderId: `ORD-${Date.now()}-${item.id}`, // Make each order ID unique
+          user_id: profile?.id,
+          mobile: profile?.phoneNumber,
+          customerName: `${profile?.name} ${profile?.lastname || ""}`,
+          productId: item.id, // Use the current item's ID
+          shippingAddress: profile?.address,
+          paymentMethod: paymentMethod,
+          totalAmount: item.price * item.quantity, // Individual item total
+          quantity: item.quantity, // Individual item quantity
+        };
+
+        const response = await fetch("http://localhost:5000/api/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderData),
+        });
+
+        const result = await response.json();
+        return result;
       });
 
-      const result = await response.json();
-      console.log("Order Saved:", result);
+      // Wait for all orders to complete
+      const allResults = await Promise.all(orderPromises);
+      console.log("All Orders Saved:", allResults);
 
+      // Clear cart after successful orders
       setCartItems([]);
       setItemCount(0);
       setTotal(0);
 
-      navigate("/success");
+      alert(`Successfully placed ${cartItems.length} orders!`);
+      // navigate("/success");
     } catch (error) {
-      console.error("Error placing order:", error);
-      alert("Failed to place order");
+      console.error("Error placing orders:", error);
+      alert("Failed to place some orders. Please try again.");
     }
   };
 
@@ -302,11 +307,11 @@ export default function CartPage() {
                   >
                     <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                       <div className="relative">
-                       <img
-                            src={item.image}
-                            alt={item.title}
-                            className="w-full sm:w-[120px] sm:h-[120px] object-cover rounded-xl shadow-md"
-                          />
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-full sm:w-[120px] sm:h-[120px] object-cover rounded-xl shadow-md"
+                        />
 
                         <Badge className="absolute -top-2 -right-2 bg-blue-600">
                           {item.difficulty}
@@ -511,160 +516,3 @@ export default function CartPage() {
     </div>
   );
 }
-
-
-
-{/* Delivery info, payment method, and order summary go here as-is */ }
-{/* <Card className="shadow-lg border-0">
-              <CardHeader className="bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-t-lg">
-                <CardTitle className="text-xl flex items-center gap-2">
-                  <MapPin className="h-6 w-6" />
-                  Delivery Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="name"
-                    className="text-sm font-semibold flex items-center gap-2"
-                  >
-                    <User className="h-4 w-4" />
-                    Full Name
-                  </Label>
-                  <Input
-                    id="name"
-                    placeholder="Enter your full name"
-                    value={deliveryInfo.name}
-                    onChange={(e) =>
-                      setDeliveryInfo((prev) => ({
-                        ...prev,
-                        name: e.target.value,
-                      }))
-                    }
-                    className="h-12"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="mobile"
-                    className="text-sm font-semibold flex items-center gap-2"
-                  >
-                    <Phone className="h-4 w-4" />
-                    Mobile Number
-                  </Label>
-                  <Input
-                    id="mobile"
-                    placeholder="Enter 10-digit mobile number"
-                    value={deliveryInfo.mobile}
-                    onChange={(e) =>
-                      setDeliveryInfo((prev) => ({
-                        ...prev,
-                        mobile: e.target.value,
-                      }))
-                    }
-                    className="h-12"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="email"
-                    className="text-sm font-semibold flex items-center gap-2"
-                  >
-                    <Mail className="h-4 w-4" />
-                    Email Address
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={deliveryInfo.email}
-                    onChange={(e) =>
-                      setDeliveryInfo((prev) => ({
-                        ...prev,
-                        email: e.target.value,
-                      }))
-                    }
-                    className="h-12"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="pincode" className="text-sm font-semibold">
-                    Pincode
-                  </Label>
-                  <Input
-                    id="pincode"
-                    placeholder="Enter 6-digit pincode"
-                    value={deliveryInfo.pincode}
-                    onChange={(e) => handlePincodeChange(e.target.value)}
-                    className="h-12"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="city" className="text-sm font-semibold">
-                      City
-                    </Label>
-                    <Input
-                      id="city"
-                      value={deliveryInfo.city}
-                      readOnly
-                      className="h-12 bg-gray-50"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="state" className="text-sm font-semibold">
-                      State
-                    </Label>
-                    <Input
-                      id="state"
-                      value={deliveryInfo.state}
-                      readOnly
-                      className="h-12 bg-gray-50"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="address" className="text-sm font-semibold">
-                    Full Address
-                  </Label>
-                  <Input
-                    id="address"
-                    placeholder="House/Flat, Street, Area"
-                    value={deliveryInfo.address}
-                    onChange={(e) =>
-                      setDeliveryInfo((prev) => ({
-                        ...prev,
-                        address: e.target.value,
-                      }))
-                    }
-                    className="h-12"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="landmark" className="text-sm font-semibold">
-                    Landmark (Optional)
-                  </Label>
-                  <Input
-                    id="landmark"
-                    placeholder="Nearby landmark"
-                    value={deliveryInfo.landmark}
-                    onChange={(e) =>
-                      setDeliveryInfo((prev) => ({
-                        ...prev,
-                        landmark: e.target.value,
-                      }))
-                    }
-                    className="h-12"
-                  />
-                </div>
-              </CardContent>
-            </Card> */}
-
-{/* Payment Method */ }
-
