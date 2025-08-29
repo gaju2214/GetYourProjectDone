@@ -892,7 +892,10 @@ export default function ProductDetailPage() {
               {product.title}
             </h1>
 
-            <p className="text-gray-600 text-lg">{product.description}</p>
+<div
+  className="text-gray-600 text-lg"
+  dangerouslySetInnerHTML={{ __html: product.description }}
+></div>
           </div>
 
           {/* Pricing */}
@@ -1074,51 +1077,61 @@ export default function ProductDetailPage() {
             </Card>
           </TabsContent>
 
-          {product && (
-            <TabsContent value="specifications" className="mt-8">
-              <Card className="bg-white shadow-md rounded-xl border border-blue-100">
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold text-blue-700 mb-4">
-                    Technical Specifications
-                  </h3>
-                  <div className="space-y-4 text-blue-900">
-                    {[
-                      ["Specification", product.subcategory?.name || "N/A"],
-                      ["Project Title", product.title],
-                      ["Price", `₹${product.price.toLocaleString()}`],
-                      [
-                        "Components",
-                        (product.components || []).length + " items",
-                      ],
-                      ["Details", product.details || "Not provided"],
-                      [
-                        "Project Description",
-                        product.description || "Not provided",
-                      ],
-                      [
-                        "Components Count",
-                        `${(product.components || []).length} items`,
-                      ],
-                      ["Estimated Build Time", "2–4 hours"],
-                    ].map(([label, value], i) => (
-                      <div
-                        key={i}
-                        className={`grid grid-cols-2 gap-4 py-2 ${i < 10 ? "border-b border-blue-100" : ""
-                          }`}
-                      >
-                        <span className="font-medium">{label}:</span>
-                        <span>{value}</span>
-                      </div>
-                    ))}
-
-                    {product.block_diagram &&
-                      typeof product.block_diagram === "string" && (
-                        <div className="pt-6">
-                          <h4 className="font-medium text-blue-600">
-                            Block Diagram
-                          </h4>
-                          <img
-                            src={`${product.block_diagram}`}
+         {product && (
+  <TabsContent value="specifications" className="mt-8">
+    <Card className="bg-white shadow-md rounded-xl border border-blue-100">
+      <CardContent className="p-6">
+        <h3 className="text-xl font-semibold text-blue-700 mb-4">
+          Technical Specifications
+        </h3>
+        <div className="space-y-4 text-blue-900">
+          {[
+            ["Specification", product.subcategory?.name || "N/A"],
+            ["Project Title", product.title],
+            ["Price", `₹${product.price.toLocaleString()}`],
+            [
+              "Components",
+              (product.components || []).length + " items",
+            ],
+            [
+              "Details",
+              <div
+                key="details"
+                dangerouslySetInnerHTML={{
+                  __html: product.details || "Not provided",
+                }}
+              />,
+            ],
+            [
+              "Project Description",
+              <div
+                key="desc"
+                dangerouslySetInnerHTML={{
+                  __html: product.description || "Not provided",
+                }}
+              />,
+            ],
+            [
+              "Components Count",
+              `${(product.components || []).length} items`,
+            ],
+            ["Estimated Build Time", "2–4 hours"],
+          ].map(([label, value], i) => (
+            <div
+              key={i}
+              className={`grid grid-cols-2 gap-4 py-2 ${
+                i < 10 ? "border-b border-blue-100" : ""
+              }`}
+            >
+              <span className="font-medium">{label}:</span>
+              <span className="prose prose-sm max-w-none">{value}</span>
+            </div>
+          ))}
+      {product.block_diagram && typeof product.block_diagram === "string" && (
+        <div className="pt-6">
+          <h4 className="font-medium text-blue-600">Block Diagram</h4>
+          <img
+            src={`${product.block_diagram}`}
                             alt="Block Diagram"
                             className="mt-2 rounded-lg shadow"
                             onError={(e) => {

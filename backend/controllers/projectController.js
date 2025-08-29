@@ -38,20 +38,31 @@ exports.createProject = async (req, res) => {
       counter++;
     }
 
-    const project = await Project.create({
-      title,
-      slug,
-      description,
-      price,
-      image, // Cloudinary URL string
-      subcategoryId,
-      components: JSON.parse(components || "[]"), // Parse stringified array
-      block_diagram, // Cloudinary URL
-      abstract_file: abstract_file, // Cloudinary URL
-      details,
-      review,
-    });
+let parsedComponents = [];
 
+try {
+  if (Array.isArray(components)) {
+    parsedComponents = components; // already an array
+  } else if (typeof components === "string") {
+    parsedComponents = JSON.parse(components); // try parsing
+  }
+} catch (err) {
+  parsedComponents = [components]; // fallback: wrap string into array
+}
+
+    const project = await Project.create({
+  title,
+  slug,
+  description,
+  price,
+  image,
+  subcategoryId,
+  components: parsedComponents,
+  block_diagram,
+  abstract_file,
+  details,
+  review,
+});
     res.status(201).json(project);
     console.log(project);
   } catch (err) {
@@ -306,6 +317,7 @@ exports.updateProject = async (req, res) => {
     });
   }
 };
+
 exports.updateCategory = async (req, res) => {
   try {
     const { id } = req.params;

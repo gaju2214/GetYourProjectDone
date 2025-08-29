@@ -161,9 +161,10 @@ export function ProductCard({ product }) {
                 {product.title}
               </h3>
 
-              <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                {product.description}
-              </p>
+            <div
+  className="text-gray-600 text-lg"
+  dangerouslySetInnerHTML={{ __html: product.description }}
+></div>
 
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-2xl font-bold text-green-600">
