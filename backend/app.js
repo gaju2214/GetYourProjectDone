@@ -34,8 +34,8 @@ const allowedOrigins = [
   "https://getyourprojectdone.up.railway.app",
   "https://getyourprojectdone-backend.up.railway.app",
   "https://master.getyourprojectdone.in",
-  "https://gypdcontroller-production.up.railway.app",
-  "http://localhost:3000",
+   "http://localhost:3000",
+  "https://gypdcontroller-production.up.railway.app"
 ];
 
 // Middleware
