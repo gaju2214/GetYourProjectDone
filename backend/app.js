@@ -34,6 +34,7 @@ const allowedOrigins = [
   "https://getyourprojectdone.up.railway.app",
   "https://getyourprojectdone-backend.up.railway.app",
   "https://master.getyourprojectdone.in",
+  "https://reauth.getyourprojectdone.in",
    "http://localhost:3000",
   "https://gypdcontroller-production.up.railway.app"
 ];
