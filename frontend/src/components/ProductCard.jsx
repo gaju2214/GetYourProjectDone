@@ -163,8 +163,13 @@ export function ProductCard({ product }) {
 
             <div
   className="text-gray-600 text-lg"
-  dangerouslySetInnerHTML={{ __html: product.description }}
-></div>
+  dangerouslySetInnerHTML={{
+                  __html:
+                    product.description?.length > 120
+                      ? product.description.slice(0, 120) + "..."
+                      : product.description
+                }}
+              ></div>
 
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-2xl font-bold text-green-600">
