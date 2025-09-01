@@ -12,7 +12,7 @@ import ProductDetailPage from "./components/ProductDetails";
 import CategoriesPage from "./pages/Categories";
 import CategoryPage from "./components/Subcategory";
 import ProjectList from "./pages/ProjectList"; // or correct path
-import ProjectAdminPanel from "./ProjectAdminPanel";
+// import ProjectAdminPanel from "./ProjectAdminPanel";
 import Account from "./pages/Account";
 
 import ProfilePage from "./pages/Profile";
@@ -31,13 +31,13 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/account" element={<Account/>} />
        <Route path="/delete/:id" element={<DeleteProject Id={1} />} />
-        <Route path="/getproject" element={<ProjectAdminPanel />} />
+        {/* <Route path="/getproject" element={<ProjectAdminPanel />} /> */}
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/profile" element={<Account />} />
-        <Route path="/adlogin" element={<AdminLogin />} />
+        {/* <Route path="/adlogin" element={<AdminLogin />} /> */}
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/categories" element={<CategoriesPage />} />
         {/* <Route path="/adregister" element={<AdminRegister />} /> */}
