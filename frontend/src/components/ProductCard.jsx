@@ -117,7 +117,7 @@ export function ProductCard({ product }) {
   return (
     <>
       <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-0 shadow-lg">
-        <Link to={`/product/${product.slug}`}>
+        <Link to={`/projects/${product.slug}`}>
           <CardContent className="p-0">
             <div className="relative overflow-hidden rounded-t-lg">
               <img

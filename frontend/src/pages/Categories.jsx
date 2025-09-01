@@ -143,7 +143,7 @@ export default function CategoriesPage() {
                     </div>
 
                     {category && categorySlug && (
-                      <Link to={`/projects/${categorySlug}`}>
+                      <Link to={`/categories/${categorySlug}`}>
                         <Button className="text-white mt-4 grouptext-lg px-20 bg-red-500 hover:bg-red-700">
                           Explore {category} Projects
                         </Button>

@@ -224,14 +224,8 @@ export default function CartPage() {
           quantity: item.quantity, // Individual item quantity
         };
 
-        const response = await fetch("http://localhost:5000/api/orders", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(orderData),
-        });
-
-        const result = await response.json();
-        return result;
+        const response = await api.post("/api/orders", orderData);
+        return response.data;
       });
 
       // Wait for all orders to complete
@@ -325,9 +319,15 @@ export default function CartPage() {
                           <h3 className="font-bold text-xl text-gray-900 mb-2">
                             {item.title}
                           </h3>
-                          <p className="text-gray-600 leading-relaxed">
-                            {item.description}
-                          </p>
+                 <div
+                className="text-gray-600 leading-relaxed"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    item.description?.length > 120
+                      ? item.description.slice(0, 120) + "..."
+                      : item.description
+                }}
+              ></div>
                           <div className="flex gap-2 mt-3">
                             <Badge variant="outline">
                               {typeof item.category === "object"
