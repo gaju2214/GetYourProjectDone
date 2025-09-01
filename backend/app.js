@@ -19,6 +19,8 @@ const authenticateUser = require("./middleware/auth");
 const sequelize = require("./config/db");
 const shiprocketRoutes = require("./routes/shiprocketRoutes");
 
+const userinfo = require('./routes/userinfo');
+
 const app = express();
 
 // Allowed Origins
@@ -83,6 +85,9 @@ app.get("/protected", authenticateUser, (req, res) => {
 // Existing middlewares and routes
 app.use("/api/protected", protectedRoutes);
 app.use("/api/admin", adminRoutes);
+
+app.use('/api/userinfos', userinfo);
+
 
 // Root Route
 app.get("/", (req, res) => res.send("Server is running 🚀"));
