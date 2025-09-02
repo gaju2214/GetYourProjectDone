@@ -39,6 +39,7 @@ function App() {
         <Route path="/profile" element={<Account />} />
         {/* <Route path="/adlogin" element={<AdminLogin />} /> */}
         <Route path="/projects/:id" element={<ProductDetailPage />} />
+        <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/categories" element={<CategoriesPage />} />
         {/* <Route path="/adregister" element={<AdminRegister />} /> */}
         <Route path="/categories/:category" element={<CategoryPage />} />
