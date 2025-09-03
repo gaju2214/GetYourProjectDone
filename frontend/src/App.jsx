@@ -46,7 +46,7 @@ function App() {
         <Route path="/projects" element={<ProjectList />} />
         <Route path="/*" element={<NotFoundPage />} />
         <Route path="/projectscat/:category" element={<CategoryPage />} />
-       
+      
         {/* just for fun */}
       </Routes>
     </>

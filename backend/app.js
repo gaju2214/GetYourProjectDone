@@ -76,7 +76,7 @@ app.use("/api/payment", paymentRoutes); // ✅ Razorpay payment route
 app.use("/uploads", express.static("uploads"));
 app.use("/api/shiprocket", shiprocketRoutes);
 // app.use("/api/orders", orderRoutes);
-// app.use("/api/orders", orderRoutes);
+ app.use("/api/orders", orderRoutes);
 
 app.get("/protected", authenticateUser, (req, res) => {
   res.json({ message: "This is protected", user: req.user });

@@ -11,7 +11,7 @@ db.Category = require('./Category')(sequelize, Sequelize);
 db.Subcategory = require('./Subcategory')(sequelize, Sequelize);
 db.CartItem = require('./CartItem')(sequelize, Sequelize); 
 db.Admin = require('./Admin')(sequelize, Sequelize);
-db.Order = require('./Order')(sequelize, Sequelize);
+db.Order = require("./Order")(sequelize, Sequelize);
 db.OrderItem = require('./OrderItem')(sequelize, Sequelize);
 db.UserInfo = require('./UserInfo')(sequelize, Sequelize);
 

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import BillingFormPopup from "./UserDetails";
+import api from "../api";
 
 export function OrderButton({
   onOrderComplete,
@@ -12,7 +13,6 @@ export function OrderButton({
   const buttonRef = useRef(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [scriptLoaded, setScriptLoaded] = useState(false);
-
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   // Inject styles for button animation
@@ -42,60 +42,86 @@ export function OrderButton({
 
   // 👉 Razorpay Payment flow
   const handlePayment = async () => {
+  try {
+    const res = await api.post("/api/payment/order", {
+      amount: finalTotal,
+    });
+
+    const data = res.data; // ✅ FIXED
+
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: data.amount, // in paise
+      currency: "INR",
+      name: "Getyourprojectdone",
+      description: "Buy Product from getyourprojectdone",
+      order_id: data.id,
+      handler: async function (response) {
+        if (response) {
+          await createOrderWithShipping();
+        }
+      },
+      theme: { color: "#3399cc" },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  } catch (error) {
+    console.error("Payment Error:", error);
+  }
+};
+
+
+  // 👉 Create order in database first, then create Shiprocket order
+  const createOrderWithShipping = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/payment/order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: finalTotal }),
-      });
+      console.log("Creating order with shipping...");
+      
+      // First create the order in your database to get order_id
+      const orderRes = await api.post("/api/orders/create-with-shipping", {
+  user_id: profile?.user_id || 1,
+  mobile: profile?.phoneNumber || "9999999999",
+  customerName: `${profile?.name || "Customer"} ${profile?.lastname || ""}`.trim(),
+  productId: cartItems?.[0]?.projectId || "DEFAULT_PRODUCT",
+  shippingAddress: profile?.address || "Default Address",
+  paymentMethod: paymentMethod,
+  totalAmount: finalTotal,
+  quantity: cartItems?.reduce((sum, item) => sum + (item.quantity || 1), 0) || 1,
+  profile: profile,
+  cartItems: cartItems
+});
 
-      const data = await res.json();
+// ❌ Wrong:
+// const orderData = await orderRes.json();
 
-      const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: data.amount, // in paise
-        currency: "INR",
-        name: "Electrosoft System",
-        description: "Buy Prduct form getyourprojectdone",
-        order_id: data.id,
-        handler: async function (response) {
-          if (response) createShiprocketOrder();
-          // await createShiprocketOrder();
-          // alert(`Payment Successful!`);
-        },
-        theme: { color: "#3399cc" },
-      };
+// ✅ Correct:
+const orderData = orderRes.data;
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      console.log("Order created:", orderData);
+
+      if (orderData.success) {
+        console.log(`Order created successfully with ID: ${orderData.orderId}`);
+        if (onOrderComplete) onOrderComplete(orderData);
+      } else {
+        console.error("Order creation failed:", orderData.error);
+        alert("Order creation failed. Please try again.");
+      }
+
     } catch (error) {
-      console.error("Payment Error:", error);
+      console.error("Order creation error:", error);
+      alert("Something went wrong. Please try again.");
     }
   };
 
-  // 👉 Helper: Create Shiprocket order
-  const createShiprocketOrder = async () => {
+  // 👉 For COD orders - create order directly with shipping
+  const handleCODOrder = async () => {
     try {
-      const res = await fetch(
-        "http://localhost:5000/api/shiprocket/createorder",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            total: finalTotal,
-            profile: profile,
-            cartItems: cartItems,
-            paymentMethod: paymentMethod,
-            // total: total,
-          }),
-        }
-      );
-
-      const data = await res.json();
-      console.log("Shiprocket Response:", data);
-      if (onOrderComplete) onOrderComplete(data);
+      setIsAnimating(true);
+      await createOrderWithShipping();
     } catch (error) {
-      console.error("Shiprocket Error:", error);
+      console.error("COD Order Error:", error);
+    } finally {
+      setIsAnimating(false);
     }
   };
 
@@ -139,10 +165,12 @@ export function OrderButton({
               <button
                 ref={buttonRef}
                 className="order"
-                onClick={createShiprocketOrder}
+                onClick={handleCODOrder}
                 disabled={disabled || isAnimating}
               >
-                <span className="default">Continue to Shipping</span>
+                <span className="default">
+                  {isAnimating ? "Processing..." : "Continue to Shipping"}
+                </span>
               </button>
             )}
           </div>
