@@ -18,6 +18,7 @@ const cookieParser = require("cookie-parser");
 const authenticateUser = require("./middleware/auth");
 const sequelize = require("./config/db");
 const shiprocketRoutes = require("./routes/shiprocketRoutes");
+const userRoutes = require('./routes/authRoutes'); // or wherever your routes are
 
 const userinfo = require('./routes/userinfo');
 
@@ -77,6 +78,7 @@ app.use("/uploads", express.static("uploads"));
 app.use("/api/shiprocket", shiprocketRoutes);
 // app.use("/api/orders", orderRoutes);
  app.use("/api/orders", orderRoutes);
+app.use('/api', userRoutes); // This makes your routes accessible at /api/users/search
 
 app.get("/protected", authenticateUser, (req, res) => {
   res.json({ message: "This is protected", user: req.user });

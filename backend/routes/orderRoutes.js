@@ -11,6 +11,7 @@ router.post("/", orderController.createOrder);
 router.get("/", orderController.getAllOrders); // Get all orders for admin
 router.put("/:id", orderController.updateOrderStatus); // Update order status
 router.post('/create-with-shipping', orderController.createOrderWithShipping);
+router.put("/shiprocket/:orderId", orderController.updateShiprocketOrder);
 
 
 // In your backend routes file

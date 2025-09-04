@@ -290,4 +290,61 @@ router.post("/userinfo", async (req, res) => {
   }
 });
 
+
+// Get all users (Admin route)
+// IMPORTANT: Put search route BEFORE the :id route
+router.get("/users/public", async (req, res) => {
+  try {
+    const { 
+      page = 1, 
+      limit = 12, 
+      search = '' 
+    } = req.query;
+
+    const offset = (page - 1) * limit;
+    
+    // Build search conditions
+    const { Op } = require('sequelize');
+    const whereCondition = search ? {
+      [Op.or]: [
+        { name: { [Op.iLike]: `%${search}%` } },
+        { lastname: { [Op.iLike]: `%${search}%` } },
+        { email: { [Op.iLike]: `%${search}%` } },
+        { phoneNumber: { [Op.iLike]: `%${search}%` } } // Added phone search
+      ]
+    } : {};
+
+    const { count, rows: users } = await User.findAndCountAll({
+      where: whereCondition,
+      attributes: [
+        'id', 'name', 'lastname', 'email', 'phoneNumber', 'city', 'state', 'createdAt'
+        // Removed sensitive fields like phone, address, dob
+      ],
+      order: [['createdAt', 'DESC']],
+      limit: parseInt(limit),
+      offset: parseInt(offset)
+    });
+
+    res.status(200).json({
+      success: true,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(count / limit),
+        totalUsers: count,
+        hasNextPage: page * limit < count,
+        hasPrevPage: page > 1
+      },
+      users: users
+    });
+
+  } catch (error) {
+    console.error("Get public users error:", error);
+    res.status(500).json({ 
+      success: false,
+      error: "Failed to fetch users" 
+    });
+  }
+});
+
+
 module.exports = router;

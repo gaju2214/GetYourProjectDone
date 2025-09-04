@@ -367,6 +367,27 @@ exports.getOrdersByUser = async (req, res) => {
     res.status(500).json({ error: "Could not fetch orders" });
   }
 };
+exports.updateShiprocketOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    // Update in your DB
+    const updatedOrder = await Order.update(
+      { status },
+      { where: { orderId } }
+    );
+
+    if (updatedOrder[0] === 0) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    res.json({ success: true, message: "Order updated successfully", orderId, status });
+  } catch (error) {
+    console.error("Error updating Shiprocket order:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
+};
 
 exports.updateOrderStatus = async (req, res) => {
   try {
