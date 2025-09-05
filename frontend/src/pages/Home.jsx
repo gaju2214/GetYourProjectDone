@@ -42,6 +42,7 @@ const HomePage = () => {
   };
 
   return (
+    
     <div className="space-y-16">
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-orange-50 via-white to-red-50 py-20">
