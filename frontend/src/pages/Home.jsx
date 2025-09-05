@@ -7,9 +7,9 @@ import { ArrowRight, Star, Users, Award, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import api from "../api";
 import usePageViews from './hooks/usePageViews';
-// import ReactGA from "react-ga4";
-// ReactGA.initialize("G-RKR4H82WJW");
-// ReactGA.send("pageview");
+import ReactGA from "react-ga4";
+ReactGA.initialize("G-RKR4H82WJW");
+ReactGA.send("pageview");
 
 const HomePage = () => {
   usePageViews();
