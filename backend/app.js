@@ -21,7 +21,7 @@ const shiprocketRoutes = require("./routes/shiprocketRoutes");
 const userRoutes = require('./routes/authRoutes'); // or wherever your routes are
 
 const userinfo = require('./routes/userinfo');
-
+const discountRoutes = require('./routes/discountRoutes');
 const app = express();
 
 // Allowed Origins
@@ -67,7 +67,7 @@ app.use(cookieParser());
 
 // Routes
 app.use("/api/auth", authRoutes);
-
+app.use("/api/discounts", discountRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/subcategories", subcategoryRoutes);
 app.use("/api/projects", projectRoutes);

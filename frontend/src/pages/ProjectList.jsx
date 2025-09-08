@@ -3,10 +3,8 @@ import axios from "axios";
 import { ProductCard } from "../components/ProductCard"; // adjust path if needed
 import api from "../api"; // adjust path based on file location
 import { useLocation } from "react-router-dom";
-
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
-
   useEffect(() => {
     api
       .get("/api/projects")
@@ -25,7 +23,6 @@ const ProjectList = () => {
         console.error("Error fetching projects:", err);
       });
   }, []);
-
   return (
     <>
       {projects && (
@@ -38,5 +35,4 @@ const ProjectList = () => {
     </>
   );
 };
-
 export default ProjectList;

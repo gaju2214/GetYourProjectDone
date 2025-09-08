@@ -4,10 +4,10 @@ import { Card, CardContent, CardFooter } from "../components/ui/Card";
 import { Badge } from "./ui/Badge";
 import { Star, ShoppingCart, Check, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useCart } from "../context/CartContext"; // ✅ Import useCart
+import { useCart } from "../context/CartContext";
 import axios from "axios";
-import api from "../api"; // adjust path based on file location
-import { useAuth } from "../context/AuthContext"; // Adjust path as needed
+import api from "../api";
+import { useAuth } from "../context/AuthContext";
 
 export function ProductCard({ product }) {
   const [isAdding, setIsAdding] = useState(false);
@@ -19,6 +19,10 @@ export function ProductCard({ product }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
   const [randomRating, setRandomRating] = useState(0);
+
+  // New states for backend discount integration
+  const [globalDiscount, setGlobalDiscount] = useState(null);
+  const [discountLoading, setDiscountLoading] = useState(true);
 
   // Check auth on mount
   useEffect(() => {
@@ -40,9 +44,34 @@ export function ProductCard({ product }) {
         setLoading(false);
       }
     };
-    const rating = (Math.random() * 0.9 + 4.0).toFixed(1); // Generates 4.0 to 4.9
+
+    const rating = (Math.random() * 0.9 + 4.0).toFixed(1);
     setRandomRating(rating);
     checkAuth();
+  }, []);
+
+  // Fetch global discount from backend
+  useEffect(() => {
+    const fetchGlobalDiscount = async () => {
+      try {
+        setDiscountLoading(true);
+        const response = await api.get('/api/discounts/global');
+        if (response.data.success) {
+          setGlobalDiscount(response.data.discount);
+        }
+      } catch (error) {
+        console.error('Failed to fetch global discount:', error);
+        // Don't show error to user, just continue with fallback
+      } finally {
+        setDiscountLoading(false);
+      }
+    };
+
+    fetchGlobalDiscount();
+
+    // Refresh discount every 2 minutes for real-time updates
+    const interval = setInterval(fetchGlobalDiscount, 2 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleGoogleLogin = () => {
@@ -61,7 +90,7 @@ export function ProductCard({ product }) {
 
     try {
       const cartItem = {
-        userId: user.userId, // ✅ dynamic user ID from context
+        userId: user.userId,
         projectId: product.id,
         quantity: 1,
       };
@@ -77,15 +106,11 @@ export function ProductCard({ product }) {
       console.log("Cart add response:", response.data);
 
       if (response.status === 200 || response.status === 201) {
-        // Add to local cart context
         dispatch({ type: "ADD_ITEM", payload: product });
-        
-        // Show success state
         setIsAdded(true);
         setTimeout(() => {
           setIsAdded(false);
         }, 2000);
-        
         alert("✅ Item added to cart!");
       } else {
         alert("❌ Failed to add item to cart.");
@@ -103,16 +128,64 @@ export function ProductCard({ product }) {
     }
   };
 
-  const discountPercentage = Math.round(
-    ((product.originalPrice - product.price) / product.originalPrice) * 100
+  // Enhanced discount calculation with backend integration
+  const getDiscountInfo = () => {
+  if (!product.price) {
+    return null;
+  }
+
+  // Use backend discount if available and active
+  if (globalDiscount && globalDiscount.isActive && !discountLoading) {
+    // Check if discount is currently valid (time-based)
+    const now = new Date();
+    const startDate = globalDiscount.startDate ? new Date(globalDiscount.startDate) : null;
+    const endDate = globalDiscount.endDate ? new Date(globalDiscount.endDate) : null;
+    
+    const isTimeValid = (!startDate || now >= startDate) && (!endDate || now <= endDate);
+    
+    if (isTimeValid) {
+      const discountPercentage = parseFloat(globalDiscount.discountValue) || 0;
+      // Calculate what the original price should be based on backend discount
+      const calculatedOriginalPrice = Math.round(product.price / (1 - discountPercentage / 100));
+      
+      return {
+        percentage: Math.round(discountPercentage),
+        label: globalDiscount.label || 'OFF',
+        backgroundColor: globalDiscount.backgroundColor || '#ef4444',
+        textColor: globalDiscount.textColor || '#ffffff',
+        isBackendControlled: true,
+        originalPrice: calculatedOriginalPrice
+      };
+    }
+  }
+
+  // Fallback to calculated discount if no backend discount is active
+  const originalPrice = product.originalPrice || Math.round(product.price / 0.6);
+  const calculatedPercentage = Math.round(
+    ((originalPrice - product.price) / originalPrice) * 100
   );
+
+  if (calculatedPercentage > 0) {
+    return {
+      percentage: calculatedPercentage,
+      label: 'OFF',
+      backgroundColor: '#ef4444',
+      textColor: '#ffffff',
+      isBackendControlled: false,
+      originalPrice: originalPrice
+    };
+  }
+
+  return null;
+};
 
   // Helper function to parse PostgreSQL arrays
   const parsePostgresArray = (arrayString) => {
     if (!arrayString || typeof arrayString !== 'string') return [];
-    // Remove curly braces and split by comma
     return arrayString.replace(/[{}]/g, '').split(',').map(item => item.trim());
   };
+
+  const discountInfo = getDiscountInfo();
 
   return (
     <>
@@ -126,15 +199,29 @@ export function ProductCard({ product }) {
                 loading="lazy"
                 className="w-full max-h-60 object-contain bg-gray-100 rounded-t-lg"
               />
-              {typeof product.price === "number" && (
-                <Badge className="text-white absolute top-3 left-3 bg-red-500 hover:bg-red-600">
-                  {`${Math.round(
-                    100 -
-                    (product.price /
-                      (product.originalPrice || product.price / 0.6)) *
-                    100
-                  )}% OFF`}
+              
+              {/* Dynamic Backend-Controlled Discount Badge */}
+              {discountInfo && discountInfo.percentage > 0 && !discountLoading && (
+                <Badge 
+                  className={`text-white absolute top-3 left-3 transition-all duration-300 hover:scale-105 font-semibold ${
+                    discountInfo.isBackendControlled 
+                      ? 'animate-pulse shadow-lg border-2 border-white/30' 
+                      : 'hover:opacity-90'
+                  }`}
+                  style={{
+                    backgroundColor: discountInfo.backgroundColor,
+                    color: discountInfo.textColor
+                  }}
+                >
+                  {`${discountInfo.percentage}% ${discountInfo.label}`}
                 </Badge>
+              )}
+
+              {/* Loading state for discount */}
+              {discountLoading && typeof product.price === "number" && (
+                <div className="absolute top-3 left-3 bg-gray-300 text-gray-600 px-3 py-1 rounded text-xs animate-pulse">
+                  Loading offer...
+                </div>
               )}
 
               <Badge
@@ -147,7 +234,7 @@ export function ProductCard({ product }) {
                       : "destructive"
                 }
               >
-                {product.difficulty}
+                {product.difficulty || "Beginner"}
               </Badge>
             </div>
 
@@ -161,9 +248,9 @@ export function ProductCard({ product }) {
                 {product.title}
               </h3>
 
-            <div
-  className="text-gray-600 text-lg"
-  dangerouslySetInnerHTML={{
+              <div
+                className="text-gray-600 text-lg"
+                dangerouslySetInnerHTML={{
                   __html:
                     product.description?.length > 120
                       ? product.description.slice(0, 120) + "..."
@@ -172,15 +259,15 @@ export function ProductCard({ product }) {
               ></div>
 
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-2xl font-bold text-green-600">
-                  ₹{product.price?.toLocaleString?.()}
-                </span>
-                {typeof product.price === "number" && (
-                  <span className="text-lg text-gray-500 line-through">
-                    ₹{Math.round(product.price / 0.6).toLocaleString()}
-                  </span>
-                )}
-              </div>
+  <span className="text-2xl font-bold text-green-600">
+    ₹{product.price?.toLocaleString?.()}
+  </span>
+  {discountInfo && (
+    <span className="text-lg text-gray-500 line-through">
+      ₹{discountInfo.originalPrice.toLocaleString()}
+    </span>
+  )}
+</div>
 
               <div className="flex flex-wrap gap-2 mb-4">
                 {(() => {
@@ -201,6 +288,14 @@ export function ProductCard({ product }) {
                   );
                 })()}
               </div>
+
+              {/* Backend Discount Indicator */}
+              {discountInfo && discountInfo.isBackendControlled && !discountLoading && (
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs text-green-600 font-medium">Live Offer Active</span>
+                </div>
+              )}
             </div>
           </CardContent>
         </Link>
@@ -256,7 +351,6 @@ export function ProductCard({ product }) {
               </p>
               
               <div className="space-y-3">
-                {/* Google Login Button */}
                 <Button
                   onClick={handleGoogleLogin}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-3 transition duration-300"

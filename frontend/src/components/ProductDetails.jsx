@@ -482,8 +482,7 @@
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
-import api from "../api"; // adjust path based on file location
-
+import api from "../api";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "../components/ui/Botton";
 import { Badge } from "../components/ui/Badge";
@@ -504,9 +503,8 @@ import {
   Headphones,
   X,
 } from "lucide-react";
-//import { mockProducts } from "../lib/mock-data";
 import { useCart } from "../context/CartContext";
-import { useAuth } from "../context/AuthContext"; // Adjust path as needed
+import { useAuth } from "../context/AuthContext";
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -518,6 +516,10 @@ export default function ProductDetailPage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+  // New states for backend discount integration
+  const [globalDiscount, setGlobalDiscount] = useState(null);
+  const [discountLoading, setDiscountLoading] = useState(true);
   
   // Form modal states
   const [showDownloadForm, setShowDownloadForm] = useState(false);
@@ -553,6 +555,7 @@ export default function ProductDetailPage() {
     checkAuth();
   }, []);
 
+  // Fetch product data
   useEffect(() => {
     const slug = window.location.pathname.split("/").pop();
     api
@@ -568,6 +571,30 @@ export default function ProductDetailPage() {
         console.error("Error fetching project:", err);
       });
   }, [id]);
+
+  // Fetch global discount from backend
+  useEffect(() => {
+    const fetchGlobalDiscount = async () => {
+      try {
+        setDiscountLoading(true);
+        const response = await api.get('/api/discounts/global');
+        if (response.data.success) {
+          setGlobalDiscount(response.data.discount);
+        }
+      } catch (error) {
+        console.error('Failed to fetch global discount:', error);
+        // Don't show error to user, just continue with fallback
+      } finally {
+        setDiscountLoading(false);
+      }
+    };
+
+    fetchGlobalDiscount();
+
+    // Refresh discount every 5 minutes for real-time updates
+    const interval = setInterval(fetchGlobalDiscount, 5 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Form validation
   const validateForm = () => {
@@ -647,12 +674,66 @@ export default function ProductDetailPage() {
 
   // Handle Google Login
   const handleGoogleLogin = () => {
-   
-  const currentUrl = window.location.href;
-  const encodedRedirectUrl = encodeURIComponent(currentUrl);
-
-  window.location.href = `${api.defaults.baseURL}/api/auth/google?returnUrl=${encodedRedirectUrl}`;
+    const currentUrl = window.location.href;
+    const encodedRedirectUrl = encodeURIComponent(currentUrl);
+    window.location.href = `${api.defaults.baseURL}/api/auth/google?returnUrl=${encodedRedirectUrl}`;
   };
+
+  // Enhanced discount calculation with backend integration
+const getDiscountInfo = () => {
+  if (!product?.price) {
+    return null;
+  }
+
+  // Use backend discount if available and active
+  if (globalDiscount && globalDiscount.isActive && !discountLoading) {
+    // Check if discount is currently valid (time-based)
+    const now = new Date();
+    const startDate = globalDiscount.startDate ? new Date(globalDiscount.startDate) : null;
+    const endDate = globalDiscount.endDate ? new Date(globalDiscount.endDate) : null;
+    
+    const isTimeValid = (!startDate || now >= startDate) && (!endDate || now <= endDate);
+    
+    if (isTimeValid) {
+      const discountPercentage = parseFloat(globalDiscount.discountValue) || 0;
+      // Calculate what the original price should be based on backend discount
+      const calculatedOriginalPrice = Math.round(product.price / (1 - discountPercentage / 100));
+      const actualSavings = calculatedOriginalPrice - product.price;
+      
+      return {
+        percentage: Math.round(discountPercentage),
+        label: globalDiscount.label || 'OFF',
+        backgroundColor: globalDiscount.backgroundColor || '#ef4444',
+        textColor: globalDiscount.textColor || '#ffffff',
+        isBackendControlled: true,
+        originalPrice: calculatedOriginalPrice,
+        savings: actualSavings
+      };
+    }
+  }
+
+  // Fallback to calculated discount if no backend discount is active
+  const originalPrice = product.originalPrice || Math.round(product.price / 0.6);
+  const calculatedPercentage = Math.round(
+    ((originalPrice - product.price) / originalPrice) * 100
+  );
+
+  if (calculatedPercentage > 0) {
+    return {
+      percentage: calculatedPercentage,
+      label: 'OFF',
+      backgroundColor: '#ef4444',
+      textColor: '#ffffff',
+      isBackendControlled: false,
+      originalPrice: originalPrice,
+      savings: originalPrice - product.price
+    };
+  }
+
+  return null;
+};
+
+
 
 
   if (!product) {
@@ -674,8 +755,7 @@ export default function ProductDetailPage() {
 
     try {
       const cartItem = {
-
-        userId: user.userId, //1, ✅ dynamic user ID from context
+        userId: user.userId,
         projectId: product.id,
         quantity: 1,
       };
@@ -705,11 +785,9 @@ export default function ProductDetailPage() {
     }
   };
 
-  const discountPercentage = Math.round(
-    ((product.originalPrice - product.price) / product.originalPrice) * 100
-  );
-  const gstAmount = Math.round(product.price * 0.18);
-  const totalPrice = product.price + gstAmount;
+ const discountInfo = getDiscountInfo();
+const gstAmount = Math.round(product.price * 0.18);
+const totalPrice = product.price + gstAmount;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -735,7 +813,6 @@ export default function ProductDetailPage() {
               </p>
               
               <div className="space-y-3">
-                {/* Google Login Button */}
                 <Button
                   onClick={handleGoogleLogin}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-3 transition duration-300"
@@ -748,14 +825,7 @@ export default function ProductDetailPage() {
                   </svg>
                   Continue with Google
                 </Button>
-
-             
-
-               
-              
               </div>
-
-              
             </div>
           </div>
         </div>
@@ -849,8 +919,21 @@ export default function ProductDetailPage() {
         </div>
       )}
 
+      {/* Global Discount Banner (Optional) */}
+      {globalDiscount && globalDiscount.isActive && !discountLoading && (
+        <div 
+          className="text-center py-3 mb-6 text-white font-medium animate-pulse rounded-lg"
+          style={{ 
+            backgroundColor: globalDiscount.backgroundColor || '#ef4444',
+            color: globalDiscount.textColor || '#ffffff'
+          }}
+        >
+          🎉 {globalDiscount.label} - {Math.round(parseFloat(globalDiscount.discountValue))}% OFF on All Products! 🎉
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Product Image */}
+        {/* Product Image with Dynamic Discount Badge */}
         <div className="space-y-4">
           <div className="relative overflow-hidden rounded-lg">
             <img
@@ -860,9 +943,29 @@ export default function ProductDetailPage() {
               className="w-full h-96 object-cover"
             />
 
-            <Badge className="absolute top-4 left-4 bg-red-500">
-              {discountPercentage}% OFF
-            </Badge>
+            {/* Dynamic Backend-Controlled Discount Badge */}
+            {discountInfo && discountInfo.percentage > 0 && !discountLoading && (
+              <Badge 
+                className={`absolute top-4 left-4 font-semibold text-lg px-4 py-2 shadow-lg transition-all duration-300 hover:scale-110 ${
+                  discountInfo.isBackendControlled 
+                    ? 'animate-pulse border-2 border-white/30' 
+                    : ''
+                }`}
+                style={{
+                  backgroundColor: discountInfo.backgroundColor,
+                  color: discountInfo.textColor
+                }}
+              >
+                {`${discountInfo.percentage}% ${discountInfo.label}`}
+              </Badge>
+            )}
+
+            {/* Loading state for discount */}
+            {discountLoading && (
+              <div className="absolute top-4 left-4 bg-gray-300 text-gray-600 px-4 py-2 rounded text-sm animate-pulse">
+                Loading offer...
+              </div>
+            )}
           </div>
         </div>
 
@@ -892,42 +995,67 @@ export default function ProductDetailPage() {
               {product.title}
             </h1>
 
-<div
-  className="text-gray-600 text-lg"
-  dangerouslySetInnerHTML={{ __html: product.description }}
-></div>
+            <div
+              className="text-gray-600 text-lg"
+              dangerouslySetInnerHTML={{ __html: product.description }}
+            ></div>
           </div>
 
-          {/* Pricing */}
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <div className="flex items-center gap-4 mb-4">
-              <span className="text-3xl font-bold text-green-600">
-                ₹{product.price.toLocaleString()}
-              </span>
-              <span className="text-xl text-gray-500 line-through">
-                ₹{product.originalPrice.toLocaleString()}
-              </span>
-              <Badge className="bg-red-500">
-                Save ₹{(product.originalPrice - product.price).toLocaleString()}
-              </Badge>
-            </div>
+          {/* Enhanced Pricing with Backend Discount Info */}
+         <div className="bg-gray-50 p-6 rounded-lg">
+  <div className="flex items-center gap-4 mb-4">
+    <span className="text-3xl font-bold text-green-600">
+      ₹{product.price.toLocaleString()}
+    </span>
+    {discountInfo && (
+      <>
+        <span className="text-xl text-gray-500 line-through">
+          ₹{discountInfo.originalPrice.toLocaleString()}
+        </span>
+        <Badge 
+          className="text-white font-semibold px-3 py-1"
+          style={{
+            backgroundColor: discountInfo.backgroundColor,
+            color: discountInfo.textColor
+          }}
+        >
+          Save ₹{discountInfo.savings.toLocaleString()}
+        </Badge>
+      </>
+    )}
+  </div>
 
-            <div className="space-y-2 text-sm text-gray-600">
-              <div className="flex justify-between">
-                <span>Price:</span>
-                <span>₹{product.price.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>GST (18%):</span>
-                <span>₹{gstAmount.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between font-semibold text-gray-900 border-t pt-2">
-                <span>Total:</span>
-                <span>₹{totalPrice.toLocaleString()}</span>
-              </div>
-            </div>
-          </div>
+  {/* Backend Discount Indicator */}
+  {discountInfo && discountInfo.isBackendControlled && !discountLoading && (
+    <div className="flex items-center gap-2 mb-4">
+      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+      <span className="text-sm text-green-600 font-medium">
+        Live Offer Active - {discountInfo.percentage}% {discountInfo.label}
+      </span>
+    </div>
+  )}
 
+  <div className="space-y-2 text-sm text-gray-600">
+    <div className="flex justify-between">
+      <span>Price:</span>
+      <span>₹{product.price.toLocaleString()}</span>
+    </div>
+    {discountInfo && (
+      <div className="flex justify-between text-green-600">
+        <span>Discount ({discountInfo.percentage}%):</span>
+        <span>-₹{discountInfo.savings.toLocaleString()}</span>
+      </div>
+    )}
+    <div className="flex justify-between">
+      <span>GST (18%):</span>
+      <span>₹{gstAmount.toLocaleString()}</span>
+    </div>
+    <div className="flex justify-between font-semibold text-gray-900 border-t pt-2">
+      <span>Total:</span>
+      <span>₹{totalPrice.toLocaleString()}</span>
+    </div>
+  </div>
+</div>
           {/* Quantity and Actions */}
           <div className="space-y-4">
             <div className="flex items-center gap-4">
@@ -952,9 +1080,8 @@ export default function ProductDetailPage() {
             </div>
 
             <div className="flex flex-wrap gap-3 justify-center sm:justify-start w-full">
-             <Button
+              <Button
                 size="lg"
-                // removed: disabled={loading}
                 className="flex items-center justify-center bg-blue-600 text-white px-6 py-3 flex-grow sm:flex-grow-0 sm:w-auto hover:bg-blue-700 transition duration-300 shadow-sm hover:shadow-md disabled:opacity-50"
                 onClick={handleAddToCart}
               >
@@ -1077,69 +1204,69 @@ export default function ProductDetailPage() {
             </Card>
           </TabsContent>
 
-         {product && (
-  <TabsContent value="specifications" className="mt-8">
-    <Card className="bg-white shadow-md rounded-xl border border-blue-100">
-      <CardContent className="p-6">
-        <h3 className="text-xl font-semibold text-blue-700 mb-4">
-          Technical Specifications
-        </h3>
-        <div className="space-y-4 text-blue-900">
-          {[
-            ["Specification", product.subcategory?.name || "N/A"],
-            ["Project Title", product.title],
-            ["Price", `₹${product.price.toLocaleString()}`],
-            [
-              "Components",
-              (product.components || []).length + " items",
-            ],
-            [
-              "Details",
-              <div
-                key="details"
-                dangerouslySetInnerHTML={{
-                  __html: product.details || "Not provided",
-                }}
-              />,
-            ],
-            [
-              "Project Description",
-              <div
-                key="desc"
-                dangerouslySetInnerHTML={{
-                  __html: product.description || "Not provided",
-                }}
-              />,
-            ],
-            [
-              "Components Count",
-              `${(product.components || []).length} items`,
-            ],
-            ["Estimated Build Time", "2–4 hours"],
-          ].map(([label, value], i) => (
-            <div
-              key={i}
-              className={`grid grid-cols-2 gap-4 py-2 ${
-                i < 10 ? "border-b border-blue-100" : ""
-              }`}
-            >
-              <span className="font-medium">{label}:</span>
-              <span className="prose prose-sm max-w-none">{value}</span>
-            </div>
-          ))}
-      {product.block_diagram && typeof product.block_diagram === "string" && (
-        <div className="pt-6">
-          <h4 className="font-medium text-blue-600">Block Diagram</h4>
-          <img
-            src={`${product.block_diagram}`}
-                            alt="Block Diagram"
-                            className="mt-2 rounded-lg shadow"
-                            onError={(e) => {
-                              e.target.style.display = "none";
-                            }}
-                          />
-                        </div>
-                      )}
+          {product && (
+            <TabsContent value="specifications" className="mt-8">
+              <Card className="bg-white shadow-md rounded-xl border border-blue-100">
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-semibold text-blue-700 mb-4">
+                    Technical Specifications
+                  </h3>
+                  <div className="space-y-4 text-blue-900">
+                    {[
+                      ["Specification", product.subcategory?.name || "N/A"],
+                      ["Project Title", product.title],
+                      ["Price", `₹${product.price.toLocaleString()}`],
+                      [
+                        "Components",
+                        (product.components || []).length + " items",
+                      ],
+                      [
+                        "Details",
+                        <div
+                          key="details"
+                          dangerouslySetInnerHTML={{
+                            __html: product.details || "Not provided",
+                          }}
+                        />,
+                      ],
+                      [
+                        "Project Description",
+                        <div
+                          key="desc"
+                          dangerouslySetInnerHTML={{
+                            __html: product.description || "Not provided",
+                          }}
+                        />,
+                      ],
+                      [
+                        "Components Count",
+                        `${(product.components || []).length} items`,
+                      ],
+                      ["Estimated Build Time", "2–4 hours"],
+                    ].map(([label, value], i) => (
+                      <div
+                        key={i}
+                        className={`grid grid-cols-2 gap-4 py-2 ${
+                          i < 10 ? "border-b border-blue-100" : ""
+                        }`}
+                      >
+                        <span className="font-medium">{label}:</span>
+                        <span className="prose prose-sm max-w-none">{value}</span>
+                      </div>
+                    ))}
+                    {product.block_diagram && typeof product.block_diagram === "string" && (
+                      <div className="pt-6">
+                        <h4 className="font-medium text-blue-600">Block Diagram</h4>
+                        <img
+                          src={`${product.block_diagram}`}
+                          alt="Block Diagram"
+                          className="mt-2 rounded-lg shadow"
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
