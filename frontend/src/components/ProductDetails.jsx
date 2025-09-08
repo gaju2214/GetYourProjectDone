@@ -1217,8 +1217,8 @@ const totalPrice = product.price + gstAmount;
 
             <div className="text-center p-4 bg-purple-50 rounded-lg">
               <Headphones className="h-6 w-6 text-purple-600 mx-auto mb-2" />
-              <div className="text-sm font-medium">24×7 Support</div>
-              <div className="text-xs text-gray-600">Always available for you</div>
+              <div className="text-sm font-medium">Get full Report</div>
+              <div className="text-xs text-gray-600">after purchase Project</div>
             </div>
           </div>
         </div>
