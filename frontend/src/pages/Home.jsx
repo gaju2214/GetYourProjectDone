@@ -17,7 +17,24 @@ const HomePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const allProjectsRef = useRef(null);
-
+  // Add this useEffect for SEO optimization
+  useEffect(() => {
+    // Set optimized page title
+    document.title = "Premium Engineering Project Kits | Electronics, Mechanical, Software | Get Your Project Done";
+    
+    // Set high-CTR meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    const descriptionContent = "Get complete engineering project kits with source code, circuit diagrams & 24/7 expert support. 500+ Electronics, Mechanical & Software projects for students. Download instantly!";
+    
+    if (metaDescription) {
+      metaDescription.setAttribute('content', descriptionContent);
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = 'description';
+      meta.content = descriptionContent;
+      document.head.appendChild(meta);
+    }
+  }, []);
   useEffect(() => {
     api
       .get("/api/projects")

@@ -15,6 +15,25 @@ import api from "../api"; // adjust path based on file location
 export default function CategoriesPage() {
   const [categoriesData, setCategoriesData] = useState([]);
 
+  useEffect(() => {
+    // Set page title
+    document.title = "Engineering Project Categories | Electronics, Mechanical, Software | Get Your Project Done";
+    
+    // Set meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 
+        'Explore 6+ engineering project categories: Electronics, Software, Mechanical, Electrical, Civil & Mechatronics. 500+ complete project kits with source code & expert support!'
+      );
+    } else {
+      // Create meta description if it doesn't exist
+      const meta = document.createElement('meta');
+      meta.name = 'description';
+      meta.content = 'Explore 6+ engineering project categories: Electronics, Software, Mechanical, Electrical, Civil & Mechatronics. 500+ complete project kits with source code & expert support!';
+      document.head.appendChild(meta);
+    }
+  }, []);
+
   const categoryIcons = {
     Electronics: "⚡",
     Software: "💻",

@@ -527,10 +527,13 @@ export default function ProductDetailPage() {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  
   // Google Login Modal states
   const [showGoogleLoginModal, setShowGoogleLoginModal] = useState(false);
   
   const navigate = useNavigate();
+
+  
 
   // Check auth on mount
   useEffect(() => {
@@ -556,21 +559,85 @@ export default function ProductDetailPage() {
   }, []);
 
   // Fetch product data
-  useEffect(() => {
-    const slug = window.location.pathname.split("/").pop();
-    api
-      .get(`/api/projects/by-slug/${slug}`)
-      .then((res) => {
-        const p = res.data.data;
-        setProduct({
-          ...p,
-          originalPrice: Math.floor(p.price * 1.5),
-        });
-      })
-      .catch((err) => {
-        console.error("Error fetching project:", err);
+  // First useEffect: Fetch product data
+useEffect(() => {
+  const slug = window.location.pathname.split("/").pop();
+  api
+    .get(`/api/projects/by-slug/${slug}`)
+    .then((res) => {
+      const p = res.data.data;
+      setProduct({
+        ...p,
+        originalPrice: Math.floor(p.price * 1.5),
       });
-  }, [id]);
+    })
+    .catch((err) => {
+      console.error("Error fetching project:", err);
+    });
+}, [id]);
+
+// Second useEffect: Set dynamic meta tags
+useEffect(() => {
+  if (product) {
+    // Set dynamic page title
+    document.title = `${product.title} | Complete ${product.category || 'Engineering'} Project Kit | Get Your Project Done`;
+
+    // Create dynamic meta description
+    const benefits = [];
+    if (product.abstract_file) benefits.push("documentation");
+    if (product.source_code) benefits.push("source code");
+    if (product.circuit_diagram) benefits.push("circuit diagrams");
+    if (product.video_tutorial) benefits.push("video tutorials");
+
+    const benefitsText = benefits.length > 0 ? benefits.join(", ") : "complete documentation";
+    const category = product.category || "Engineering";
+    const discountInfo = getDiscountInfo();
+
+    // Format price with rupee symbol using proper Unicode
+    const formatPrice = (price) => `₹${price.toLocaleString('en-IN')}`;
+
+    let descriptionContent;
+    if (discountInfo) {
+      descriptionContent = `${product.title} - Complete ${category} project with ${benefitsText} & expert support. ${discountInfo.percentage}% OFF! Now ${formatPrice(product.price)} (was ${formatPrice(discountInfo.originalPrice)}). Download instantly!`;
+    } else {
+      descriptionContent = `${product.title} - Complete ${category} project with ${benefitsText} & expert support. Perfect for engineering students. ${formatPrice(product.price)} - Download now!`;
+    }
+
+    // Ensure description stays under 160 characters
+    descriptionContent = descriptionContent.substring(0, 160);
+
+    // Set meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', descriptionContent);
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = 'description';
+      meta.content = descriptionContent;
+      document.head.appendChild(meta);
+    }
+
+    // Add Open Graph meta tags for social sharing
+    const updateOrCreateMetaTag = (property, content) => {
+      let metaTag = document.querySelector(`meta[property="${property}"]`);
+      if (metaTag) {
+        metaTag.setAttribute('content', content);
+      } else {
+        metaTag = document.createElement('meta');
+        metaTag.setAttribute('property', property);
+        metaTag.setAttribute('content', content);
+        document.head.appendChild(metaTag);
+      }
+    };
+
+    updateOrCreateMetaTag('og:title', `${product.title} | Complete ${category} Project Kit`);
+    updateOrCreateMetaTag('og:description', descriptionContent);
+    updateOrCreateMetaTag('og:image', product.image || '/placeholder-logo.png');
+    updateOrCreateMetaTag('og:url', window.location.href);
+    updateOrCreateMetaTag('og:type', 'product');
+  }
+}, [product]); // This runs when product state changes
+
 
   // Fetch global discount from backend
   useEffect(() => {
@@ -1042,8 +1109,8 @@ const totalPrice = product.price + gstAmount;
     </div>
     {discountInfo && (
       <div className="flex justify-between text-green-600">
-        <span>Discount ({discountInfo.percentage}%):</span>
-        <span>-₹{discountInfo.savings.toLocaleString()}</span>
+        {/* <span>Discount ({discountInfo.percentage}%):</span>
+        <span>-₹{discountInfo.savings.toLocaleString()}</span> */}
       </div>
     )}
     <div className="flex justify-between">
