@@ -928,7 +928,7 @@ const totalPrice = product.price + gstAmount;
             color: globalDiscount.textColor || '#ffffff'
           }}
         >
-          🎉 {globalDiscount.label} - {Math.round(parseFloat(globalDiscount.discountValue))}% OFF on All Products! 🎉
+          🎉 {globalDiscount.label} - {Math.round(parseFloat(globalDiscount.discountValue))}% OFF on All Projects! 🎉
         </div>
       )}
 
