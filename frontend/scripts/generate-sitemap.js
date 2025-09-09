@@ -1,6 +1,11 @@
-const { createSitemap } = require('sitemap');
-const fs = require('fs');
-const path = require('path');
+import { createSitemap } from 'sitemap';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// ES modules don't have __dirname, so we create it
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const hostname = 'https://www.getyourprojectdone.in';
 
