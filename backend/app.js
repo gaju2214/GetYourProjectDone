@@ -22,6 +22,8 @@ const userRoutes = require('./routes/authRoutes'); // or wherever your routes ar
 
 const userinfo = require('./routes/userinfo');
 const discountRoutes = require('./routes/discountRoutes');
+const sitemapRoutes = require('./routes/sitemap');
+
 const app = express();
 
 // Allowed Origins
@@ -79,6 +81,8 @@ app.use("/api/shiprocket", shiprocketRoutes);
 // app.use("/api/orders", orderRoutes);
  app.use("/api/orders", orderRoutes);
 app.use('/api', userRoutes); // This makes your routes accessible at /api/users/search
+app.use('/', sitemapRoutes);
+
 
 app.get("/protected", authenticateUser, (req, res) => {
   res.json({ message: "This is protected", user: req.user });

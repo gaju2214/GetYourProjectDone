@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.getyourprojectdone.in/sitemap.xml
+
+# Disallow admin areas
+
