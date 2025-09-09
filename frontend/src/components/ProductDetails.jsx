@@ -580,7 +580,7 @@ useEffect(() => {
 useEffect(() => {
   if (product) {
     // Set dynamic page title
-    document.title = `${product.title} | Complete ${product.category || 'Engineering'} Project Kit | Get Your Project Done`;
+    document.title = `${product.title} Engineering Project | Get Your Project Done`;
 
     // Create dynamic meta description
     const benefits = [];
