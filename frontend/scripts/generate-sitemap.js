@@ -1,11 +1,8 @@
-import { createSitemap } from 'sitemap';
+import pkg from 'sitemap';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-// ES modules don't have __dirname, so we create it
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const { createSitemap } = pkg;
 
 const hostname = 'https://www.getyourprojectdone.in';
 
@@ -19,12 +16,20 @@ const urls = [
 ];
 
 // Add your engineering categories
-const categories = ['Electronics', 'Software', 'Mechanical', 'Electrical', 'Civil', 'Mechatronics'];
-categories.forEach(category => {
+const categories = [
+  'Electronics',
+  'Software',
+  'Mechanical',
+  'Electrical',
+  'Civil',
+  'Mechatronics',
+];
+
+categories.forEach((category) => {
   urls.push({
     url: `/category/${category.toLowerCase()}`,
     changefreq: 'weekly',
-    priority: 0.6
+    priority: 0.6,
   });
 });
 
@@ -34,8 +39,15 @@ const sitemap = createSitemap({
   urls,
 });
 
-// Write to public directory
-const publicDir = path.join(__dirname, '../public');
+// Resolve public directory (no import.meta.url needed)
+const publicDir = path.join(process.cwd(), 'public');
+
+// Ensure directory exists
+if (!fs.existsSync(publicDir)) {
+  fs.mkdirSync(publicDir, { recursive: true });
+}
+
+// Write sitemap.xml
 fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemap.toString());
 
 console.log('✅ Sitemap generated successfully!');

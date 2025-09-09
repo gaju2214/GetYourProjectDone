@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "start": "npx serve -s dist",
     "generate-sitemap": "node scripts/generate-sitemap.js",
-    "postinstall": "npm run generate-sitemap"},
+    "postinstall": "npm run generate-sitemap"
+  },
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^41.4.2",
     "@ckeditor/ckeditor5-build-decoupled-document": "^41.4.2",
@@ -35,6 +36,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@babel/plugin-syntax-import-meta": "^7.10.4",
     "@eslint/js": "^9.30.1",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
