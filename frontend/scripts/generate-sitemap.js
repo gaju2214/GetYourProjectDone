@@ -16,9 +16,8 @@ import path from 'path';
 
   // Add categories
   const categories = [
-     'Electronics',
+  'Electronics',
   'Computer',
-  'Mechanical',
   'Electrical',
   'Robotics',
   'Mechanical',
@@ -32,6 +31,23 @@ import path from 'path';
       priority: 0.6,
     });
   });
+try {
+    const backendUrl = process.env.VITE_BACKEND_URL || 'https://master.getyourprojectdone.in';
+
+    // You can add dynamic fetching here if needed
+    const response = await fetch(`${backendUrl}/api/projects`);
+    const projects = await response.json();
+    projects.forEach(project => {
+      urls.push({
+        url: `/project/${project.slug}`,
+        changefreq: 'weekly',
+        priority: 0.6,
+        lastmod: project.updatedAt
+      });
+    });
+  } catch (error) {
+    console.warn('Could not fetch dynamic content, using static sitemap only');
+  }
 
   // Create sitemap stream
   const sitemapStream = new SitemapStream({ hostname });
@@ -48,7 +64,7 @@ import path from 'path';
   );
 
   // Ensure public directory exists
-  const publicDir = path.join(process.cwd(), '../public');
+  const publicDir = path.join(process.cwd(), 'public');
   if (!fs.existsSync(publicDir)) {
     fs.mkdirSync(publicDir, { recursive: true });
   }
@@ -56,5 +72,6 @@ import path from 'path';
   // Save sitemap.xml
   fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), sitemapXML);
 
-  console.log('✅ Sitemap generated successfully!');
+   console.log('✅ Sitemap generated successfully!');
+  console.log(`🌐 Will be accessible at: ${hostname}/sitemap.xml`);
 })();
