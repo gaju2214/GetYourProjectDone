@@ -72,7 +72,7 @@ export default function CartPage() {
         setProfile(res.data);
 
         setError(null);
-        console.log(res.data);
+        // console.log(res.data);
       } catch (err) {
         console.error("Profile fetch failed:", err);
         setError("You must be logged in to view your profile.");
