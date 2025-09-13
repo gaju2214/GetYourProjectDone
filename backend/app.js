@@ -99,7 +99,7 @@ app.use('/api/userinfos', userinfo);
 app.get("/", (req, res) => res.send("Server is running 🚀"));
 
 // Sync database
-sequelize.sync({ force: true })
+sequelize.sync({ alter: true })
   .then(() => console.log("Database synced"))
   .catch((err) => console.log("Error syncing database:", err));
 
