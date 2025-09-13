@@ -1000,16 +1000,17 @@ const totalPrice = product.price + gstAmount;
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        {/* Product Image with Dynamic Discount Badge */}
-        <div className="space-y-4">
-          <div className="relative overflow-hidden rounded-lg">
-            <img
-              src={`${product.image}`}
-              alt={product.title}
-              loading="lazy"
-              className="w-full h-96 object-cover"
-            />
+   <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+  {/* Product Image with Dynamic Discount Badge */}
+  <div className="space-y-4">
+    <div className="relative overflow-hidden rounded-lg bg-gray-50">
+      <img
+        src={`${product.image}`}
+        alt={product.title}
+        loading="lazy"
+        className="w-full h-96 object-contain"
+      />
+   
 
             {/* Dynamic Backend-Controlled Discount Badge */}
             {discountInfo && discountInfo.percentage > 0 && !discountLoading && (
