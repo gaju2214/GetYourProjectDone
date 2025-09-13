@@ -47,11 +47,17 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
   // Add this association
-  Order.associate = function(models) {
-    Order.hasMany(models.OrderItem, {
-      foreignKey: 'orderId',
-      as: 'OrderItems'
-    });
-  };
+ Order.associate = (models) => {
+  Order.hasMany(models.OrderItem, {
+    foreignKey: "orderId", // Match your OrderItem model
+    as: "OrderItems"
+  });
+  
+  Order.belongsTo(models.User, {
+    foreignKey: "user_id" // Or userId if that's what you use
+  });
+};
   return Order;
 };
+
+// In Order.js

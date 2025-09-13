@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-
 import api from "../api"; // adjust path based on file location
-
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Botton";
 import {
@@ -305,7 +303,6 @@ export default function CartPage() {
                           src={item.image}
                           alt={item.title}
                           loading="lazy"
-
                           className="w-full sm:w-[120px] sm:h-[120px] object-cover rounded-xl shadow-md"
                         />
 
@@ -319,15 +316,15 @@ export default function CartPage() {
                           <h3 className="font-bold text-xl text-gray-900 mb-2">
                             {item.title}
                           </h3>
-                 <div
-                className="text-gray-600 leading-relaxed"
-                dangerouslySetInnerHTML={{
-                  __html:
-                    item.description?.length > 120
-                      ? item.description.slice(0, 120) + "..."
-                      : item.description
-                }}
-              ></div>
+                          <div
+                            className="text-gray-600 leading-relaxed"
+                            dangerouslySetInnerHTML={{
+                              __html:
+                                item.description?.length > 120
+                                  ? item.description.slice(0, 120) + "..."
+                                  : item.description,
+                            }}
+                          ></div>
                           <div className="flex gap-2 mt-3">
                             <Badge variant="outline">
                               {typeof item.category === "object"

@@ -100,7 +100,7 @@ app.get("/", (req, res) => res.send("Server is running 🚀"));
 
 // Sync database
 sequelize
-  .sync({ alter: true })
+  .sync({ alter:true })
   .then(() => console.log("Database synced"))
   .catch((err) => console.log("Error syncing database:", err));
 

@@ -354,17 +354,57 @@ exports.getAllOrders = async (req, res) => {
 
 exports.getOrdersByUser = async (req, res) => {
   const { user_id } = req.params;
+  
   try {
-    const orders = await Order.findAll({
+    console.log('Step 1: Testing simple Order query...');
+    const simpleOrders = await Order.findAll({ 
       where: { user_id },
-      include: {
-        model: OrderItem,
-        include: "Project",
-      },
+      raw: true 
     });
-    res.json(orders);
+    console.log('Simple orders result:', simpleOrders);
+
+    if (simpleOrders.length === 0) {
+      return res.json({ message: 'No orders found for this user', orders: [] });
+    }
+
+    console.log('Step 2: Testing with OrderItems...');
+    const ordersWithItems = await Order.findAll({
+      where: { user_id },
+      include: [{
+        model: OrderItem,
+        as: 'OrderItems' // ✅ Use the alias from your association
+      }]
+    });
+    console.log('Orders with items:', ordersWithItems.length);
+
+    console.log('Step 3: Testing full query...');
+    const fullOrders = await Order.findAll({
+      where: { user_id },
+      include: [
+        {
+          model: OrderItem,
+          as: 'OrderItems', // ✅ Use the alias from your association
+          include: [
+            {
+              model: Project,
+              as: 'Project' // ✅ Use the alias from OrderItem association
+            }
+          ]
+        }
+      ],
+      order: [['createdAt', 'DESC']]
+    });
+
+    console.log('Full orders result:', fullOrders.length);
+    res.json(fullOrders);
+    
   } catch (err) {
-    res.status(500).json({ error: "Could not fetch orders" });
+    console.error('Error at step:', err.message);
+    console.error('Full error:', err);
+    res.status(500).json({ 
+      error: err.message,
+      details: err.stack
+    });
   }
 };
 exports.updateShiprocketOrder = async (req, res) => {
