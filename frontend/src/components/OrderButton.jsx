@@ -198,9 +198,8 @@
 // }
 
 
-
 import { useEffect, useRef, useState } from "react";
-import { Edit } from "lucide-react"; // ✅ edit icon
+import { Edit, MapPin, Phone, User } from "lucide-react"; // Added icons
 import BillingFormPopup from "./UserDetails"; 
 import api from "../api";
 
@@ -242,12 +241,12 @@ export function OrderButton({
         amount: data.amount,
         currency: "INR",
         name: "Getyourprojectdone",
-        description: "Buy Product from getyourprojectdone",
+        description: "Order Payment",
         order_id: data.id,
         handler: async function (response) {
           if (response) await createOrderWithShipping();
         },
-        theme: { color: "#000000" }, // ✅ Razorpay popup theme black
+        theme: { color: "#000000" }, // Black theme
       };
 
       const rzp = new window.Razorpay(options);
@@ -301,43 +300,60 @@ export function OrderButton({
     <>
       <div>
         {userProfile?.address ? (
-          <div className="order-summary border p-4 rounded-md shadow">
-            <h3 className="font-bold text-lg mb-2">Order Summary</h3>
-            <p><strong>Name:</strong> {userProfile.name} {userProfile.lastname}</p>
-            <p><strong>Phone:</strong> {userProfile.phoneNumber}</p>
-            <p><strong>Address:</strong> {userProfile.address}, {userProfile.city}, {userProfile.state}</p>
+          <div className="order-summary bg-white border p-6 rounded-lg shadow-md max-w-md mx-auto transition-transform hover:scale-[1.01]">
+            <h3 className="font-semibold text-xl mb-4 border-b pb-2 text-gray-800">
+            Address
+            </h3>
+
+            <div className="space-y-2 text-gray-700">
+              {/* <p className="flex items-center gap-2">
+                <User size={16} className="text-gray-500" />
+                <strong>Name:</strong> {userProfile.name} {userProfile.lastname}
+              </p>
+              <p className="flex items-center gap-2">
+                <Phone size={16} className="text-gray-500" />
+                <strong>Phone:</strong> {userProfile.phoneNumber}
+              </p> */}
+              <p className="flex items-center gap-2">
+                <MapPin size={16} className="text-gray-500" />
+                 {userProfile.address}, {userProfile.city}, {userProfile.state}
+              </p>
+            </div>
 
             {/* ✅ Edit button with icon */}
             <button
-              className="flex items-center gap-2 bg-gray-200 text-sm px-3 py-1 rounded mt-2 hover:bg-gray-300"
+              className="flex items-center gap-2 text-sm mt-3 px-3 py-1.5 border rounded-lg hover:bg-gray-100 transition"
               onClick={() => setIsPopupOpen(true)}
             >
-              <Edit size={16} /> Edit Address
+              <Edit size={16} className="text-gray-600" /> Edit Address
             </button>
 
-            {paymentMethod === "op" ? (
-              <button
-                ref={buttonRef}
-                className="bg-gray-600 text-white px-4 py-2 rounded mt-3 hover:bg-gray-900"
-                onClick={handlePayment}
-                disabled={disabled || isAnimating || !scriptLoaded}
-              >
-                Continue to Pay
-              </button>
-            ) : (
-              <button
-                ref={buttonRef}
-                className="bg-gray-700 text-white px-4 py-2 rounded mt-3 hover:bg-gray-900"
-                onClick={handleCODOrder}
-                disabled={disabled || isAnimating}
-              >
-                {isAnimating ? "Processing..." : "Continue to Shipping"}
-              </button>
-            )}
+            {/* Payment Buttons */}
+            <div className="mt-5 flex flex-col gap-3">
+              {paymentMethod === "op" ? (
+                <button
+                  ref={buttonRef}
+                  className="w-full bg-gray-700 text-white font-medium px-4 py-2.5 rounded-lg shadow hover:bg-gray-900 transition"
+                  onClick={handlePayment}
+                  disabled={disabled || isAnimating || !scriptLoaded}
+                >
+                  Continue to Pay ₹{finalTotal}
+                </button>
+              ) : (
+                <button
+                  ref={buttonRef}
+                  className="w-full bg-gray-700 text-white font-medium px-4 py-2.5 rounded-lg shadow hover:bg-gray-900 transition"
+                  onClick={handleCODOrder}
+                  disabled={disabled || isAnimating}
+                >
+                  {isAnimating ? "Processing..." : "Cash on Delivery"}
+                </button>
+              )}
+            </div>
           </div>
         ) : (
           <button
-            className="bg-black text-white px-6 py-2 rounded hover:bg-gray-900"
+            className="bg-black text-white px-8 py-3 rounded-lg font-medium shadow hover:bg-gray-900 transition w-full max-w-sm mx-auto block"
             onClick={() => setIsPopupOpen(true)}
           >
             Buy Now

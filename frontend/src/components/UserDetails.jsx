@@ -405,7 +405,7 @@
 import React, { useState } from "react";
 import api from "../api";
 
-const BillingFormPopup = ({ isPopupOpen, setIsPopupOpen, profile, onProfileUpdate }) => {
+const BillingFormPopup = ({ isPopupOpen, setIsPopupOpen, profile, onConfirm }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     phoneNumber: profile?.phoneNumber || "",
@@ -488,13 +488,12 @@ const BillingFormPopup = ({ isPopupOpen, setIsPopupOpen, profile, onProfileUpdat
       try {
         const res = await api.put(`/api/auth/profile`, formData, { withCredentials: true });
         alert("Profile updated!");
-        onProfileUpdate(res.data); // update parent state
+        if (onConfirm) onConfirm(res.data); // ✅ use onConfirm
       } catch (err) {
         console.error("Update failed:", err);
         alert("Update failed");
       }
-      closePopup();
-    }
+      closePopup();}
   };
 
   const renderStep = () => {

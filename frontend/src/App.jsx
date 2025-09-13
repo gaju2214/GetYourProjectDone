@@ -19,6 +19,7 @@ import ProfilePage from "./pages/Profile";
 import AdminLogin from "./pages/Adlogin";
 import AdminRegister from "./pages/Register";
 import DeleteProject from "./pages/Editproject";
+import ProjectAdminPanel from "./ProjectAdminPanel";
 
 
 
@@ -31,7 +32,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/account" element={<Account/>} />
        <Route path="/delete/:id" element={<DeleteProject Id={1} />} />
-        {/* <Route path="/getproject" element={<ProjectAdminPanel />} /> */}
+        {/* <Route path="/getproject" element={<ProjectAdminPanel/>} /> */}
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
