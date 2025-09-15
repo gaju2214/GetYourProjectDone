@@ -19,6 +19,7 @@ import ProfilePage from "./pages/Profile";
 import AdminLogin from "./pages/Adlogin";
 import AdminRegister from "./pages/Register";
 import DeleteProject from "./pages/Editproject";
+import ProjectAdminPanel from "./ProjectAdminPanel";
 
 
 
@@ -32,19 +33,21 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/account" element={<Account/>} />
        <Route path="/delete/:id" element={<DeleteProject Id={1} />} />
-        {/* <Route path="/getproject" element={<ProjectAdminPanel/>} /> */}
+        <Route path="/getproject" element={<ProjectAdminPanel/>} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/profile" element={<Account />} />
-        {/* <Route path="/adlogin" element={<AdminLogin />} /> */}
+        <Route path="/adlogin" element={<AdminLogin />} />
         <Route path="/projects/:id" element={<ProductDetailPage />} />
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/categories" element={<CategoriesPage />} />
-        {/* <Route path="/adregister" element={<AdminRegister />} /> */}
+        <Route path="/adregister" element={<AdminRegister/>} />
         <Route path="/categories/:category" element={<CategoryPage />} />
         <Route path="/projects" element={<ProjectList/>} />
+        <Route path="/projects/search" element={<ProjectList/>} />
+
         <Route path="/*" element={<NotFoundPage />} />
         <Route path="/projectscat/:category" element={<CategoryPage />} />
       

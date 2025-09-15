@@ -12,6 +12,7 @@ router.get("/", orderController.getAllOrders);
 router.put("/:id", orderController.updateOrderStatus);
 router.post('/create-with-shipping', orderController.createOrderWithShipping);
 
+
 // ✅ Fix: Add the missing tracking routes
 router.get('/shiprocket/track/awb/:awb', async (req, res) => {
   try {
@@ -197,6 +198,58 @@ router.get('/shiprocket', async (req, res) => {
     }
   }
 });
+
+// ✅ Update Shiprocket order address
+router.put("/shiprocket/address/:orderId", async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { shipping_address } = req.body; // <-- nested object from frontend
+
+    if (!shipping_address) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing shipping_address in request body",
+      });
+    }
+
+    const token = await authenticateShiprocket();
+
+    const response = await axios.put(
+      `${SHIPROCKET_API_BASE}/orders/address/${orderId}`,
+      {
+        shipping_customer_name: shipping_address.name?.split(" ")[0] || "",
+        shipping_last_name: shipping_address.name?.split(" ").slice(1).join(" ") || "",
+        shipping_address: shipping_address.address,
+        shipping_address_2: "",
+        shipping_city: shipping_address.city,
+        shipping_state: shipping_address.state,
+        shipping_country: shipping_address.country,
+        shipping_pincode: shipping_address.pincode,
+        shipping_email: shipping_address.email,
+        shipping_phone: shipping_address.phone,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    res.json({
+      success: true,
+      message: "Order address updated successfully",
+      data: response.data,
+    });
+  } catch (error) {
+    console.error("Error updating Shiprocket order address:", error.response?.data || error.message);
+    res.status(error.response?.status || 500).json({
+      success: false,
+      message: error.response?.data?.message || "Failed to update order address in Shiprocket",
+    });
+  }
+});
+
 
 module.exports = router;
 

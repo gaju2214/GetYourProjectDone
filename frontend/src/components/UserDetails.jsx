@@ -400,14 +400,13 @@
 
 
 
-
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../api";
 
-const BillingFormPopup = ({ isPopupOpen, setIsPopupOpen, profile, onConfirm }) => {
+const BillingFormPopup = ({ isPopupOpen, setIsPopupOpen, profile, onConfirm,shiprocketOrderId }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
+    user_id: profile?.user_id || 1,
     phoneNumber: profile?.phoneNumber || "",
     email: profile?.email || "",
     name: profile?.name || "",
@@ -420,6 +419,22 @@ const BillingFormPopup = ({ isPopupOpen, setIsPopupOpen, profile, onConfirm }) =
   });
   const [errors, setErrors] = useState({});
 
+  // Sync formData whenever profile changes
+  useEffect(() => {
+    setFormData({
+      user_id: profile?.user_id || 1,
+      phoneNumber: profile?.phoneNumber || "",
+      email: profile?.email || "",
+      name: profile?.name || "",
+      lastname: profile?.lastname || "",
+      address: profile?.address || "",
+      city: profile?.city || "",
+      pincode: profile?.pincode || "",
+      state: profile?.state || "",
+      country: profile?.country || "India",
+    });
+  }, [profile]);
+
   const closePopup = () => {
     setIsPopupOpen(false);
     setCurrentStep(1);
@@ -427,39 +442,23 @@ const BillingFormPopup = ({ isPopupOpen, setIsPopupOpen, profile, onConfirm }) =
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const validateStep = (step) => {
     const newErrors = {};
     if (step === 1) {
-      if (!formData.phoneNumber.trim()) {
-        newErrors.phoneNumber = "Phone number is required";
-      } else if (!/^\d{10}$/.test(formData.phoneNumber.replace(/\s+/g, ""))) {
+      if (!formData.phoneNumber.trim()) newErrors.phoneNumber = "Phone number is required";
+      else if (!/^\d{10}$/.test(formData.phoneNumber.replace(/\s+/g, "")))
         newErrors.phoneNumber = "Please enter a valid 10-digit phone number";
-      }
     }
     if (step === 2) {
-      if (!formData.email.trim()) {
-        newErrors.email = "Email is required";
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      if (!formData.email.trim()) newErrors.email = "Email is required";
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
         newErrors.email = "Please enter a valid email address";
-      }
-      if (!formData.name.trim()) {
-        newErrors.name = "First name is required";
-      }
-      if (!formData.lastname.trim()) {
-        newErrors.lastname = "Last name is required";
-      }
+      if (!formData.name.trim()) newErrors.name = "First name is required";
+      if (!formData.lastname.trim()) newErrors.lastname = "Last name is required";
     }
     if (step === 3) {
       if (!formData.address.trim()) newErrors.address = "Address is required";
@@ -473,28 +472,65 @@ const BillingFormPopup = ({ isPopupOpen, setIsPopupOpen, profile, onConfirm }) =
   };
 
   const nextStep = () => {
-    if (validateStep(currentStep)) {
-      if (currentStep < 3) setCurrentStep(currentStep + 1);
-    }
+    if (validateStep(currentStep) && currentStep < 3) setCurrentStep(currentStep + 1);
   };
 
   const prevStep = () => {
     if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (validateStep(3)) {
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!validateStep(3)) return;
+
+  try {
+    // 1️⃣ Update your local profile in DB
+    const res = await api.put("/api/auth/profile", formData, { withCredentials: true });
+    alert("Profile updated!");
+
+    // Build updated profile object
+    const updatedProfile = {
+      user_id: res.data.user_id || formData.user_id,
+      phoneNumber: res.data.phoneNumber || formData.phoneNumber,
+      email: res.data.email || formData.email,
+      name: res.data.name || formData.name,
+      lastname: res.data.lastname || formData.lastname,
+      address: res.data.address || formData.address,
+      city: res.data.city || formData.city,
+      pincode: res.data.pincode || formData.pincode,
+      state: res.data.state || formData.state,
+      country: res.data.country || formData.country,
+    };
+
+    // 2️⃣ Also update Shiprocket order address
+    if (profile?.shiprocketOrderId) {
       try {
-        const res = await api.put(`/api/auth/profile`, formData, { withCredentials: true });
-        alert("Profile updated!");
-        if (onConfirm) onConfirm(res.data); // ✅ use onConfirm
+        await api.put(`/api/orders/shiprocket/address/${profile.shiprocketOrderId}`, {
+          shipping_address: {
+            name: `${updatedProfile.name} ${updatedProfile.lastname}`.trim(),
+            address: updatedProfile.address,
+            city: updatedProfile.city,
+            state: updatedProfile.state,
+            pincode: updatedProfile.pincode,
+            country: updatedProfile.country || "India",
+            phone: updatedProfile.phoneNumber,
+            email: updatedProfile.email || "test@example.com",
+          },
+        });
+        console.log("✅ Shiprocket address updated");
       } catch (err) {
-        console.error("Update failed:", err);
-        alert("Update failed");
+        console.error("❌ Failed to update Shiprocket address", err);
       }
-      closePopup();}
-  };
+    }
+
+    if (onConfirm) onConfirm(updatedProfile);
+    closePopup();
+  } catch (err) {
+    console.error("Update failed:", err);
+    alert("Update failed");
+  }
+};
+
 
   const renderStep = () => {
     switch (currentStep) {
@@ -654,25 +690,17 @@ const BillingFormPopup = ({ isPopupOpen, setIsPopupOpen, profile, onConfirm }) =
               onClick={prevStep}
               disabled={currentStep === 1}
               className={`px-4 py-2 rounded ${
-                currentStep === 1
-                  ? "bg-gray-300 text-gray-500"
-                  : "bg-gray-200 hover:bg-gray-300"
+                currentStep === 1 ? "bg-gray-300 text-gray-500" : "bg-gray-200 hover:bg-gray-300"
               }`}
             >
               Previous
             </button>
             {currentStep < 3 ? (
-              <button
-                onClick={nextStep}
-                className="bg-blue-600 text-white px-4 py-2 rounded"
-              >
+              <button onClick={nextStep} className="bg-blue-600 text-white px-4 py-2 rounded">
                 Next
               </button>
             ) : (
-              <button
-                onClick={handleSubmit}
-                className="bg-green-600 text-white px-4 py-2 rounded"
-              >
+              <button onClick={handleSubmit} className="bg-green-600 text-white px-4 py-2 rounded">
                 Submit
               </button>
             )}

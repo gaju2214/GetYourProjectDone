@@ -197,10 +197,9 @@
 //   );
 // }
 
-
 import { useEffect, useRef, useState } from "react";
-import { Edit, MapPin, Phone, User } from "lucide-react"; // Added icons
-import BillingFormPopup from "./UserDetails"; 
+import { Edit, MapPin } from "lucide-react";
+import BillingFormPopup from "./UserDetails";
 import api from "../api";
 
 export function OrderButton({
@@ -217,7 +216,7 @@ export function OrderButton({
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [userProfile, setUserProfile] = useState(profile || null);
 
-  // ✅ Load Razorpay script once
+  // Load Razorpay script once
   useEffect(() => {
     if (!document.querySelector("#razorpay-script")) {
       const script = document.createElement("script");
@@ -225,12 +224,10 @@ export function OrderButton({
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
       script.onload = () => setScriptLoaded(true);
       document.body.appendChild(script);
-    } else {
-      setScriptLoaded(true);
-    }
+    } else setScriptLoaded(true);
   }, []);
 
-  // 👉 Razorpay Payment flow
+  // Razorpay payment
   const handlePayment = async () => {
     try {
       const res = await api.post("/api/payment/order", { amount: finalTotal });
@@ -246,7 +243,7 @@ export function OrderButton({
         handler: async function (response) {
           if (response) await createOrderWithShipping();
         },
-        theme: { color: "#000000" }, // Black theme
+        theme: { color: "#000000" },
       };
 
       const rzp = new window.Razorpay(options);
@@ -256,7 +253,6 @@ export function OrderButton({
     }
   };
 
-  // 👉 Create order in DB + Shiprocket
   const createOrderWithShipping = async () => {
     try {
       const orderRes = await api.post("/api/orders/create-with-shipping", {
@@ -265,26 +261,23 @@ export function OrderButton({
         customerName: `${userProfile?.name || "Customer"} ${userProfile?.lastname || ""}`.trim(),
         productId: cartItems?.[0]?.projectId || "DEFAULT_PRODUCT",
         shippingAddress: userProfile?.address || "Default Address",
-        paymentMethod: paymentMethod,
+        paymentMethod,
         totalAmount: finalTotal,
         quantity: cartItems?.reduce((sum, item) => sum + (item.quantity || 1), 0) || 1,
         profile: userProfile,
-        cartItems: cartItems,
+        cartItems,
       });
 
       const orderData = orderRes.data;
       if (orderData.success) {
         if (onOrderComplete) onOrderComplete(orderData);
-      } else {
-        alert("Order creation failed. Please try again.");
-      }
+      } else alert("Order creation failed. Please try again.");
     } catch (error) {
       console.error("Order creation error:", error);
       alert("Something went wrong. Please try again.");
     }
   };
 
-  // 👉 For COD orders
   const handleCODOrder = async () => {
     try {
       setIsAnimating(true);
@@ -301,26 +294,14 @@ export function OrderButton({
       <div>
         {userProfile?.address ? (
           <div className="order-summary bg-white border p-6 rounded-lg shadow-md max-w-md mx-auto transition-transform hover:scale-[1.01]">
-            <h3 className="font-semibold text-xl mb-4 border-b pb-2 text-gray-800">
-            Address
-            </h3>
-
+            <h3 className="font-semibold text-xl mb-4 border-b pb-2 text-gray-800">Address</h3>
             <div className="space-y-2 text-gray-700">
-              {/* <p className="flex items-center gap-2">
-                <User size={16} className="text-gray-500" />
-                <strong>Name:</strong> {userProfile.name} {userProfile.lastname}
-              </p>
-              <p className="flex items-center gap-2">
-                <Phone size={16} className="text-gray-500" />
-                <strong>Phone:</strong> {userProfile.phoneNumber}
-              </p> */}
               <p className="flex items-center gap-2">
                 <MapPin size={16} className="text-gray-500" />
-                 {userProfile.address}, {userProfile.city}, {userProfile.state}
+                {userProfile.address}, {userProfile.city}, {userProfile.state}
               </p>
             </div>
 
-            {/* ✅ Edit button with icon */}
             <button
               className="flex items-center gap-2 text-sm mt-3 px-3 py-1.5 border rounded-lg hover:bg-gray-100 transition"
               onClick={() => setIsPopupOpen(true)}
@@ -328,7 +309,6 @@ export function OrderButton({
               <Edit size={16} className="text-gray-600" /> Edit Address
             </button>
 
-            {/* Payment Buttons */}
             <div className="mt-5 flex flex-col gap-3">
               {paymentMethod === "op" ? (
                 <button
@@ -361,12 +341,10 @@ export function OrderButton({
         )}
       </div>
 
-      {/* Popup for editing/adding address */}
       <BillingFormPopup
         isPopupOpen={isPopupOpen}
         setIsPopupOpen={setIsPopupOpen}
         profile={userProfile}
-        paymentMethod={paymentMethod}
         onConfirm={(updatedProfile) => {
           setUserProfile(updatedProfile);
           setIsPopupOpen(false);

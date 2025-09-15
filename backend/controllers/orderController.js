@@ -135,7 +135,7 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-// FIXED: Direct Shiprocket integration without HTTP loop
+
 exports.createOrderWithShipping = async (req, res) => {
   try {
     const {
@@ -159,49 +159,36 @@ exports.createOrderWithShipping = async (req, res) => {
       });
     }
 
-    // ✅ CHECK FOR DUPLICATE ORDERS (within last 2 minutes)
-    // ✅ MORE STRICT DUPLICATE DETECTION
-const existingOrder = await Order.findOne({
-  where: {
-    user_id,
-    // Check for orders with similar amounts (within 5% difference to handle GST variations)
-    totalAmount: {
-      [Op.between]: [
-        Math.floor(totalAmount * 0.95), // 5% lower
-        Math.ceil(totalAmount * 1.05)   // 5% higher
-      ]
-    },
-    paymentMethod,
-    status: {
-      [Op.in]: ['pending', 'confirmed', 'shipping_pending']
-    },
-    createdAt: {
-      [Op.gte]: new Date(Date.now() - 5 * 60 * 1000) // Within last 5 minutes
+    // Check for duplicate orders (last 5 minutes)
+    const existingOrder = await Order.findOne({
+      where: {
+        user_id,
+        totalAmount: {
+          [Op.between]: [
+            Math.floor(totalAmount * 0.95),
+            Math.ceil(totalAmount * 1.05)
+          ]
+        },
+        paymentMethod,
+        status: { [Op.in]: ['pending', 'confirmed', 'shipping_pending'] },
+        createdAt: { [Op.gte]: new Date(Date.now() - 5 * 60 * 1000) }
+      },
+      order: [['createdAt', 'DESC']]
+    });
+
+    if (existingOrder) {
+      return res.status(200).json({
+        success: true,
+        message: "Similar order already exists",
+        order: existingOrder,
+        orderId: existingOrder.orderId,
+        shiprocketOrderId: existingOrder.shiprocket_order_id || null,
+        isDuplicate: true
+      });
     }
-  },
-  order: [['createdAt', 'DESC']]
-});
 
-if (existingOrder) {
-  console.log(`Duplicate order detected for user ${user_id}:`, {
-    existing_amount: existingOrder.totalAmount,
-    new_amount: totalAmount,
-    time_diff: Date.now() - new Date(existingOrder.createdAt).getTime()
-  });
-  
-  return res.status(200).json({
-    success: true,
-    message: "Similar order already exists",
-    order: existingOrder,
-    orderId: existingOrder.orderId,
-    isDuplicate: true
-  });
-}
-
-    // Generate orderId
+    // Generate order ID and create order in DB
     const orderId = generateOrderId();
-
-    // Create the order in database
     const newOrder = await Order.create({
       orderId,
       user_id,
@@ -214,16 +201,17 @@ if (existingOrder) {
       status: "pending",
       quantity,
       paymentStatus: paymentMethod === "cod" ? "pending" : "initiated",
+      shiprocket_order_id: null,
     });
 
     console.log(`Order created with ID: ${orderId}`);
 
-    // ✅ DIRECT SHIPROCKET INTEGRATION (NO HTTP LOOP)
+    // Direct Shiprocket integration
+    let shiprocketData = null;
+
     try {
-      // Import shiprocket controller function directly
       const shiprocketController = require('./shiprocketController');
-      
-      // Prepare shiprocket request data
+
       const shiprocketReqData = {
         body: {
           order_id: orderId,
@@ -249,35 +237,29 @@ if (existingOrder) {
         }
       };
 
-      // Create mock response object
-      let shiprocketSuccess = false;
-      let shiprocketData = null;
-      
+      // Mock response object to capture Shiprocket response
       const mockRes = {
-        json: (data) => {
-          if (data.success) {
-            shiprocketSuccess = true;
-            shiprocketData = data;
-          }
-        },
+        json: (data) => { shiprocketData = data; },
         status: () => mockRes
       };
 
-      // Call shiprocket function directly
+      // Call Shiprocket controller
       await shiprocketController.createShiprocketOrder(shiprocketReqData, mockRes);
-      
-      if (shiprocketSuccess) {
-        console.log("Shiprocket order created successfully");
-        await newOrder.update({ 
+
+      if (shiprocketData && shiprocketData.success) {
+        await newOrder.update({
           status: "confirmed",
           shiprocket_order_id: shiprocketData.order_id
         });
 
-        res.status(201).json({ 
-          success: true, 
+        console.log("✅ Shiprocket order created:", shiprocketData.order_id);
+
+        return res.status(201).json({
+          success: true,
           message: "Order created and shipped successfully",
-          order: newOrder, 
-          orderId: orderId,
+          order: newOrder,
+          orderId,
+          shiprocketOrderId: shiprocketData.order_id,
           shiprocket: shiprocketData
         });
       } else {
@@ -285,32 +267,29 @@ if (existingOrder) {
       }
 
     } catch (shiprocketError) {
-      console.error("Shiprocket integration failed:", shiprocketError.message);
-      
-      // Update order status to indicate shipping issue
+      console.error("❌ Shiprocket integration failed:", shiprocketError.message);
+
       await newOrder.update({ status: "shipping_pending" });
 
-      // Still return success since order was created
-      res.status(201).json({ 
-        success: true, 
+      return res.status(201).json({
+        success: true,
         message: "Order created but shipping failed",
-        order: newOrder, 
-        orderId: orderId,
-        warning: "Shiprocket integration failed, shipping will be processed manually"
+        order: newOrder,
+        orderId,
+        warning: "Shiprocket integration failed, shipping will be processed manually",
+        shiprocket: shiprocketData || null
       });
     }
 
   } catch (error) {
-    console.error("Error creating order:", error);
-    res.status(500).json({ 
+    console.error("❌ Error creating order:", error.message);
+    return res.status(500).json({
       success: false,
       error: "Failed to create order",
       details: error.message
     });
   }
-};
-
-exports.getAllOrders = async (req, res) => {
+};exports.getAllOrders = async (req, res) => {
   try {
     const orders = await Order.findAll({
       include: [

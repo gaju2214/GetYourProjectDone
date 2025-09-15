@@ -4,7 +4,7 @@ const projectController = require("../controllers/projectController");
 
 // Create a new project (no multer needed)
 router.post("/create-project", projectController.createProject);
-
+router.get("/search", projectController.searchProjects);
 // Get all projects
 router.get("/", projectController.getAllProjects);
 

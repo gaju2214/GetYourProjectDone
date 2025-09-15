@@ -29,10 +29,12 @@ const [user, setUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
 
-  const handleSearchKeyDown = (e) => {
+
+   const handleSearchKeyDown = (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
-      navigate(`/projects?q=${encodeURIComponent(searchQuery.trim())}`);
-      setShowSearch(false);
+      // Update URL with query
+      navigate(`/projects/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setShowSearch(false); // optional: close search dropdown
     }
   };
   useEffect(() => {

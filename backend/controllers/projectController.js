@@ -166,6 +166,86 @@ exports.getAllProjects = async (req, res) => {
 //   }
 // };
 // Get all projects (with optional subcategory filtering)
+
+exports.searchProjects = async (req, res) => {
+  const { q } = req.query;
+
+  try {
+    if (!q || q.trim() === "") {
+      return res.status(400).json({ error: "Query parameter 'q' is required" });
+    }
+
+    const term = q.trim();
+
+    // Step 1: Search by Category
+    const category = await Category.findOne({
+      where: { name: { [Op.iLike]: `%${term}%` } },
+    });
+
+    if (category) {
+      const projects = await Project.findAll({
+        include: [
+          {
+            model: Subcategory,
+            as: "subcategory",
+            where: { categoryId: category.id },
+            include: [{ model: Category, as: "category" }],
+          },
+        ],
+      });
+
+      if (projects.length > 0) {
+        return res.json(projects);
+      }
+    }
+
+    // Step 2: Search by Subcategory
+    const subcategory = await Subcategory.findOne({
+      where: { name: { [Op.iLike]: `%${term}%` } },
+    });
+
+    if (subcategory) {
+      const projects = await Project.findAll({
+        where: { subcategoryId: subcategory.id },
+        include: [
+          {
+            model: Subcategory,
+            as: "subcategory",
+            include: [{ model: Category, as: "category" }],
+          },
+        ],
+      });
+
+      if (projects.length > 0) {
+        return res.json(projects);
+      }
+    }
+
+    // Step 3: Search by Project title
+    const projectsByTitle = await Project.findAll({
+      where: {
+        title: { [Op.iLike]: `%${term}%` },
+      },
+      include: [
+        {
+          model: Subcategory,
+          as: "subcategory",
+          include: [{ model: Category, as: "category" }],
+        },
+      ],
+    });
+
+    if (projectsByTitle.length > 0) {
+      return res.json(projectsByTitle);
+    }
+
+    // Step 4: Nothing found
+    return res.status(404).json({ error: `No projects found for "${term}"` });
+  } catch (err) {
+    console.error("Error searching projects:", err);
+    return res.status(500).json({ error: "Failed to search projects" });
+  }
+};
 exports.getAllProjects = async (req, res) => {
   const { subcategoryId } = req.query;
 
@@ -385,6 +465,9 @@ exports.updateSubcategory = async (req, res) => {
 //     });
 //   }
 // };
+
+
+
 
 exports.deleteProject = async (req, res) => {
   try {

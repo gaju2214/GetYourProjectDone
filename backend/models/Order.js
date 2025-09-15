@@ -8,6 +8,10 @@ module.exports = (sequelize, DataTypes) => {
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: 'Users', // Make sure this matches your User table name
+        key: 'id'
+      }
     },
     mobile: {
       type: DataTypes.STRING,
@@ -45,19 +49,23 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    // shiprocket_order_id: {
+    //   type: DataTypes.STRING,
+    //   allowNull: true,
+    // },
   });
-  // Add this association
- Order.associate = (models) => {
-  Order.hasMany(models.OrderItem, {
-    foreignKey: "orderId", // Match your OrderItem model
-    as: "OrderItems"
-  });
-  
-  Order.belongsTo(models.User, {
-    foreignKey: "user_id" // Or userId if that's what you use
-  });
-};
+
+  Order.associate = (models) => {
+    Order.hasMany(models.OrderItem, {
+      foreignKey: "orderId",
+      as: "OrderItems",
+    });
+
+    Order.belongsTo(models.User, {
+      foreignKey: "user_id",
+      targetKey: "id" // Explicitly specify the target key
+    });
+  };
+
   return Order;
 };
-
-// In Order.js
