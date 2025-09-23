@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Users', // Make sure this matches your User table name
+        model: 'users', // Make sure this matches your User table name
         key: 'id'
       }
     },

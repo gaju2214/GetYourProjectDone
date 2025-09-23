@@ -2,6 +2,7 @@ module.exports = (sequelize, DataTypes) => {
   const Project = sequelize.define(
     "Project",
     {
+      // ... existing fields remain the same
       title: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -21,20 +22,19 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ARRAY(DataTypes.STRING),
         allowNull: true,
       },
-
       block_diagram: {
-        type: DataTypes.STRING, // Store filename or URL
+        type: DataTypes.STRING,
         allowNull: true,
       },
       abstract_file: {
-        type: DataTypes.STRING, // Store filename or URL
+        type: DataTypes.STRING,
         allowNull: true,
       },
       details: {
         type: DataTypes.TEXT,
       },
       review: {
-        type: DataTypes.TEXT, // Can change to a Review model later if needed
+        type: DataTypes.TEXT,
       },
       subcategoryId: {
         type: DataTypes.INTEGER,
@@ -57,17 +57,18 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "subcategoryId",
       as: "subcategory",
     });
-  };
-  Project.associate = (models) => {
-  Project.belongsTo(models.Subcategory, {
-    foreignKey: "subcategoryId",
-    as: "subcategory",
-  });
 
- Project.hasMany(models.OrderItem, {
-    foreignKey: "projectId",
-    as: "OrderItems"
-  });
-};
+    Project.hasMany(models.OrderItem, {
+      foreignKey: "projectId",
+      as: "OrderItems"
+    });
+
+    // Add this association
+    Project.hasMany(models.UserInfo, {
+      foreignKey: "projectId",
+      as: "downloads"
+    });
+  };
+
   return Project;
 };

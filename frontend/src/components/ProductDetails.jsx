@@ -693,52 +693,53 @@ useEffect(() => {
   };
 
   // Handle form submission
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    
-    const errors = validateForm();
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      return;
-    }
-    
-    setIsSubmitting(true);
-    
-    try {
-      const downloadData = {
-        name: formData.name.trim(),
-        phoneNumber: formData.mobile.trim(),
-      };
+const handleFormSubmit = async (e) => {
+  e.preventDefault();
+  
+  const errors = validateForm();
+  if (Object.keys(errors).length > 0) {
+    setFormErrors(errors);
+    return;
+  }
+  
+  setIsSubmitting(true);
+  
+  try {
+    const downloadData = {
+      name: formData.name.trim(),
+      phoneNumber: formData.mobile.trim(),
+       projectId: product.id // ✅ This is being sent
+    };
 
-      await api.post("/api/auth/userinfo", downloadData);
+    await api.post("/api/auth/userinfo", downloadData);
 
-      const localData = {
-        projectTitle: product.title,
-        projectId: product.id,
-        downloadDate: new Date().toISOString(),
-      };
+    const localData = {
+      projectId: product.id, // Also store in localStorage if needed
+      projectTitle: product.title, // Store project title for reference
+      downloadDate: new Date().toISOString(),
+    };
 
-      const existing = JSON.parse(localStorage.getItem("abstractDownloads") || "[]");
-      existing.push(localData);
-      localStorage.setItem("abstractDownloads", JSON.stringify(existing));
+    const existing = JSON.parse(localStorage.getItem("abstractDownloads") || "[]");
+    existing.push(localData);
+    localStorage.setItem("abstractDownloads", JSON.stringify(existing));
 
-      const link = document.createElement("a");
-      link.href = product.abstract_file;
-      link.download = `${product.title}-abstract.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    const link = document.createElement("a");
+    link.href = product.abstract_file;
+    link.download = `${product.title}-abstract.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-      setShowDownloadForm(false);
-      setFormData({ name: "", mobile: "" });
-      setFormErrors({});
-    } catch (error) {
-      console.error("Error during download:", error);
-      alert("An error occurred. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    setShowDownloadForm(false);
+    setFormData({ name: "", mobile: "" });
+    setFormErrors({});
+  } catch (error) {
+    console.error("Error during download:", error);
+    alert("An error occurred. Please try again.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   // Handle Google Login
   const handleGoogleLogin = () => {

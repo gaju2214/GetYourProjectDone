@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true, // usually you want this
+        autoIncrement: true,
       },
       name: {
         type: DataTypes.STRING,
@@ -14,17 +14,33 @@ module.exports = (sequelize, DataTypes) => {
       phoneNumber: {
         type: DataTypes.STRING(20),
         allowNull: true,
-        unique: false, // Allow multiple nulls but non-null values are not forced unique
+        unique: false,
         validate: {
-          is: /^\+?[\d\s\-\(\)]{10,}$/, // regex validation
+          is: /^\+?[\d\s\-\(\)]{10,}$/,
         },
+      },
+      projectId: {
+        type: DataTypes.INTEGER,
+        allowNull: false, // This should match your requirement
+        references: {
+          model: 'Projects',
+          key: 'id'
+        }
       },
     },
     {
-      tableName: "userinfos", // 👈 table name
-      timestamps: true,       // createdAt & updatedAt
+      tableName: "userinfos",
+      timestamps: true,
     }
   );
+
+  // Add association
+  UserInfo.associate = (models) => {
+    UserInfo.belongsTo(models.Project, {
+      foreignKey: "projectId",
+      as: "project",
+    });
+  };
 
   return UserInfo;
 };

@@ -271,7 +271,7 @@ router.post("/logout", (req, res) => {
 
 router.post("/userinfo", async (req, res) => {
   try {
-    const { name, phoneNumber } = req.body;
+    const { name, phoneNumber, projectId } = req.body;
 
     // validation (optional, extra safety)
     if (!name) {
@@ -281,6 +281,7 @@ router.post("/userinfo", async (req, res) => {
     const newUserInfo = await UserInfo.create({
       name,
       phoneNumber,
+      projectId
     });
 
     res.status(201).json(newUserInfo);
