@@ -61,7 +61,6 @@
 
 // // 6. Export the sequelize instance so other parts of your application can use it
 // module.exports = sequelize;
-
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
@@ -71,8 +70,13 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD,
   {
     host: process.env.DB_HOST,
-    dialect: 'postgres', // or 'mysql'
+    dialect: 'postgres',
     logging: false,
+    pool: {
+      max: 10,        // Increase as needed for your traffic; default is 5
+      acquire: 60000, // Increase how long it waits for a free connection before timing out
+      idle: 30000     // How long a connection can sit idle before being released
+    }
   }
 );
 
