@@ -73,7 +73,7 @@ const sequelize = new Sequelize(
     dialect: 'postgres',
     logging: false,
     pool: {
-      max: 10,        // Increase as needed for your traffic; default is 5
+      max: 20,        // Increase as needed for your traffic; default is 5
       acquire: 60000, // Increase how long it waits for a free connection before timing out
       idle: 30000     // How long a connection can sit idle before being released
     }
