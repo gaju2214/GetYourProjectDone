@@ -5,14 +5,14 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true,
     },
-    user_id: {
+   user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: 'users', // Make sure this matches your User table name
         key: 'id'
-      }
-    },
+      }
+    },
     mobile: {
       type: DataTypes.STRING,
       allowNull: false,

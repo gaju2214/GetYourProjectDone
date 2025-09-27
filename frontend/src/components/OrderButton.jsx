@@ -197,6 +197,8 @@
 //   );
 // }
 
+
+
 import { useEffect, useRef, useState } from "react";
 import { Edit, MapPin } from "lucide-react";
 import BillingFormPopup from "./UserDetails";
@@ -253,30 +255,44 @@ export function OrderButton({
     }
   };
 
-  const createOrderWithShipping = async () => {
-    try {
-      const orderRes = await api.post("/api/orders/create-with-shipping", {
-        user_id: userProfile?.user_id || 1,
-        mobile: userProfile?.phoneNumber || "9999999999",
-        customerName: `${userProfile?.name || "Customer"} ${userProfile?.lastname || ""}`.trim(),
-        productId: cartItems?.[0]?.projectId || "DEFAULT_PRODUCT",
-        shippingAddress: userProfile?.address || "Default Address",
-        paymentMethod,
-        totalAmount: finalTotal,
-        quantity: cartItems?.reduce((sum, item) => sum + (item.quantity || 1), 0) || 1,
-        profile: userProfile,
-        cartItems,
-      });
+const createOrderWithShipping = async () => {
+  try {
+    const payload = {
+      user_id: userProfile?.id || userProfile?.user_id,
+      mobile: userProfile?.phoneNumber || "9999999999",
+      customerName: `${userProfile?.name || "Customer"} ${userProfile?.lastname || ""}`.trim(),
+      productId: cartItems?.[0]?.projectId || null,
+      shippingAddress: userProfile?.address || "Default Address",
+      paymentMethod,
+      totalAmount: finalTotal,
+      quantity: cartItems?.reduce((sum, item) => sum + (item.quantity || 1), 0) || 1,
+      profile: userProfile,
+      cartItems,
+    };
 
-      const orderData = orderRes.data;
-      if (orderData.success) {
-        if (onOrderComplete) onOrderComplete(orderData);
-      } else alert("Order creation failed. Please try again.");
-    } catch (error) {
-      console.error("Order creation error:", error);
-      alert("Something went wrong. Please try again.");
+    console.log("📦 Sending order payload:", payload);
+
+    const orderRes = await api.post("/api/orders/create-with-shipping", payload);
+
+    console.log("✅ Order response from backend:", orderRes.data);
+
+    if (orderRes.data.success) {
+      alert("Order placed successfully!");
+      
+      // ✅ Call onOrderComplete here
+      if (typeof onOrderComplete === "function") {
+        onOrderComplete(orderRes.data); // pass backend response if needed
+      }
+
+    } else {
+      alert("Order creation failed. Please try again.");
     }
-  };
+  } catch (error) {
+    console.error("❌ Order creation error:", error);
+    alert("Something went wrong. Please try again.");
+  }
+};
+
 
   const handleCODOrder = async () => {
     try {

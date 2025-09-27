@@ -406,7 +406,7 @@ import api from "../api";
 const BillingFormPopup = ({ isPopupOpen, setIsPopupOpen, profile, onConfirm,shiprocketOrderId }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
-    user_id: profile?.user_id || 1,
+    user_id: profile?.id || 1,
     phoneNumber: profile?.phoneNumber || "",
     email: profile?.email || "",
     name: profile?.name || "",
@@ -422,7 +422,7 @@ const BillingFormPopup = ({ isPopupOpen, setIsPopupOpen, profile, onConfirm,ship
   // Sync formData whenever profile changes
   useEffect(() => {
     setFormData({
-      user_id: profile?.user_id || 1,
+      user_id: profile?.id || 1,
       phoneNumber: profile?.phoneNumber || "",
       email: profile?.email || "",
       name: profile?.name || "",
@@ -490,7 +490,7 @@ const BillingFormPopup = ({ isPopupOpen, setIsPopupOpen, profile, onConfirm,ship
 
     // Build updated profile object
     const updatedProfile = {
-      user_id: res.data.user_id || formData.user_id,
+      user_id: res.data.id || formData.user_id,
       phoneNumber: res.data.phoneNumber || formData.phoneNumber,
       email: res.data.email || formData.email,
       name: res.data.name || formData.name,

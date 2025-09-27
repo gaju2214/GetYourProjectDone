@@ -11,7 +11,7 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider> {/* ✅ Wrap AuthProvider here */}
-        <CartProvider>
+        <CartProvider >
           <App />
         </CartProvider>
       </AuthProvider>

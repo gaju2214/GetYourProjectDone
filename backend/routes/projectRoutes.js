@@ -34,7 +34,7 @@ router.delete("/:id", projectController.deleteProject);
 router.get("/category/:id", projectController.getCategoryById);
 router.put("/category/:id", projectController.updateCategory);
 router.delete("/category/:id", projectController.deleteCategory);  
-
+// router.get("/category", projectController.getAllCategories);
 
 // Subcategories
 // router.get("/subcategory/:subcategoryId", projectController.getProjectsBySubcategory);

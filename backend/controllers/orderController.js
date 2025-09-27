@@ -75,10 +75,10 @@ exports.placeOrder = async (req, res) => {
 
     for (const item of cartItems) {
       await OrderItem.create({
-        orderId: order.id,
+        orderId: order.orderId,
         projectId: item.projectId,
         quantity: item.quantity,
-        price: item.Project.price,
+        price: item.price,
       });
     }
 
@@ -129,6 +129,8 @@ exports.createOrder = async (req, res) => {
       order: newOrder, 
       orderId: orderId 
     });
+    
+
   } catch (error) {
     console.error("Error creating order:", error);
     res.status(500).json({ error: "Failed to create order" });
@@ -204,11 +206,25 @@ exports.createOrderWithShipping = async (req, res) => {
       shiprocket_order_id: null,
     });
 
-    console.log(`Order created with ID: ${orderId}`);
+// if (cartItems.length > 0) {
+//   // Delete only cart items for the user
+//   await CartItem.destroy({
+//     where: { userId: user_id } // Make sure this matches your CartItem model field
+//   });
+//   console.log(`✅ Cart cleared for user ${user_id}`);
+// }
+
+// // You can log the order creation separately
+// console.log(`Order created with ID: ${orderId}`);
+
+//     console.log(`Order created with ID: ${orderId}`);
+
+    // Delete cart items after order creation
+  
+
 
     // Direct Shiprocket integration
     let shiprocketData = null;
-
     try {
       const shiprocketController = require('./shiprocketController');
 
@@ -237,13 +253,11 @@ exports.createOrderWithShipping = async (req, res) => {
         }
       };
 
-      // Mock response object to capture Shiprocket response
       const mockRes = {
         json: (data) => { shiprocketData = data; },
         status: () => mockRes
       };
 
-      // Call Shiprocket controller
       await shiprocketController.createShiprocketOrder(shiprocketReqData, mockRes);
 
       if (shiprocketData && shiprocketData.success) {
@@ -265,7 +279,6 @@ exports.createOrderWithShipping = async (req, res) => {
       } else {
         throw new Error("Shiprocket integration failed");
       }
-
     } catch (shiprocketError) {
       console.error("❌ Shiprocket integration failed:", shiprocketError.message);
 
@@ -289,7 +302,10 @@ exports.createOrderWithShipping = async (req, res) => {
       details: error.message
     });
   }
-};exports.getAllOrders = async (req, res) => {
+};
+
+  
+exports.getAllOrders = async (req, res) => {
   try {
     const orders = await Order.findAll({
       include: [

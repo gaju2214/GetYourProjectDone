@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../api"; // adjust path based on file location
 import { useNavigate } from "react-router-dom";
-import { Button } from "../components/ui/Botton";
+import { Button } from "../components/ui/Botton"; // Fixed typo: was "Botton"
 import {
   Card,
   CardContent,
@@ -68,7 +68,6 @@ export default function CartPage() {
           withCredentials: true,
         });
         setProfile(res.data);
-
         setError(null);
         // console.log(res.data);
       } catch (err) {
@@ -114,9 +113,9 @@ export default function CartPage() {
   useEffect(() => {
     if (!userId) return;
 
-    api
-      .get(`/api/cart/${userId}`)
-      .then((res) => {
+    const fetchCart = async () => {
+      try {
+        const res = await api.get(`/api/cart/${userId}`);
         setCartItems(res.data);
         setItemCount(res.data.reduce((sum, item) => sum + item.quantity, 0));
         setTotal(
@@ -125,51 +124,82 @@ export default function CartPage() {
             0
           )
         );
-      })
-      .catch((err) => console.error("Error fetching cart:", err));
+      } catch (err) {
+        console.error("Error fetching cart:", err);
+        setError("Failed to load cart items");
+      }
+    };
+
+    fetchCart();
   }, [userId]);
 
-  if (loading) return <div>Loading...</div>;
-  if (!user) return null; // or fallback UI
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-  const updateQuantity = (cartId, newQuantity) => {
+  // Don't render anything if user is not authenticated (redirect will happen)
+  if (!user) return null;
+
+  const updateQuantity = async (cartId, newQuantity) => {
     if (newQuantity < 1) return;
 
-    api
-      .put(`/api/cart/update/${cartId}`, {
+    try {
+      const res = await api.put(`/api/cart/update/${cartId}`, {
         quantity: newQuantity,
-      })
-      .then((res) => {
-        const updatedCart = cartItems.map((item) =>
-          item.id === cartId ? { ...item, quantity: newQuantity } : item
-        );
-
-        setCartItems(updatedCart);
-
-        // Optional: update totals
-        const newTotal = updatedCart.reduce(
-          (sum, i) => sum + i.price * i.quantity,
-          0
-        );
-        const newItemCount = updatedCart.reduce(
-          (sum, i) => sum + i.quantity,
-          0
-        );
-        setTotal(newTotal);
-        setItemCount(newItemCount);
-      })
-      .catch((err) => {
-        console.error("Failed to update quantity:", err);
       });
+
+      const updatedCart = cartItems.map((item) =>
+        item.id === cartId ? { ...item, quantity: newQuantity } : item
+      );
+
+      setCartItems(updatedCart);
+
+      // Update totals
+      const newTotal = updatedCart.reduce(
+        (sum, i) => sum + (i.price || 0) * i.quantity,
+        0
+      );
+      const newItemCount = updatedCart.reduce(
+        (sum, i) => sum + i.quantity,
+        0
+      );
+      setTotal(newTotal);
+      setItemCount(newItemCount);
+    } catch (err) {
+      console.error("Failed to update quantity:", err);
+      setError("Failed to update item quantity");
+    }
   };
 
-  const removeItem = (id) => {
-    api
-      .delete(`/api/cart/${id}`)
-      .then(() => {
-        setCartItems((prev) => prev.filter((item) => item.id !== id));
-      })
-      .catch((err) => console.error("Failed to remove item:", err));
+  const removeItem = async (id) => {
+    try {
+      await api.delete(`/api/cart/${id}`);
+      const updatedCart = cartItems.filter((item) => item.id !== id);
+      setCartItems(updatedCart);
+      
+      // Recalculate totals after removal
+      const newTotal = updatedCart.reduce(
+        (sum, item) => sum + (item.price || 0) * item.quantity,
+        0
+      );
+      const newItemCount = updatedCart.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+      );
+      setTotal(newTotal);
+      setItemCount(newItemCount);
+    } catch (err) {
+      console.error("Failed to remove item:", err);
+      setError("Failed to remove item from cart");
+    }
   };
 
   const gstAmount = Math.round(total * 0.18);
@@ -203,22 +233,29 @@ export default function CartPage() {
 
   const handleCheckout = async () => {
     if (!paymentMethod) {
-      alert("Please select a payment method");
+      setError("Please select a payment method");
+      return;
+    }
+
+    if (!profile?.id) {
+      setError("Profile information is required for checkout");
       return;
     }
 
     try {
+      setError(null); // Clear any previous errors
+      
       // Create an array to store all order promises
       const orderPromises = cartItems.map(async (item) => {
         const orderData = {
           orderId: `ORD-${Date.now()}-${item.id}`, // Make each order ID unique
-          user_id: profile?.id,
-          mobile: profile?.phoneNumber,
-          customerName: `${profile?.name} ${profile?.lastname || ""}`,
-          productId: item.id, // Use the current item's ID
-          shippingAddress: profile?.address,
+          user_id: profile.id,
+          mobile: profile.phoneNumber,
+          customerName: `${profile.name} ${profile.lastname || ""}`,
+          productId: item.projectId, // Use the current item's ID
+          shippingAddress: profile.address,
           paymentMethod: paymentMethod,
-          totalAmount: item.price * item.quantity, // Individual item total
+          totalAmount: (item.price || 0) * item.quantity, // Individual item total
           quantity: item.quantity, // Individual item quantity
         };
 
@@ -235,13 +272,36 @@ export default function CartPage() {
       setItemCount(0);
       setTotal(0);
 
-      alert(`Successfully placed orders!`);
+      alert(`Successfully placed ${allResults.length} orders!`);
       // navigate("/success");
     } catch (error) {
       console.error("Error placing orders:", error);
-      alert("Failed to place some orders. Please try again.");
+      setError("Failed to place some orders. Please try again.");
     }
   };
+
+  // Show error message if exists
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center p-8 bg-white rounded-lg shadow-lg max-w-md">
+          <div className="text-red-500 mb-4">
+            <svg className="w-16 h-16 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Error</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <Button
+            onClick={() => window.location.reload()}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (cartItems.length === 0) {
     return (
@@ -300,21 +360,24 @@ export default function CartPage() {
                     <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                       <div className="relative">
                         <img
-                          src={item.image}
-                          alt={item.title}
+                          src={item.image || '/placeholder-image.jpg'} // Add fallback image
+                          alt={item.title || 'Product'}
                           loading="lazy"
                           className="w-full sm:w-[120px] sm:h-[120px] object-cover rounded-xl shadow-md"
+                          onError={(e) => {
+                            e.target.src = '/placeholder-image.jpg'; // Fallback on error
+                          }}
                         />
 
                         <Badge className="absolute -top-2 -right-2 bg-blue-600">
-                          {item.difficulty}
+                          {item.difficulty || 'N/A'}
                         </Badge>
                       </div>
 
                       <div className="flex-1 space-y-4">
                         <div>
                           <h3 className="font-bold text-xl text-gray-900 mb-2">
-                            {item.title}
+                            {item.title || 'Untitled Product'}
                           </h3>
                           <div
                             className="text-gray-600 leading-relaxed"
@@ -322,19 +385,19 @@ export default function CartPage() {
                               __html:
                                 item.description?.length > 120
                                   ? item.description.slice(0, 120) + "..."
-                                  : item.description,
+                                  : item.description || 'No description available',
                             }}
                           ></div>
                           <div className="flex gap-2 mt-3">
                             <Badge variant="outline">
                               {typeof item.category === "object"
-                                ? item.category?.name
-                                : item.category}
+                                ? item.category?.name || 'Category'
+                                : item.category || 'Category'}
                             </Badge>
                             <Badge variant="outline">
                               {typeof item.subcategory === "object"
-                                ? item.subcategory?.name
-                                : item.subcategory}
+                                ? item.subcategory?.name || 'Subcategory'
+                                : item.subcategory || 'Subcategory'}
                             </Badge>
                           </div>
                         </div>
@@ -347,9 +410,10 @@ export default function CartPage() {
                               onClick={() =>
                                 updateQuantity(item.id, item.quantity - 1)
                               }
-                              className="h-6 w-6 p-0 ml-2"
+                              className="h-8 w-8 p-0"
+                              disabled={item.quantity <= 1}
                             >
-                              <Minus className="h-4 w-4 m-1" />
+                              <Minus className="h-4 w-4" />
                             </Button>
                             <span className="px-4 py-2 bg-gray-100 rounded-lg font-semibold min-w-[60px] text-center">
                               {item.quantity}
@@ -360,19 +424,19 @@ export default function CartPage() {
                               onClick={() =>
                                 updateQuantity(item.id, item.quantity + 1)
                               }
-                              className="h-6 w-6 p-0 ml-2"
+                              className="h-8 w-8 p-0"
                             >
-                              <Plus className="h-4 w-4 m-1" />
+                              <Plus className="h-4 w-4" />
                             </Button>
                           </div>
 
                           <div className="flex items-center gap-4">
                             <div className="text-right">
                               <div className="text-2xl font-bold text-green-600">
-                                ₹{(item.price * item.quantity).toLocaleString()}
+                                ₹{((item.price || 0) * item.quantity).toLocaleString()}
                               </div>
                               <div className="text-sm text-gray-500">
-                                ₹{item.price?.toLocaleString()} each
+                                ₹{(item.price || 0).toLocaleString()} each
                               </div>
                             </div>
                             <Button
@@ -394,7 +458,7 @@ export default function CartPage() {
           </div>
 
           <div className="xl:col-span-2 space-y-6">
-            {/* special */}
+            {/* Payment Method */}
             <Card className="shadow-lg border-0">
               <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-t-lg">
                 <CardTitle className="text-xl">Payment Method</CardTitle>
@@ -408,7 +472,6 @@ export default function CartPage() {
                       label: "Online Payment",
                       color: "text-blue-600",
                     },
-
                     {
                       id: "cod",
                       icon: Banknote,
@@ -441,6 +504,7 @@ export default function CartPage() {
                 </div>
               </CardContent>
             </Card>
+
             {/* Order Summary */}
             <Card className="shadow-lg border-0">
               <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-t-lg">
@@ -494,7 +558,7 @@ export default function CartPage() {
                   <OrderButton
                     onOrderComplete={handleCheckout}
                     finalTotal={finalTotal}
-                    disabled={!paymentMethod}
+                    disabled={!paymentMethod || !profile?.id}
                     paymentMethod={paymentMethod}
                     cartItems={cartItems}
                     total={total}

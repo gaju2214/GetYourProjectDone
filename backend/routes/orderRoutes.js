@@ -38,25 +38,41 @@ router.get('/shiprocket/track/awb/:awb', async (req, res) => {
   }
 });
 
-router.get('/shiprocket/track/order/:orderId', async (req, res) => {
+router.get("/shiprocket/track/order/:orderId", async (req, res) => {
   try {
     const { orderId } = req.params;
-    
+
+    if (!orderId) {
+      return res.status(400).json({ success: false, message: "Order ID is required" });
+    }
+
     const token = await authenticateShiprocket();
-    
-    const response = await axios.get(`https://apiv2.shiprocket.in/v1/external/orders/track/${orderId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+    if (!token) {
+      return res.status(500).json({ success: false, message: "Failed to authenticate Shiprocket" });
+    }
+
+    const response = await axios.get(
+      `https://apiv2.shiprocket.in/v1/external/orders/track/${orderId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       }
-    });
-    
-    res.json(response.data);
+    );
+
+    // Ensure response data exists
+    if (!response.data) {
+      return res.status(404).json({ success: false, message: "No tracking info found" });
+    }
+
+    res.json({ success: true, data: response.data });
   } catch (error) {
-    console.error('Error tracking by Order ID:', error);
+    console.error("Error tracking by Order ID:", error.response?.data || error.message || error);
     res.status(500).json({
       success: false,
-      message: 'Failed to track shipment by Order ID'
+      message: "Failed to track shipment by Order ID",
+      error: error.response?.data || error.message || null,
     });
   }
 });

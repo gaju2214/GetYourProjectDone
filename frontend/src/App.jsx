@@ -21,6 +21,9 @@ import AdminRegister from "./pages/Register";
 import DeleteProject from "./pages/Editproject";
 import ProjectAdminPanel from "./ProjectAdminPanel";
 
+import EditProject from "./pages/Editproject";
+
+
 
 
 
@@ -47,6 +50,11 @@ function App() {
         <Route path="/categories/:category" element={<CategoryPage />} />
         <Route path="/projects" element={<ProjectList/>} />
         <Route path="/projects/search" element={<ProjectList/>} />
+      
+        <Route path="/pr" element={<EditProject/>} />
+        
+        
+
 
         <Route path="/*" element={<NotFoundPage />} />
         <Route path="/projectscat/:category" element={<CategoryPage />} />
