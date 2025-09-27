@@ -2,6 +2,18 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 
+// Add global error handlers to prevent auto-exit
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+  console.error('Stack:', error.stack);
+  // Don't exit immediately, log the error and continue
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+  // Don't exit immediately, log the error and continue
+});
+
 const passport = require("./config/passport");
 const authRoutes = require("./routes/authRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
@@ -33,9 +45,6 @@ const allowedOrigins = [
   "http://192.168.31.24:5173",
   "https://www.getyourprojectdone.in",
   "https://getyourprojectdone.in",
-  "https://qjv19kc1-5000.inc1.devtunnels.ms",
-  "https://getyourprojectdone.onrender.com",
-  "https://getyourprojectdone-frontend.onrender.com",
   "https://getyourprojectdone.up.railway.app",
   "https://getyourprojectdone-backend.up.railway.app",
   "https://master.getyourprojectdone.in",
@@ -94,17 +103,73 @@ app.use("/api/admin", adminRoutes);
 
 app.use('/api/userinfos', userinfo);
 
-
 // Root Route
 app.get("/", (req, res) => res.send("Server is running 🚀"));
 
-// Sync database
+// Global error handling middleware (should be after all routes)
+app.use((err, req, res, next) => {
+  console.error('❌ API Error:', err);
+  console.error('Stack:', err.stack);
+  
+  // Send error response instead of crashing
+  res.status(err.status || 500).json({
+    error: 'Internal server error',
+    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong',
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
+});
+
+// Handle 404 routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route not found', path: req.originalUrl });
+});
+
+// Sync database with better error handling
 sequelize.sync({ alter: true })
-  .then(() => console.log("Database synced"))
-  .catch((err) => console.log("Error syncing database:", err));
+  .then(() => console.log("✅ Database synced successfully"))
+  .catch((err) => {
+    console.error("❌ Error syncing database:", err);
+    console.error("Database sync failed but server will continue running...");
+  });
 
 // Server Start
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
+  console.log(`🌐 Server URL: http://localhost:${PORT}`);
+});
+
+// Handle server errors
+server.on('error', (error) => {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  switch (error.code) {
+    case 'EACCES':
+      console.error(`❌ Port ${PORT} requires elevated privileges`);
+      break;
+    case 'EADDRINUSE':
+      console.error(`❌ Port ${PORT} is already in use`);
+      break;
+    default:
+      console.error('❌ Server error:', error);
+  }
+});
+
+// Graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('🛑 SIGTERM received, shutting down gracefully');
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
+});
+
+process.on('SIGINT', () => {
+  console.log('\n🛑 SIGINT received, shutting down gracefully');
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
 });

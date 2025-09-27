@@ -81,7 +81,11 @@ const sequelize = new Sequelize(
 );
 
 sequelize.authenticate()
-  .then(() => console.log('Database connected successfully'))
-  .catch(err => console.error('Database connection failed:', err));
+  .then(() => console.log('✅ Database connected successfully'))
+  .catch(err => {
+    console.error('❌ Database connection failed:', err);
+    console.error('Please check your database configuration in .env file');
+    // Don't exit - let the app handle the error gracefully
+  });
 
 module.exports = sequelize;
