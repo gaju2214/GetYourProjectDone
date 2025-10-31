@@ -3,38 +3,38 @@ import { motion } from "framer-motion";
 import CountUp from "react-countup";
 import { Button } from "../components/ui/Botton";
 import { ProductCard } from "../components/ProductCard";
-import { ArrowRight, Star, Users, Award, Zap } from "lucide-react";
+import { Users, Award, Star, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import api from "../api";
-import usePageViews from './hooks/usePageViews';
+import usePageViews from "./hooks/usePageViews";
 import ReactGA from "react-ga4";
+import AnimatedBuildScene from "../components/AnimatedBuildScene";
+
 ReactGA.initialize("G-RKR4H82WJW");
 ReactGA.send("pageview");
 
 const HomePage = () => {
   usePageViews();
   const [allProducts, setAllProducts] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showSearch, setShowSearch] = useState(false);
   const allProjectsRef = useRef(null);
-  // Add this useEffect for SEO optimization
-useEffect(() => {
-  // Set optimized page title (SEO + CTR)
-  document.title = "Project Kits for Engineering Students | Electronics, Mechanical, Computer & Robotics | Get Your Project Done";
 
-  // Set high-CTR meta description
-  const metaDescription = document.querySelector('meta[name="description"]');
-  const descriptionContent = "Buy ready-to-use engineering project kits with source code, circuit diagrams & 24/7 expert help. 500+ Electronics, Mechanical & Software projects for students. Instant download!";
-  
-  if (metaDescription) {
-    metaDescription.setAttribute('content', descriptionContent);
-  } else {
-    const meta = document.createElement('meta');
-    meta.name = 'description';
-    meta.content = descriptionContent;
-    document.head.appendChild(meta);
-  }
-}, []);
+  useEffect(() => {
+    document.title =
+      "Project Kits for Engineering Students | Electronics, Mechanical, Computer & Robotics | Get Your Project Done";
+
+    const metaDescription = document.querySelector('meta[name="description"]');
+    const descriptionContent =
+      "Buy ready-to-use engineering project kits with source code, circuit diagrams & 24/7 expert help. 500+ Electronics, Mechanical & Software projects for students. Instant download!";
+
+    if (metaDescription) {
+      metaDescription.setAttribute("content", descriptionContent);
+    } else {
+      const meta = document.createElement("meta");
+      meta.name = "description";
+      meta.content = descriptionContent;
+      document.head.appendChild(meta);
+    }
+  }, []);
 
   useEffect(() => {
     api
@@ -50,72 +50,17 @@ useEffect(() => {
         }));
         setAllProducts(mappedProjects);
       })
-      .catch((err) => {
-        console.error("Error fetching projects:", err);
-      });
+      .catch((err) => console.error("Error fetching projects:", err));
   }, []);
 
-  const scrollToProjects = () => {
+  const scrollToProjects = () =>
     allProjectsRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
   return (
-    
     <div className="space-y-16">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-orange-50 via-white to-red-50 py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              Premium Engineering
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-orange-500">
-                {" "}
-                Project Solutions
-              </span>
-            </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Complete project solutions for Electronics, Mechanical,
-              Electrical, Software, Robotics, and Mechatronics students. Build,
-              Learn, and Excel in your engineering journey with Get Your Project
-              Done.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <Link to="/categories">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-[240px] text-lg text-white px-8 py-3 bg-red-600 hover:bg-red-700 rounded-md transition-all duration-300 active:border active:border-orange-400 active:ring-2 active:ring-orange-300 flex items-center justify-center gap-2"
-                >
-                  Explore Project{" "}
-                  <span className="text-white transition-all duration-300">→</span>
-                </motion.button>
-              </Link>
-
-              <a
-                href="https://getyourprojectdone.in/iot_platform/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-[240px] relative overflow-hidden px-8 py-3 text-lg font-semibold text-white bg-gradient-to-r from-orange-500 to-orange-600 border-none rounded-md shadow-md transition-all duration-300 hover:from-white hover:to-white hover:text-orange-600 hover:ring-2 hover:ring-orange-500 active:scale-95 flex items-center justify-center gap-2"
-                >
-                  IoT Platform
-                </motion.button>
-              </a>
-
-            </div>
-
-            <div className="mt-8 p-4 bg-orange-50 rounded-lg border border-orange-200">
-              <p className="text-sm text-orange-700">
-                💡 <strong>Pro Tip:</strong> Click on the "Get Your Project
-                Done" logo above to explore our complete ecosystem network!
-              </p>
-            </div>
-          </div>
-        </div>
+      {/* 🔹 New Hero Section with Dynamic Animation */}
+      <section className="relative w-full">
+        <AnimatedBuildScene />
       </section>
 
       {/* Stats Section */}
@@ -196,9 +141,7 @@ useEffect(() => {
               All Engineering Project Kits
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Comprehensive collection of premium project kits across all
-              engineering disciplines with detailed components and expert
-              guidance.
+              Explore project kits across all engineering disciplines.
             </p>
           </div>
 
@@ -213,80 +156,12 @@ useEffect(() => {
               <Button
                 size="lg"
                 variant="outline"
-                className="px-8 py-3 text-lg font-semibold text-orange-600 border border-orange-500 bg-gradient-to-r from-orange-50 via-white to-orange-100 rounded-md shadow-sm transition-all duration-300 hover:from-orange-100 hover:to-orange-200 hover:shadow-md active:ring-2 active:ring-orange-300 focus:ring-2 focus:ring-orange-400 hover:text-orange-600 active:text-orange-600 focus:text-orange-600"
+                className="px-8 py-3 text-lg font-semibold text-orange-600 border border-orange-500 rounded-md hover:bg-orange-50 transition-all duration-300"
               >
                 Load More Projects
               </Button>
             </Link>
           </div>
-        </div>
-      </section>
-
-      {/* Categories Preview */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Engineering Disciplines
-            </h2>
-            <p className="text-xl text-gray-600">
-              Comprehensive project solutions across all major engineering
-              fields
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {[
-              "Electronics",
-              "Mechanical",
-              "Electrical",
-              "Software",
-              "Robotics",
-              "Mechatronics",
-            ].map((category) => (
-              <motion.div
-                key={category}
-                whileHover={{ scale: 1.08 }}
-                whileTap={{ scale: 0.95 }}
-                className="text-center group cursor-pointer transition-transform"
-              >
-                <div className="w-20 h-20 bg-gradient-to-br from-red-100 to-orange-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <span className="text-2xl font-bold text-red-600">
-                    {category[0]}
-                  </span>
-                </div>
-                <h3 className="font-semibold text-gray-900 group-hover:text-red-600 transition-colors">
-                  {category}
-                </h3>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-red-600 to-orange-500">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Ready to Get Your Project Done?
-          </h2>
-          <p className="text-xl text-red-100 mb-8 max-w-2xl mx-auto">
-            Join thousands of engineering students who have successfully
-            completed their projects with our premium kits. Achieve your goals
-            today!
-          </p>
-
-          <motion.button
-            onClick={scrollToProjects}
-            className="bg-white text-red-600 px-6 py-3 rounded-lg text-lg font-semibold shadow-md hover:bg-gray-100 transition-all duration-300 ease-in-out hover:shadow-xl hover:scale-105"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            Browse All Projects
-          </motion.button>
         </div>
       </section>
     </div>
