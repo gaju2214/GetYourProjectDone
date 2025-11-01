@@ -57,14 +57,14 @@ const HomePage = () => {
     allProjectsRef.current?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <div className="space-y-16">
+    <div className="space-y-8">
       {/* 🔹 New Hero Section with Dynamic Animation */}
       <section className="relative w-full">
         <AnimatedBuildScene />
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white -mt-16">
         <div className="container mx-auto px-4">
           <motion.div
             className="grid grid-cols-2 md:grid-cols-4 gap-8"
@@ -133,10 +133,15 @@ const HomePage = () => {
         </div>
       </section>
 
+      {/* 🔹 Animated Build Scene Section */}
+      <section className="relative w-full">
+        <AnimatedBuildScene />
+      </section>
+
       {/* All Projects Section */}
-      <section className="py-16" ref={allProjectsRef}>
+      <section className="pt-8 pb-12" ref={allProjectsRef}>
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
               All Engineering Project Kits
             </h2>
@@ -151,7 +156,7 @@ const HomePage = () => {
             ))}
           </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-8">
             <Link to="/projects">
               <Button
                 size="lg"

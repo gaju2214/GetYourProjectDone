@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export default function AnimatedBuildScene() {
   return (
-<div className="relative w-full h-[85vh] md:h-[90vh] sm:h-screen bg-050810 overflow-hidden flex items-center justify-center">
+    <div className="relative w-full h-auto md:h-[90vh] bg-050810 overflow-hidden flex items-center justify-center">
       {/* Blueprint Grid Background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#0a1f2e,#000)]">
         <div className="absolute inset-0 bg-[linear-gradient(#0f2335_1px,transparent_1px),linear-gradient(90deg,#0f2335_1px,transparent_1px)] bg-[size:40px_40px]" />
@@ -13,9 +13,9 @@ export default function AnimatedBuildScene() {
       <svg
         viewBox="0 0 1400 800"
         xmlns="http://www.w3.org/2000/svg"
-       className="relative w-full h-auto max-w-[95vw] max-h-[95vh] mx-auto">
+        className="relative w-full h-auto max-w-[95vw] max-h-[95vh] mx-auto">
         {/* ========== LAPTOP WITH CODE ========== */}
-        
+
         {/* Laptop Base */}
         <motion.rect
           x="50"
@@ -127,7 +127,7 @@ export default function AnimatedBuildScene() {
         />
 
         {/* ========== CODE UPLOAD ANIMATION ========== */}
-        
+
         {/* Data Packets Flowing */}
         {[...Array(5)].map((_, i) => (
           <motion.g key={`data-packet-${i}`}>
@@ -137,7 +137,7 @@ export default function AnimatedBuildScene() {
               r="5"
               fill="#8be9fd"
               initial={{ opacity: 0 }}
-              animate={{ 
+              animate={{
                 opacity: [0, 1, 1, 0],
               }}
               transition={{
@@ -194,7 +194,7 @@ export default function AnimatedBuildScene() {
         </motion.text>
 
         {/* ========== ARDUINO BOARD (CENTER) ========== */}
-        
+
         {/* Arduino PCB */}
         <motion.rect
           x="420"
@@ -307,7 +307,7 @@ export default function AnimatedBuildScene() {
         </text>
 
         {/* ========== BREADBOARD ========== */}
-        
+
         <motion.rect
           x="420"
           y="480"
@@ -381,16 +381,16 @@ export default function AnimatedBuildScene() {
           transition={{ duration: 1, delay: 3.5 }}
         />
 
-  {/* LARGE EMPTY SPACE - 120px gap */}
+        {/* LARGE EMPTY SPACE - 120px gap */}
 
-  {/* ULTRASONIC SENSOR - CENTER-LEFT (After Large Gap) */}
+        {/* ULTRASONIC SENSOR - CENTER-LEFT (After Large Gap) */}
 
 
 
         {/* Power Wire (5V) */}
-        
+
         {/* ========== ULTRASONIC SENSOR (HC-SR04) ========== */}
-        
+
         <motion.g
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -398,17 +398,17 @@ export default function AnimatedBuildScene() {
         >
           {/* Sensor Body */}
           <rect x="750" y="230" width="100" height="70" rx="5" fill="#1e90ff" stroke="#1c86ee" strokeWidth="2" />
-          
+
           {/* Ultrasonic Transmitters (Eyes) */}
           <circle cx="775" cy="260" r="15" fill="#0a0a0a" stroke="#333" strokeWidth="2" />
           <circle cx="825" cy="260" r="15" fill="#0a0a0a" stroke="#333" strokeWidth="2" />
-          
+
           {/* Sensor Pins */}
           <rect x="760" y="295" width="10" height="20" fill="#666" />
           <rect x="785" y="295" width="10" height="20" fill="#666" />
           <rect x="810" y="295" width="10" height="20" fill="#666" />
           <rect x="835" y="295" width="10" height="20" fill="#666" />
-          
+
           {/* Label */}
           <text x="800" y="288" fill="#fff" fontSize="9" textAnchor="middle" fontWeight="bold">
             HC-SR04
@@ -424,7 +424,7 @@ export default function AnimatedBuildScene() {
               fill="none"
               opacity="0.6"
               initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ 
+              animate={{
                 pathLength: [0, 1],
                 opacity: [0.6, 0],
                 x: [0, 80]
@@ -454,7 +454,7 @@ export default function AnimatedBuildScene() {
         </motion.text>
 
         {/* ========== TEMPERATURE SENSOR (LM35) ========== */}
-        
+
         <motion.g
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -462,11 +462,11 @@ export default function AnimatedBuildScene() {
         >
           {/* Sensor Body */}
           <rect x="750" y="340" width="80" height="60" rx="4" fill="#1a1a1a" stroke="#ff6600" strokeWidth="2" />
-          
+
           {/* Sensor Element */}
           <circle cx="790" cy="370" r="18" fill="#ff6600" opacity="0.3" />
           <circle cx="790" cy="370" r="12" fill="#ff3300" />
-          
+
           {/* Temperature Icon */}
           <motion.rect
             x="785"
@@ -475,18 +475,18 @@ export default function AnimatedBuildScene() {
             height="20"
             rx="2"
             fill="#fff"
-            animate={{ 
+            animate={{
               height: [20, 25, 20],
               y: [360, 355, 360]
             }}
             transition={{ duration: 2, repeat: Infinity, delay: 5 }}
           />
-          
+
           {/* Sensor Pins */}
           <rect x="760" y="395" width="8" height="20" fill="#666" />
           <rect x="786" y="395" width="8" height="20" fill="#666" />
           <rect x="812" y="395" width="8" height="20" fill="#666" />
-          
+
           {/* Label */}
           <text x="790" y="390" fill="#fff" fontSize="9" textAnchor="middle" fontWeight="bold">
             LM35
@@ -531,7 +531,7 @@ export default function AnimatedBuildScene() {
         </motion.text>
 
         {/* ========== SIGNAL PROCESSING ANIMATION ========== */}
-        
+
         {/* Signal from Ultrasonic to Arduino */}
         {[...Array(4)].map((_, i) => (
           <motion.circle
@@ -585,7 +585,7 @@ export default function AnimatedBuildScene() {
         ))}
 
         {/* ========== OUTPUT: LED/LIGHT BULB ========== */}
-        
+
         {/* Wire from Arduino to Light */}
         <motion.path
           d="M 600 395 L 900 395 Q 920 395 920 415 L 920 500"
@@ -633,7 +633,7 @@ export default function AnimatedBuildScene() {
         >
           {/* Bulb Socket */}
           <rect x="900" y="500" width="40" height="30" rx="3" fill="#888" stroke="#666" strokeWidth="2" />
-          
+
           {/* Socket Threads */}
           {[...Array(4)].map((_, i) => (
             <line
@@ -682,7 +682,7 @@ export default function AnimatedBuildScene() {
             r="50"
             fill="#ffff00"
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ 
+            animate={{
               opacity: [0, 0.4, 0],
               scale: [0.8, 1.3, 0.8]
             }}
@@ -695,7 +695,7 @@ export default function AnimatedBuildScene() {
             r="70"
             fill="#ffff00"
             initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ 
+            animate={{
               opacity: [0, 0.2, 0],
               scale: [0.8, 1.5, 0.8]
             }}
@@ -715,13 +715,13 @@ export default function AnimatedBuildScene() {
               strokeLinecap="round"
               opacity="0.6"
               initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ 
+              animate={{
                 pathLength: [0, 1, 0],
                 opacity: [0, 0.6, 0]
               }}
-              transition={{ 
-                duration: 2, 
-                delay: 8 + i * 0.1, 
+              transition={{
+                duration: 2,
+                delay: 8 + i * 0.1,
                 repeat: Infinity,
                 ease: "easeInOut"
               }}
@@ -745,7 +745,7 @@ export default function AnimatedBuildScene() {
         </motion.text>
 
         {/* ========== DATA FLOW LABELS ========== */}
-        
+
         <motion.text
           x="380"
           y="320"
@@ -799,7 +799,7 @@ export default function AnimatedBuildScene() {
         </motion.text>
 
         {/* ========== SYSTEM FLOW DIAGRAM ========== */}
-        
+
         <motion.g
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.5 }}
@@ -822,7 +822,7 @@ export default function AnimatedBuildScene() {
           <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
             <polygon points="0 0, 10 3, 0 6" fill="#00ffff" />
           </marker>
-          
+
           <linearGradient id="bulb-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#fffacd" stopOpacity="0.9" />
             <stop offset="100%" stopColor="#ffd700" stopOpacity="0.4" />
@@ -830,7 +830,7 @@ export default function AnimatedBuildScene() {
         </defs>
 
         {/* ========== BLUEPRINT CORNER MARKERS ========== */}
-        
+
         {[[30, 60], [1370, 60], [30, 740], [1370, 740]].map(([x, y], i) => (
           <motion.g
             key={`marker-${i}`}
@@ -857,7 +857,7 @@ export default function AnimatedBuildScene() {
           animate={{ opacity: 0.8, y: 0 }}
           transition={{ delay: 1, duration: 1 }}
         >
-Premium Engineering <br /> Project Solutions
+          Premium Engineering <br /> Project Solutions
         </motion.text>
 
         {/* System Status */}
@@ -876,7 +876,7 @@ Premium Engineering <br /> Project Solutions
         </motion.text>
 
         {/* ========== SCANNING LINE EFFECT ========== */}
-        
+
         <motion.line
           x1="30"
           y1="400"
@@ -888,10 +888,10 @@ Premium Engineering <br /> Project Solutions
           animate={{ y1: [60, 740], y2: [60, 740] }}
           transition={{ duration: 6, repeat: Infinity, ease: "linear", delay: 2 }}
         />
-<linearGradient id="box-shadow" x1="0%" y1="0%" x2="100%" y2="100%">
-  <stop offset="0%" stopColor="#000" stopOpacity="0.1" />
-  <stop offset="100%" stopColor="#000" stopOpacity="0.3" />
-</linearGradient>
+        <linearGradient id="box-shadow" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#000" stopOpacity="0.1" />
+          <stop offset="100%" stopColor="#000" stopOpacity="0.3" />
+        </linearGradient>
 
       </svg>
 
