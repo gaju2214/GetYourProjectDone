@@ -133,10 +133,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* 🔹 Animated Build Scene Section */}
-      <section className="relative w-full">
-        <AnimatedBuildScene />
-      </section>
+    
 
       {/* All Projects Section */}
       <section className="pt-8 pb-12" ref={allProjectsRef}>
