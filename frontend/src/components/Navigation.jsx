@@ -224,7 +224,13 @@ const Navigation = () => {
                       >
                         Cart
                       </Link>
-
+                      <Link
+                        to="https://iot.getyourprojectdone.in/"
+                        onClick={() => setIsMenuOpen(false)}
+                        className="text-gray-800 hover:text-orange-500"
+                      >
+                       Free IoT Platform
+                      </Link>
                       {user ? (
                         <>
                           <Link
