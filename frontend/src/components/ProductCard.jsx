@@ -234,7 +234,7 @@ export function ProductCard({ product }) {
                       : "destructive"
                 }
               >
-                {product.difficulty || "Beginner"}
+                {product.difficulty}
               </Badge>
             </div>
 

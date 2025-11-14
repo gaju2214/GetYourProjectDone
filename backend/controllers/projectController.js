@@ -385,6 +385,45 @@ exports.updateProject = async (req, res) => {
     const project = await Project.findByPk(id);
     if (!project) return res.status(404).json({ message: "Project not found" });
 
+    // ✅ If title is being updated, regenerate the slug
+    if (updatedData.title && updatedData.title !== project.title) {
+      let slug = slugify(updatedData.title);
+      let counter = 1;
+      let originalSlug = slug;
+      
+      // Check for duplicate slugs (excluding current project)
+      while (true) {
+        const existing = await Project.findOne({ 
+          where: { 
+            slug,
+            id: { [Op.ne]: id }  // Exclude current project
+          } 
+        });
+        if (!existing) break;
+        slug = `${originalSlug}-${counter}`;
+        counter++;
+      }
+      
+      updatedData.slug = slug;
+      console.log(`Title changed: "${project.title}" → "${updatedData.title}"`);
+      console.log(`Slug updated: "${project.slug}" → "${slug}"`);
+    }
+
+    // ✅ Handle components if they're being updated
+    if (updatedData.components) {
+      let parsedComponents = [];
+      try {
+        if (Array.isArray(updatedData.components)) {
+          parsedComponents = updatedData.components;
+        } else if (typeof updatedData.components === "string") {
+          parsedComponents = JSON.parse(updatedData.components);
+        }
+      } catch (err) {
+        parsedComponents = [updatedData.components];
+      }
+      updatedData.components = parsedComponents;
+    }
+
     await project.update(updatedData);
 
     res.json({ message: "Project updated successfully", project });
@@ -397,6 +436,7 @@ exports.updateProject = async (req, res) => {
     });
   }
 };
+
 
 exports.updateCategory = async (req, res) => {
   try {
