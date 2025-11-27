@@ -42,10 +42,129 @@ export default function ProductDetailPage() {
   const [discountLoading, setDiscountLoading] = useState(true);
   
   // Form modal states
-  const [showDownloadForm, setShowDownloadForm] = useState(false);
-  const [formData, setFormData] = useState({ name: '', mobile: '' });
-  const [formErrors, setFormErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+// Add these new state variables at the top with your other useState hooks
+const [showDownloadForm, setShowDownloadForm] = useState(false);
+const [showOtpForm, setShowOtpForm] = useState(false);
+const [formData, setFormData] = useState({ name: "", mobile: "" });
+const [otp, setOtp] = useState("");
+const [userId, setUserId] = useState(null);
+const [formErrors, setFormErrors] = useState({});
+const [otpError, setOtpError] = useState("");
+const [isSubmitting, setIsSubmitting] = useState(false);
+const [isVerifying, setIsVerifying] = useState(false);
+
+// Handle initial form submission (send OTP)
+const handleFormSubmit = async (e) => {
+  e.preventDefault();
+  
+  const errors = validateForm();
+  if (Object.keys(errors).length > 0) {
+    setFormErrors(errors);
+    return;
+  }
+  
+  setIsSubmitting(true);
+  
+  try {
+    const response = await api.post("/api/userinfos/send-otp", {
+      name: formData.name.trim(),
+      phoneNumber: formData.mobile.trim(),
+      projectId: product.id
+    });
+
+    if (response.data.success) {
+      setUserId(response.data.userId);
+      setShowDownloadForm(false);
+      setShowOtpForm(true);
+      alert("OTP sent successfully to your mobile number!");
+    }
+  } catch (error) {
+    console.error("Error sending OTP:", error);
+    alert(error.response?.data?.message || "Failed to send OTP. Please try again.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
+// Handle OTP verification
+const handleOtpVerification = async (e) => {
+  e.preventDefault();
+  
+  if (!otp || otp.length !== 6) {
+    setOtpError("Please enter a valid 6-digit OTP");
+    return;
+  }
+  
+  setIsVerifying(true);
+  setOtpError("");
+  
+  try {
+    const response = await api.post("/api/userinfos/verify-otp", {
+      userId: userId,
+      otp: otp
+    });
+
+    if (response.data.success) {
+      // Store download info in localStorage
+      const localData = {
+        projectId: product.id,
+        projectTitle: product.title,
+        downloadDate: new Date().toISOString(),
+      };
+
+      const existing = JSON.parse(localStorage.getItem("abstractDownloads") || "[]");
+      existing.push(localData);
+      localStorage.setItem("abstractDownloads", JSON.stringify(existing));
+
+      // Trigger download
+      const link = document.createElement("a");
+      link.href = product.abstract_file;
+      link.download = `${product.title}-abstract.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Reset states
+      setShowOtpForm(false);
+      setFormData({ name: "", mobile: "" });
+      setOtp("");
+      setUserId(null);
+      setFormErrors({});
+      
+      alert("OTP verified successfully! Your download will start shortly.");
+    }
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    setOtpError(error.response?.data?.message || "Invalid or expired OTP. Please try again.");
+  } finally {
+    setIsVerifying(false);
+  }
+};
+
+// Handle resend OTP
+const handleResendOtp = async () => {
+  setIsSubmitting(true);
+  setOtpError("");
+  
+  try {
+    const response = await api.post("/api/userinfos/send-otp", {
+      name: formData.name.trim(),
+      phoneNumber: formData.mobile.trim(),
+      projectId: product.id
+    });
+
+    if (response.data.success) {
+      setUserId(response.data.userId);
+      alert("OTP resent successfully!");
+    }
+  } catch (error) {
+    console.error("Error resending OTP:", error);
+    alert("Failed to resend OTP. Please try again.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   
   // Google Login Modal states
@@ -212,53 +331,7 @@ useEffect(() => {
   };
 
   // Handle form submission
-const handleFormSubmit = async (e) => {
-  e.preventDefault();
-  
-  const errors = validateForm();
-  if (Object.keys(errors).length > 0) {
-    setFormErrors(errors);
-    return;
-  }
-  
-  setIsSubmitting(true);
-  
-  try {
-    const downloadData = {
-      name: formData.name.trim(),
-      phoneNumber: formData.mobile.trim(),
-       projectId: product.id // ✅ This is being sent
-    };
 
-    await api.post("/api/auth/userinfo", downloadData);
-
-    const localData = {
-      projectId: product.id, // Also store in localStorage if needed
-      projectTitle: product.title, // Store project title for reference
-      downloadDate: new Date().toISOString(),
-    };
-
-    const existing = JSON.parse(localStorage.getItem("abstractDownloads") || "[]");
-    existing.push(localData);
-    localStorage.setItem("abstractDownloads", JSON.stringify(existing));
-
-    const link = document.createElement("a");
-    link.href = product.abstract_file;
-    link.download = `${product.title}-abstract.pdf`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    setShowDownloadForm(false);
-    setFormData({ name: "", mobile: "" });
-    setFormErrors({});
-  } catch (error) {
-    console.error("Error during download:", error);
-    alert("An error occurred. Please try again.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
 
   // Handle Google Login
   const handleGoogleLogin = () => {
@@ -420,92 +493,180 @@ const totalPrice = product.price + gstAmount;
       )}
 
       {/* Download Form Modal */}
-      {showDownloadForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
-            <div className="flex items-center justify-between p-6 border-b">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Download Abstract
-              </h3>
-              <button
-                onClick={() => {
-                  setShowDownloadForm(false);
-                  setFormData({ name: '', mobile: '' });
-                  setFormErrors({});
-                }}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-            
-            <form onSubmit={handleFormSubmit} className="p-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Full Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                      formErrors.name ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder="Enter your full name"
-                    maxLength={50}
-                  />
-                  {formErrors.name && (
-                    <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>
-                  )}
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Mobile Number <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="tel"
-                    value={formData.mobile}
-                    onChange={(e) => handleInputChange('mobile', e.target.value.replace(/\D/g, '').slice(0, 10))}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 ${
-                      formErrors.mobile ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                    placeholder="Enter 10-digit mobile number"
-                    maxLength={10}
-                  />
-                  {formErrors.mobile && (
-                    <p className="text-red-500 text-xs mt-1">{formErrors.mobile}</p>
-                  )}
-                </div>
-              </div>
-              
-              <div className="flex gap-3 mt-6">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    setShowDownloadForm(false);
-                    setFormData({ name: '', mobile: '' });
-                    setFormErrors({});
-                  }}
-                  className="flex-1"
-                  disabled={isSubmitting}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  className="flex-1 bg-orange-500 hover:bg-orange-600"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Downloading...' : 'Download Abstract'}
-                </Button>
-              </div>
-            </form>
+{showDownloadForm && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+      <div className="flex items-center justify-between p-6 border-b">
+        <h3 className="text-lg font-semibold text-gray-900">
+          Download Abstract
+        </h3>
+        <button
+          onClick={() => {
+            setShowDownloadForm(false);
+            setFormData({ name: '', mobile: '' });
+            setFormErrors({});
+          }}
+          className="text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          <X className="h-6 w-6" />
+        </button>
+      </div>
+      
+      <form onSubmit={handleFormSubmit} className="p-6">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Full Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) => handleInputChange('name', e.target.value)}
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 ${
+                formErrors.name ? 'border-red-500' : 'border-gray-300'
+              }`}
+              placeholder="Enter your full name"
+              maxLength={50}
+            />
+            {formErrors.name && (
+              <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>
+            )}
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Mobile Number <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="tel"
+              value={formData.mobile}
+              onChange={(e) => handleInputChange('mobile', e.target.value.replace(/\D/g, '').slice(0, 10))}
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 ${
+                formErrors.mobile ? 'border-red-500' : 'border-gray-300'
+              }`}
+              placeholder="Enter 10-digit mobile number"
+              maxLength={10}
+            />
+            {formErrors.mobile && (
+              <p className="text-red-500 text-xs mt-1">{formErrors.mobile}</p>
+            )}
           </div>
         </div>
-      )}
+        
+        <div className="flex gap-3 mt-6">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              setShowDownloadForm(false);
+              setFormData({ name: '', mobile: '' });
+              setFormErrors({});
+            }}
+            className="flex-1"
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            className="flex-1 bg-orange-500 hover:bg-orange-600"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Sending OTP...' : 'Send OTP'}
+          </Button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
+{/* OTP Verification Modal */}
+{showOtpForm && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+      <div className="flex items-center justify-between p-6 border-b">
+        <h3 className="text-lg font-semibold text-gray-900">
+          Verify OTP
+        </h3>
+        <button
+          onClick={() => {
+            setShowOtpForm(false);
+            setOtp("");
+            setOtpError("");
+            setShowDownloadForm(true);
+          }}
+          className="text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          <X className="h-6 w-6" />
+        </button>
+      </div>
+      
+      <form onSubmit={handleOtpVerification} className="p-6">
+        <div className="mb-4">
+          <p className="text-sm text-gray-600 mb-4">
+            Enter the 6-digit OTP sent to <strong>{formData.mobile}</strong>
+          </p>
+          
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            OTP <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={otp}
+            onChange={(e) => {
+              const value = e.target.value.replace(/\D/g, '').slice(0, 6);
+              setOtp(value);
+              setOtpError("");
+            }}
+            className={`w-full px-3 py-2 border rounded-lg text-center text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-orange-500 ${
+              otpError ? 'border-red-500' : 'border-gray-300'
+            }`}
+            placeholder="000000"
+            maxLength={6}
+          />
+          {otpError && (
+            <p className="text-red-500 text-xs mt-1">{otpError}</p>
+          )}
+          
+          <div className="mt-3 text-center">
+            <button
+              type="button"
+              onClick={handleResendOtp}
+              disabled={isSubmitting}
+              className="text-sm text-orange-500 hover:text-orange-600 disabled:text-gray-400"
+            >
+              {isSubmitting ? 'Resending...' : 'Resend OTP'}
+            </button>
+          </div>
+        </div>
+        
+        <div className="flex gap-3 mt-6">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => {
+              setShowOtpForm(false);
+              setOtp("");
+              setOtpError("");
+              setShowDownloadForm(true);
+            }}
+            className="flex-1"
+            disabled={isVerifying}
+          >
+            Back
+          </Button>
+          <Button
+            type="submit"
+            className="flex-1 bg-orange-500 hover:bg-orange-600"
+            disabled={isVerifying || otp.length !== 6}
+          >
+            {isVerifying ? 'Verifying...' : 'Verify & Download'}
+          </Button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
 
       {/* Global Discount Banner (Optional) */}
       {globalDiscount && globalDiscount.isActive && !discountLoading && (

@@ -1,3 +1,5 @@
+const { sendOTP } = require('../utils/sendOtp');
+
 const db = require('../models');
 const UserInfo = db.UserInfo;
 
@@ -175,5 +177,78 @@ exports.deleteUserInfo = async (req, res) => {
       success: false,
       message: error.message 
     });
+  }
+};
+
+exports.sendOtpToUser = async (req, res) => {
+  try {
+    const { phoneNumber, name, projectId } = req.body;
+
+    // Validate project
+    const project = await db.Project.findByPk(projectId);
+    if (!project) {
+      return res.status(404).json({ success: false, message: "Project not found" });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 2 minutes
+
+    // Create user record with OTP
+    const user = await UserInfo.create({
+      name,
+      phoneNumber,
+      projectId,
+      otp,
+      otpExpiresAt: expiresAt,
+    });
+
+    // Send SMS
+    const smsResponse = await sendOTP(phoneNumber, otp);
+
+    return res.status(200).json({
+      success: true,
+      message: "OTP sent successfully",
+      userId: user.id,
+      smsResponse
+    });
+
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.verifyOtp = async (req, res) => {
+  try {
+    const { userId, otp } = req.body;
+
+    const user = await UserInfo.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    if (user.isVerified) {
+      return res.status(200).json({ success: true, message: "Already verified" });
+    }
+
+    if (user.otp !== otp) {
+      return res.status(400).json({ success: false, message: "Invalid OTP" });
+    }
+
+    if (new Date() > user.otpExpiresAt) {
+      return res.status(400).json({ success: false, message: "OTP expired" });
+    }
+
+    // Mark as verified
+    user.isVerified = true;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "OTP verified successfully. User can download project abstract now."
+    });
+
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
   }
 };

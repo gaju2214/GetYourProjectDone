@@ -7,26 +7,21 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+      name: DataTypes.STRING,
       phoneNumber: {
         type: DataTypes.STRING(20),
-        allowNull: true,
-        unique: false,
-        validate: {
-          is: /^\+?[\d\s\-\(\)]{10,}$/,
-        },
+        validate: { is: /^\+?[\d\s\-\(\)]{10,}$/ },
       },
       projectId: {
         type: DataTypes.INTEGER,
-        allowNull: false, // This should match your requirement
-        references: {
-          model: 'Projects',
-          key: 'id'
-        }
+        allowNull: false,
+        references: { model: 'Projects', key: 'id' }
       },
+
+      // 🔥 Add these for OTP
+      otp: { type: DataTypes.STRING, allowNull: true },
+      otpExpiresAt: { type: DataTypes.DATE, allowNull: true },
+      isVerified: { type: DataTypes.BOOLEAN, defaultValue: false },
     },
     {
       tableName: "userinfos",
@@ -34,7 +29,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  // Add association
   UserInfo.associate = (models) => {
     UserInfo.belongsTo(models.Project, {
       foreignKey: "projectId",
