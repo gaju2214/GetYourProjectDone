@@ -2,15 +2,20 @@ const axios = require("axios");
 const HttpsProxyAgent = require('https-proxy-agent');
 
 const getShiprocketToken = async () => {
-  // Use pre-fetched token from environment (bypasses 403 issue)
+  // PRIORITY 1: Use manual token from environment
   if (process.env.SHIPROCKET_TOKEN) {
-    console.log("Using pre-configured Shiprocket token");
+    console.log("✅ Using SHIPROCKET_TOKEN from environment");
     return process.env.SHIPROCKET_TOKEN;
   }
   
-  // Fallback: Try to fetch token (will fail on Railway due to 403)
+  // PRIORITY 2: Try to fetch token (will fail on Railway)
+  console.log("⚠️ SHIPROCKET_TOKEN not found, attempting login...");
+  
+  if (!process.env.SHIPROCKET_EMAIL || !process.env.SHIPROCKET_PASSWORD) {
+    throw new Error("Missing SHIPROCKET_EMAIL or SHIPROCKET_PASSWORD");
+  }
+  
   try {
-    console.log("Attempting to fetch Shiprocket token...");
     const loginRes = await axios.post(
       "https://apiv2.shiprocket.in/v1/external/auth/login",
       {
@@ -26,19 +31,15 @@ const getShiprocketToken = async () => {
       }
     );
     
-    if (!loginRes.data.token) {
-      throw new Error("No token received");
-    }
-    
-    console.log("Token fetched successfully");
+    console.log("✅ Token fetched successfully");
     return loginRes.data.token;
   } catch (error) {
-    console.error("Token fetch failed:", {
+    console.error("❌ Login failed:", {
       status: error.response && error.response.status,
       message: error.message
     });
     
-    throw new Error("SHIPROCKET_TOKEN not set in Railway env and login failed due to IP blocking. Please add SHIPROCKET_TOKEN variable.");
+    throw new Error("Add SHIPROCKET_TOKEN to Railway variables. Railway IP is blocked by Shiprocket.");
   }
 };
 
@@ -295,3 +296,50 @@ exports.cancelShiprocketOrder = async (req, res) => {
     });
   }
 };
+// Add this function
+exports.getAllShiprocketOrders = async (req, res) => {
+  try {
+    console.log("Fetching all Shiprocket orders...");
+    const token = await getShiprocketToken();
+
+    const response = await axios.get(
+      "https://apiv2.shiprocket.in/v1/external/orders",
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        },
+        timeout: 15000
+      }
+    );
+
+    console.log("Orders fetched successfully:", response.data.data ? response.data.data.length : 0);
+    
+    res.json({
+      success: true,
+      data: response.data.data || [],
+      meta: response.data.meta || {}
+    });
+  } catch (error) {
+    const errorData = error.response && error.response.data;
+    console.error("Error fetching Shiprocket orders:", errorData || error.message);
+    res.status(500).json({ 
+      success: false,
+      error: "Failed to fetch Shiprocket orders",
+      details: error.message
+    });
+  }
+};
+
+// Add debug function
+exports.debugEnv = async (req, res) => {
+  res.json({
+    hasToken: !!process.env.SHIPROCKET_TOKEN,
+    hasEmail: !!process.env.SHIPROCKET_EMAIL,
+    hasPassword: !!process.env.SHIPROCKET_PASSWORD,
+    tokenLength: (process.env.SHIPROCKET_TOKEN && process.env.SHIPROCKET_TOKEN.length) || 0,
+    tokenPreview: process.env.SHIPROCKET_TOKEN ? process.env.SHIPROCKET_TOKEN.substring(0, 30) + '...' : 'NOT SET',
+    nodeEnv: process.env.NODE_ENV
+  });
+};
+
