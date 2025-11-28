@@ -7,11 +7,11 @@ const getShiprocketToken = async () => {
     const loginRes = await axios.post(
       "https://apiv2.shiprocket.in/v1/external/auth/login",
       {
-        email: process.env.SHIPROCKET_EMAIL || "valadog186@mardiek.com",
-        password: process.env.SHIPROCKET_PASSWORD || "^Jw5jP1nEg6kmcQ9",
+        email: process.env.SHIPROCKET_EMAIL,
+        password: process.env.SHIPROCKET_PASSWORD
       },
       {
-        timeout: 10000 // 10 second timeout
+        timeout: 10000
       }
     );
     
@@ -22,12 +22,14 @@ const getShiprocketToken = async () => {
     console.log("Shiprocket login successful");
     return loginRes.data.token;
   } catch (error) {
-    console.error("Shiprocket login failed:", error.response?.data || error.message);
-    throw new Error("Failed to authenticate with Shiprocket: " + (error.response?.data?.message || error.message));
+    const errorData = error.response && error.response.data;
+    const errorMessage = (errorData && errorData.message) || error.message;
+    console.error("Shiprocket login failed:", errorData || error.message);
+    throw new Error("Failed to authenticate with Shiprocket: " + errorMessage);
   }
 };
 
-// Create Shiprocket order - receives order_id from order controller
+// Create Shiprocket order
 exports.createShiprocketOrder = async (req, res) => {
   try {
     console.log("=== SHIPROCKET ORDER CREATION START ===");
@@ -66,15 +68,15 @@ exports.createShiprocketOrder = async (req, res) => {
 
     // Validate and prepare profile data with better validation
     const validatedProfile = {
-      name: (profile?.name || "Customer").substring(0, 50),
-      lastname: (profile?.lastname || "").substring(0, 50),
-      address: (profile?.address || "Default Address").substring(0, 100),
-      city: (profile?.city || "Mumbai").substring(0, 50),
-      pincode: String(profile?.pincode || "400001").replace(/\D/g, '').substring(0, 6) || "400001",
-      state: (profile?.state || "Maharashtra").substring(0, 50),
-      country: (profile?.country || "India").substring(0, 50),
-      email: (profile?.email || "customer@example.com").substring(0, 50),
-      phoneNumber: String(profile?.phoneNumber || "9999999999").replace(/\D/g, '').substring(0, 10) || "9999999999"
+      name: ((profile && profile.name) || "Customer").substring(0, 50),
+      lastname: ((profile && profile.lastname) || "").substring(0, 50),
+      address: ((profile && profile.address) || "Default Address").substring(0, 100),
+      city: ((profile && profile.city) || "Mumbai").substring(0, 50),
+      pincode: String((profile && profile.pincode) || "400001").replace(/\D/g, '').substring(0, 6) || "400001",
+      state: ((profile && profile.state) || "Maharashtra").substring(0, 50),
+      country: ((profile && profile.country) || "India").substring(0, 50),
+      email: ((profile && profile.email) || "customer@example.com").substring(0, 50),
+      phoneNumber: String((profile && profile.phoneNumber) || "9999999999").replace(/\D/g, '').substring(0, 10) || "9999999999"
     };
 
     // Ensure pincode is 6 digits
@@ -92,8 +94,8 @@ exports.createShiprocketOrder = async (req, res) => {
     // Prepare order data
     const orderData = {
       order_id: String(order_id),
-      order_date: new Date().toISOString().split("T")[0],
-      pickup_location: "Home",
+      order_date: new Date().toISOString().slice(0, 16).replace('T', ' '),
+      pickup_location: "Home-1",
       billing_customer_name: validatedProfile.name,
       billing_last_name: validatedProfile.lastname,
       billing_address: validatedProfile.address,
@@ -106,17 +108,19 @@ exports.createShiprocketOrder = async (req, res) => {
       shipping_is_billing: true,
 
       // Map cart items with validation
-      order_items: cartItems && cartItems.length > 0 ? cartItems.map((item, index) => ({
-        name: String(item.title || `Product-${index + 1}`).substring(0, 50),
-        sku: String(item.projectId || `SKU-${order_id}-${index + 1}`),
-        units: Math.max(1, parseInt(item.quantity) || 1),
-        selling_price: Math.max(1, parseFloat(item.price) || 1),
-      })) : [
+      order_items: cartItems && cartItems.length > 0 ? cartItems.map(function(item, index) {
+        return {
+          name: String(item.title || ("Product-" + (index + 1))).substring(0, 50),
+          sku: String(item.projectId || ("SKU-" + order_id + "-" + (index + 1))),
+          units: Math.max(1, parseInt(item.quantity) || 1),
+          selling_price: Math.max(1, parseFloat(item.price) || 1)
+        };
+      }) : [
         {
           name: "Default Product",
-          sku: `SKU-${order_id}`,
+          sku: "SKU-" + order_id,
           units: 1,
-          selling_price: Math.max(1, parseFloat(total)),
+          selling_price: Math.max(1, parseFloat(total))
         }
       ],
 
@@ -127,7 +131,7 @@ exports.createShiprocketOrder = async (req, res) => {
       length: 10,
       breadth: 10,
       height: 10,
-      weight: 1,
+      weight: 0.5
     };
 
     console.log("=== SENDING TO SHIPROCKET ===");
@@ -146,10 +150,10 @@ exports.createShiprocketOrder = async (req, res) => {
       orderData,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json"
         },
-        timeout: 30000 // 30 second timeout
+        timeout: 30000
       }
     );
 
@@ -166,20 +170,23 @@ exports.createShiprocketOrder = async (req, res) => {
 
   } catch (error) {
     console.log("=== SHIPROCKET ERROR ===");
-    console.error("Status:", error.response?.status);
-    console.error("Data:", error.response?.data);
+    const errorResponse = error.response;
+    const errorData = errorResponse && errorResponse.data;
+    
+    console.error("Status:", errorResponse && errorResponse.status);
+    console.error("Data:", errorData);
     console.error("Message:", error.message);
 
-    const errorMessage = error.response?.data?.message || 
-                        error.response?.data?.error || 
+    const errorMessage = (errorData && errorData.message) || 
+                        (errorData && errorData.error) || 
                         error.message || 
                         "Unknown Shiprocket error";
 
-    res.status(error.response?.status || 500).json({ 
+    res.status((errorResponse && errorResponse.status) || 500).json({ 
       success: false,
       error: "Failed to create Shiprocket order",
       details: errorMessage,
-      shiprocket_error: error.response?.data,
+      shiprocket_error: errorData,
       order_id: req.body.order_id
     });
   }
@@ -191,10 +198,10 @@ exports.getShiprocketOrder = async (req, res) => {
     const token = await getShiprocketToken();
 
     const response = await axios.get(
-      `https://apiv2.shiprocket.in/v1/external/orders/show/${order_id}`,
+      "https://apiv2.shiprocket.in/v1/external/orders/show/" + order_id,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: "Bearer " + token
         },
         timeout: 15000
       }
@@ -205,7 +212,8 @@ exports.getShiprocketOrder = async (req, res) => {
       data: response.data
     });
   } catch (error) {
-    console.error("Error fetching Shiprocket order:", error.response?.data || error.message);
+    const errorData = error.response && error.response.data;
+    console.error("Error fetching Shiprocket order:", errorData || error.message);
     res.status(500).json({ 
       success: false,
       error: "Failed to fetch Shiprocket order details" 
@@ -219,10 +227,10 @@ exports.trackShipment = async (req, res) => {
     const token = await getShiprocketToken();
 
     const response = await axios.get(
-      `https://apiv2.shiprocket.in/v1/external/courier/track/shipment/${shipment_id}`,
+      "https://apiv2.shiprocket.in/v1/external/courier/track/shipment/" + shipment_id,
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: "Bearer " + token
         },
         timeout: 15000
       }
@@ -233,7 +241,8 @@ exports.trackShipment = async (req, res) => {
       tracking_data: response.data
     });
   } catch (error) {
-    console.error("Error tracking shipment:", error.response?.data || error.message);
+    const errorData = error.response && error.response.data;
+    console.error("Error tracking shipment:", errorData || error.message);
     res.status(500).json({ 
       success: false,
       error: "Failed to track shipment" 
@@ -251,8 +260,8 @@ exports.cancelShiprocketOrder = async (req, res) => {
       { ids: [order_id] },
       {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json"
         },
         timeout: 15000
       }
@@ -264,7 +273,8 @@ exports.cancelShiprocketOrder = async (req, res) => {
       data: response.data
     });
   } catch (error) {
-    console.error("Error cancelling order:", error.response?.data || error.message);
+    const errorData = error.response && error.response.data;
+    console.error("Error cancelling order:", errorData || error.message);
     res.status(500).json({ 
       success: false,
       error: "Failed to cancel order" 
