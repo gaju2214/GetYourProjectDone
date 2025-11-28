@@ -1,23 +1,26 @@
 const axios = require("axios");
+const HttpsProxyAgent = require('https-proxy-agent');
 
 const getShiprocketToken = async () => {
   try {
     console.log("Logging into Shiprocket...");
+    
+    const config = {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      timeout: 10000
+    };
+
     const loginRes = await axios.post(
       "https://apiv2.shiprocket.in/v1/external/auth/login",
       {
         email: process.env.SHIPROCKET_EMAIL,
         password: process.env.SHIPROCKET_PASSWORD
       },
-      {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Accept-Language': 'en-US,en;q=0.9'
-        },
-        timeout: 10000
-      }
+      config
     );
     
     if (!loginRes.data.token) {
