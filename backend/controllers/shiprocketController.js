@@ -297,6 +297,7 @@ exports.cancelShiprocketOrder = async (req, res) => {
   }
 };
 // Add this function
+// Get all Shiprocket orders
 exports.getAllShiprocketOrders = async (req, res) => {
   try {
     console.log("Fetching all Shiprocket orders...");
@@ -313,7 +314,7 @@ exports.getAllShiprocketOrders = async (req, res) => {
       }
     );
 
-    console.log("Orders fetched successfully:", response.data.data ? response.data.data.length : 0);
+    console.log("Orders fetched successfully");
     
     res.json({
       success: true,
@@ -322,16 +323,15 @@ exports.getAllShiprocketOrders = async (req, res) => {
     });
   } catch (error) {
     const errorData = error.response && error.response.data;
-    console.error("Error fetching Shiprocket orders:", errorData || error.message);
+    console.error("Error fetching orders:", errorData || error.message);
     res.status(500).json({ 
       success: false,
-      error: "Failed to fetch Shiprocket orders",
-      details: error.message
+      error: "Failed to fetch orders"
     });
   }
 };
 
-// Add debug function
+// Debug environment variables
 exports.debugEnv = async (req, res) => {
   res.json({
     hasToken: !!process.env.SHIPROCKET_TOKEN,
@@ -339,7 +339,28 @@ exports.debugEnv = async (req, res) => {
     hasPassword: !!process.env.SHIPROCKET_PASSWORD,
     tokenLength: (process.env.SHIPROCKET_TOKEN && process.env.SHIPROCKET_TOKEN.length) || 0,
     tokenPreview: process.env.SHIPROCKET_TOKEN ? process.env.SHIPROCKET_TOKEN.substring(0, 30) + '...' : 'NOT SET',
-    nodeEnv: process.env.NODE_ENV
+    nodeEnv: process.env.NODE_ENV,
+    allKeys: Object.keys(process.env).filter(function(key) {
+      return key.includes('SHIPROCKET');
+    })
   });
+};
+
+// Debug Shiprocket connection
+exports.debugShiprocket = async (req, res) => {
+  try {
+    const token = await getShiprocketToken();
+    res.json({
+      success: true,
+      message: "Shiprocket connection working",
+      hasToken: !!token,
+      tokenLength: token.length
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
 };
 
