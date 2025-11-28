@@ -206,22 +206,18 @@ exports.createOrderWithShipping = async (req, res) => {
       shiprocket_order_id: null,
     });
 
-// if (cartItems.length > 0) {
-//   // Delete only cart items for the user
-//   await CartItem.destroy({
-//     where: { userId: user_id } // Make sure this matches your CartItem model field
-//   });
-//   console.log(`✅ Cart cleared for user ${user_id}`);
-// }
-
-// // You can log the order creation separately
-// console.log(`Order created with ID: ${orderId}`);
-
-//     console.log(`Order created with ID: ${orderId}`);
-
-    // Delete cart items after order creation
-  
-
+    // ✅ CREATE ORDER ITEMS - This was missing!
+    if (cartItems && cartItems.length > 0) {
+      for (const item of cartItems) {
+        await OrderItem.create({
+          orderId: newOrder.orderId,
+          projectId: item.projectId || item.id,
+          quantity: item.quantity || 1,
+          price: item.price || 0
+        });
+      }
+      console.log(`✅ Created ${cartItems.length} order items for order ${orderId}`);
+    }
 
     // Direct Shiprocket integration
     let shiprocketData = null;
@@ -263,7 +259,7 @@ exports.createOrderWithShipping = async (req, res) => {
       if (shiprocketData && shiprocketData.success) {
         await newOrder.update({
           status: "confirmed",
-          shiprocket_order_id: shiprocketData.order_id
+          shiprocket_order_id: shiprocketData.shiprocket_order_id || shiprocketData.order_id
         });
 
         console.log("✅ Shiprocket order created:", shiprocketData.order_id);
@@ -273,7 +269,7 @@ exports.createOrderWithShipping = async (req, res) => {
           message: "Order created and shipped successfully",
           order: newOrder,
           orderId,
-          shiprocketOrderId: shiprocketData.order_id,
+          shiprocketOrderId: shiprocketData.shiprocket_order_id || shiprocketData.order_id,
           shiprocket: shiprocketData
         });
       } else {
@@ -304,6 +300,7 @@ exports.createOrderWithShipping = async (req, res) => {
   }
 };
 
+
   
 exports.getAllOrders = async (req, res) => {
   try {
@@ -316,36 +313,41 @@ exports.getAllOrders = async (req, res) => {
             {
               model: Project,
               as: "Project",
-              attributes: ["id", "title", "price"],
-            },
-          ],
-        },
+              attributes: ["id", "title", "price", "image"]
+            }
+          ]
+        }
       ],
-      order: [["createdAt", "DESC"]],
+      order: [["createdAt", "DESC"]]
     });
 
+    // ✅ Return with both formats for compatibility
     const formattedOrders = orders.map(order => ({
-      ...order.dataValues,
+      ...order.toJSON(), // Includes OrderItems
+      // Keep order_items for backward compatibility
       order_items: order.OrderItems?.map(item => ({
         name: item.Project?.title || "N/A",
         sku: item.projectId,
         units: item.quantity,
         selling_price: item.Project?.price || 0,
-      })) || [],
+        // Also keep the full item data
+        Project: item.Project
+      })) || []
     }));
 
     res.json({
       success: true,
-      data: formattedOrders,
+      data: formattedOrders
     });
   } catch (error) {
     console.error("Error fetching all orders:", error);
     res.status(500).json({
       success: false,
-      error: "Failed to fetch orders",
+      error: "Failed to fetch orders"
     });
   }
 };
+
 
 exports.getOrdersByUser = async (req, res) => {
   const { user_id } = req.params;

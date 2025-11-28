@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     orderId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING, // ✅ Changed from INTEGER to STRING
       allowNull: false,
     },
     projectId: {
@@ -24,20 +24,19 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  // Make sure the model names match exactly what's in your models folder
   OrderItem.associate = (models) => {
-  OrderItem.belongsTo(models.Order, {
-    foreignKey: "orderId",
-    as: "order",
-    onDelete: "CASCADE",
-  });
+    OrderItem.belongsTo(models.Order, {
+      foreignKey: "orderId",
+      targetKey: "orderId", // ✅ Reference the orderId STRING field
+      as: "Order",
+      onDelete: "CASCADE",
+    });
 
-    // Check if this should be models.Projects or models.Project
     OrderItem.belongsTo(models.Project, {
-    foreignKey: "projectId",
-    as: "Project"
-  });
-};
+      foreignKey: "projectId",
+      as: "Project"
+    });
+  };
 
   return OrderItem;
 };
