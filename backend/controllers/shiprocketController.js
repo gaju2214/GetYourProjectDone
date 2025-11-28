@@ -1,6 +1,5 @@
 const axios = require("axios");
 
-// Shiprocket login function with better error handling
 const getShiprocketToken = async () => {
   try {
     console.log("Logging into Shiprocket...");
@@ -11,6 +10,12 @@ const getShiprocketToken = async () => {
         password: process.env.SHIPROCKET_PASSWORD
       },
       {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Accept-Language': 'en-US,en;q=0.9'
+        },
         timeout: 10000
       }
     );
@@ -23,11 +28,14 @@ const getShiprocketToken = async () => {
     return loginRes.data.token;
   } catch (error) {
     const errorData = error.response && error.response.data;
-    const errorMessage = (errorData && errorData.message) || error.message;
-    console.error("Shiprocket login failed:", errorData || error.message);
-    throw new Error("Failed to authenticate with Shiprocket: " + errorMessage);
+    console.error("Shiprocket login failed:", {
+      status: error.response && error.response.status,
+      data: errorData
+    });
+    throw new Error("Failed to authenticate: " + (error.message || 'Unknown error'));
   }
 };
+
 
 // Create Shiprocket order
 exports.createShiprocketOrder = async (req, res) => {
