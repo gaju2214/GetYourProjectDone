@@ -2,40 +2,43 @@ const axios = require("axios");
 const HttpsProxyAgent = require('https-proxy-agent');
 
 const getShiprocketToken = async () => {
+  // Use pre-fetched token from environment (bypasses 403 issue)
+  if (process.env.SHIPROCKET_TOKEN) {
+    console.log("Using pre-configured Shiprocket token");
+    return process.env.SHIPROCKET_TOKEN;
+  }
+  
+  // Fallback: Try to fetch token (will fail on Railway due to 403)
   try {
-    console.log("Logging into Shiprocket...");
-    
-    const config = {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      timeout: 10000
-    };
-
+    console.log("Attempting to fetch Shiprocket token...");
     const loginRes = await axios.post(
       "https://apiv2.shiprocket.in/v1/external/auth/login",
       {
         email: process.env.SHIPROCKET_EMAIL,
         password: process.env.SHIPROCKET_PASSWORD
       },
-      config
+      {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          'Content-Type': 'application/json'
+        },
+        timeout: 10000
+      }
     );
     
     if (!loginRes.data.token) {
-      throw new Error("No token received from Shiprocket login");
+      throw new Error("No token received");
     }
     
-    console.log("Shiprocket login successful");
+    console.log("Token fetched successfully");
     return loginRes.data.token;
   } catch (error) {
-    const errorData = error.response && error.response.data;
-    console.error("Shiprocket login failed:", {
+    console.error("Token fetch failed:", {
       status: error.response && error.response.status,
-      data: errorData
+      message: error.message
     });
-    throw new Error("Failed to authenticate: " + (error.message || 'Unknown error'));
+    
+    throw new Error("SHIPROCKET_TOKEN not set in Railway env and login failed due to IP blocking. Please add SHIPROCKET_TOKEN variable.");
   }
 };
 
