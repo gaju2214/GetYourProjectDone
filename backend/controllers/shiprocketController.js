@@ -12,7 +12,7 @@ const getShiprocketToken = async () => {
   console.log("⚠️ SHIPROCKET_TOKEN not found, attempting login...");
   
   if (!process.env.SHIPROCKET_EMAIL || !process.env.SHIPROCKET_PASSWORD) {
-    throw new Error("Missing SHIPROCKET_EMAIL or SHIPROCKET_PASSWORD");
+    return null;  // FIXED
   }
   
   try {
@@ -39,7 +39,7 @@ const getShiprocketToken = async () => {
       message: error.message
     });
     
-    throw new Error("Add SHIPROCKET_TOKEN to Railway variables. Railway IP is blocked by Shiprocket.");
+    return null; // FIXED
   }
 };
 
@@ -72,6 +72,13 @@ exports.createShiprocketOrder = async (req, res) => {
 
     // Get Shiprocket token
     const token = await getShiprocketToken();
+
+    if (!token) {
+      return res.status(500).json({
+        success: false,
+        error: "Shiprocket token missing. Add SHIPROCKET_TOKEN to Railway."
+      });
+    }
 
     // Determine payment method
     let payment_method;
@@ -122,15 +129,12 @@ exports.createShiprocketOrder = async (req, res) => {
       billing_phone: validatedProfile.phoneNumber,
       shipping_is_billing: true,
 
-      // Map cart items with validation
-      order_items: cartItems && cartItems.length > 0 ? cartItems.map(function(item, index) {
-        return {
-          name: String(item.title || ("Product-" + (index + 1))).substring(0, 50),
-          sku: String(item.projectId || ("SKU-" + order_id + "-" + (index + 1))),
-          units: Math.max(1, parseInt(item.quantity) || 1),
-          selling_price: Math.max(1, parseFloat(item.price) || 1)
-        };
-      }) : [
+      order_items: cartItems && cartItems.length > 0 ? cartItems.map((item, index) => ({
+        name: String(item.title || ("Product-" + (index + 1))).substring(0, 50),
+        sku: String(item.projectId || ("SKU-" + order_id + "-" + (index + 1))),
+        units: Math.max(1, parseInt(item.quantity) || 1),
+        selling_price: Math.max(1, parseFloat(item.price) || 1)
+      })) : [
         {
           name: "Default Product",
           sku: "SKU-" + order_id,
@@ -142,7 +146,6 @@ exports.createShiprocketOrder = async (req, res) => {
       payment_method: payment_method,
       sub_total: Math.max(1, parseFloat(total)),
 
-      // Required dimensions (minimum values)
       length: 10,
       breadth: 10,
       height: 10,
@@ -212,6 +215,13 @@ exports.getShiprocketOrder = async (req, res) => {
     const { order_id } = req.params;
     const token = await getShiprocketToken();
 
+    if (!token) {
+      return res.status(500).json({
+        success: false,
+        error: "Shiprocket token missing. Add SHIPROCKET_TOKEN to Railway."
+      });
+    }
+
     const response = await axios.get(
       "https://apiv2.shiprocket.in/v1/external/orders/show/" + order_id,
       {
@@ -240,6 +250,13 @@ exports.trackShipment = async (req, res) => {
   try {
     const { shipment_id } = req.params;
     const token = await getShiprocketToken();
+
+    if (!token) {
+      return res.status(500).json({
+        success: false,
+        error: "Shiprocket token missing. Add SHIPROCKET_TOKEN to Railway."
+      });
+    }
 
     const response = await axios.get(
       "https://apiv2.shiprocket.in/v1/external/courier/track/shipment/" + shipment_id,
@@ -270,6 +287,13 @@ exports.cancelShiprocketOrder = async (req, res) => {
     const { order_id } = req.params;
     const token = await getShiprocketToken();
 
+    if (!token) {
+      return res.status(500).json({
+        success: false,
+        error: "Shiprocket token missing. Add SHIPROCKET_TOKEN to Railway."
+      });
+    }
+
     const response = await axios.post(
       "https://apiv2.shiprocket.in/v1/external/orders/cancel",
       { ids: [order_id] },
@@ -296,12 +320,19 @@ exports.cancelShiprocketOrder = async (req, res) => {
     });
   }
 };
-// Add this function
+
 // Get all Shiprocket orders
 exports.getAllShiprocketOrders = async (req, res) => {
   try {
     console.log("Fetching all Shiprocket orders...");
     const token = await getShiprocketToken();
+
+    if (!token) {
+      return res.status(500).json({
+        success: false,
+        error: "Shiprocket token missing. Add SHIPROCKET_TOKEN to Railway."
+      });
+    }
 
     const response = await axios.get(
       "https://apiv2.shiprocket.in/v1/external/orders",
@@ -354,7 +385,7 @@ exports.debugShiprocket = async (req, res) => {
       success: true,
       message: "Shiprocket connection working",
       hasToken: !!token,
-      tokenLength: token.length
+      tokenLength: token ? token.length : 0
     });
   } catch (error) {
     res.status(500).json({
@@ -363,4 +394,3 @@ exports.debugShiprocket = async (req, res) => {
     });
   }
 };
-
