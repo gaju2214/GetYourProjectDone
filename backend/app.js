@@ -36,6 +36,8 @@ const userinfo = require('./routes/userinfo');
 const discountRoutes = require('./routes/discountRoutes');
 const sitemapRoutes = require('./routes/sitemap');
 
+// ✅ NEW: Shiprocket Checkout routes
+
 const app = express();
 
 // Allowed Origins
@@ -94,6 +96,11 @@ app.use("/api/shiprocket", shiprocketRoutes);
 app.use('/api', userRoutes); // This makes your routes accessible at /api/users/search
 app.use('/', sitemapRoutes);
 
+// ✅ Import the new routes
+const shiprocketCheckoutRoutes = require('./routes/shiprocketCheckoutRoutes');
+
+// ✅ Mount the routes BEFORE your error handlers
+app.use('/api/shiprocket-checkout', shiprocketCheckoutRoutes);
 
 app.get("/protected", authenticateUser, (req, res) => {
   res.json({ message: "This is protected", user: req.user });

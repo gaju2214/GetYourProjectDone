@@ -40,10 +40,16 @@
     return false;
   }
 </script>
-
+<!-- ✅ Shiprocket Checkout Styles -->
+    <link rel="stylesheet" href="https://checkout-ui.shiprocket.com/assets/styles/shopify.css">
   </head>
   <body>
     <div id="root" ></div>
+     <!-- ✅ Hidden field for Shiprocket (use your actual domain) -->
+    <input type="hidden" value="getyourprojectdone.in" id="sellerDomain"/>
+    
+    <!-- ✅ Shiprocket Checkout Script -->
+    <script src="https://checkout-ui.shiprocket.com/assets/js/channels/shopify.js"> </script>
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>

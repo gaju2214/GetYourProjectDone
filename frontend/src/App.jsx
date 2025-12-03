@@ -23,6 +23,7 @@ import DeleteProject from "./pages/Editproject";
 import ProjectAdminPanel from "./ProjectAdminPanel";
 
 import EditProject from "./pages/Editproject";
+import OrderSuccess from './pages/OrderSuccess'; // ✅ Add this import
 
 
 
@@ -52,7 +53,8 @@ function App() {
         <Route path="/categories/:category" element={<CategoryPage />} />
         <Route path="/projects" element={<ProjectList/>} />
         <Route path="/projects/search" element={<ProjectList/>} />
-      
+              <Route path="/order-success" element={<OrderSuccess />} />
+
         <Route path="/pr" element={<EditProject/>} />
         
         

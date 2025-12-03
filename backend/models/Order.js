@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true, // ✅ Changed to true for Shiprocket orders (guest checkout)
       references: {
         model: 'users',
         key: 'id'
@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     productId: {
       type: DataTypes.STRING,
-      allowNull: true, // Changed to true since we use OrderItems now
+      allowNull: true, // For backward compatibility
     },
     shippingAddress: {
       type: DataTypes.STRING,
@@ -54,6 +54,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    // ✅ Shiprocket Shipping API order ID (your existing integration)
     shiprocket_order_id: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -62,12 +63,24 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    // ✅ NEW: Shiprocket Checkout order ID
+    shiprocket_checkout_order_id: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      unique: true, // Prevent duplicate orders from webhook
+    },
+    // ✅ NEW: Track order source
+    order_source: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      defaultValue: "manual", // "manual", "shiprocket_checkout"
+    },
   });
 
   Order.associate = (models) => {
     Order.hasMany(models.OrderItem, {
       foreignKey: "orderId",
-      sourceKey: "orderId", // ✅ Use orderId STRING as the source
+      sourceKey: "orderId",
       as: "OrderItems",
     });
 
