@@ -6,7 +6,8 @@ import NotFoundPage from "./pages/404";
 import { BrowserRouter as Router, Routes, Route, useParams } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import CartPage from "./pages/Cart";
-import LoginPage from "./pages/Auth";
+import Auth from "./pages/Auth";
+import Login from "./pages/Login";
 import SuccessPage from "./pages/Suceess";
 import ProductDetailPage from "./components/ProductDetails";
 import CategoriesPage from "./pages/Categories";
@@ -39,7 +40,8 @@ function App() {
         <Route path="/getproject" element={<ProjectAdminPanel/>} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/cart" element={<CartPage />} />
-        <Route path="/auth/login" element={<LoginPage />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/auth/login" element={<Login />} />
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/profile" element={<Account />} />
         <Route path="/adlogin" element={<AdminLogin />} />

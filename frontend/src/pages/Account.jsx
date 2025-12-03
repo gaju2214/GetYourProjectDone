@@ -292,6 +292,9 @@ import {
 } from "lucide-react";
 import { Button } from "../components/ui/Botton";
 import api from "../api";
+import { Lock } from "lucide-react";
+import { Label } from "../components/ui/Label";
+import { Input } from "../components/ui/Input";
 
 export default function Account() {
   const navigate = useNavigate();
@@ -300,10 +303,18 @@ export default function Account() {
   const [activeTab, setActiveTab] = useState("profile");
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersError, setOrdersError] = useState(null);
+
+  // Password update fields
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
 
   // Profile fields
   const [firstName, setFirstName] = useState("");
@@ -328,9 +339,7 @@ export default function Account() {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${backendUrl}/api/auth/profile`, {
-          withCredentials: true,
-        });
+        const res = await api.get(`/api/auth/profile`);
         const u = res.data;
         console.log('Profile data received:', u);
         setUser(u);
@@ -384,9 +393,7 @@ export default function Account() {
       console.log('Fetching orders for user:', user.id);
       
       // Use dynamic user ID instead of hardcoded 5
-      const response = await axios.get(`${backendUrl}/api/orders/user/${user.id}`, {
-        withCredentials: true,
-      });
+      const response = await api.get(`/api/orders/user/${user.id}`);
       
       console.log('Orders response:', response.data);
       console.log('Response status:', response.status);
@@ -462,9 +469,7 @@ export default function Account() {
 
     try {
       setLoading(true);
-      const res = await axios.put(`${backendUrl}/api/auth/profile`, updatedUser, {
-        withCredentials: true,
-      });
+      const res = await api.put(`/api/auth/profile`, updatedUser);
       setUser(res.data);
       setIsEditingProfile(false);
       alert("Profile updated successfully!");
@@ -488,9 +493,7 @@ export default function Account() {
 
     try {
       setLoading(true);
-      const res = await axios.put(`${backendUrl}/api/auth/profile`, updatedUser, {
-        withCredentials: true,
-      });
+      const res = await api.put(`/api/auth/profile`, updatedUser);
       setUser(res.data);
       setIsEditingAddress(false);
       alert("Address updated successfully!");
@@ -526,11 +529,71 @@ export default function Account() {
 
   const handleLogout = async () => {
     try {
-      await axios.post(`${backendUrl}/api/auth/logout`, {}, { withCredentials: true });
-      navigate("/auth/login");
+      await api.post(`/api/auth/logout`, {});
     } catch (err) {
-      console.error("Logout failed:", err);
-      alert("Logout failed, please try again.");
+      console.error("Logout request failed:", err);
+    }
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    } catch (e) {}
+    navigate("/auth/login");
+  };
+
+  const handlePasswordUpdate = async () => {
+    setPasswordError("");
+    setPasswordSuccess("");
+
+    // Validation
+    if (!newPassword || !confirmPassword) {
+      setPasswordError("All fields are required");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordError("Password must be at least 6 characters long");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+
+    // Check if user has existing password (for existing users)
+    const hasPassword = user?.password && user.password.trim() !== '';
+    
+    // For existing users, current password is required
+    if (hasPassword && !currentPassword) {
+      setPasswordError("Current password is required");
+      return;
+    }
+
+    if (hasPassword && currentPassword === newPassword) {
+      setPasswordError("New password must be different from current password");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const res = await api.post("/api/auth/update-password", {
+        currentPassword: hasPassword ? currentPassword : null,
+        newPassword,
+      });
+
+      setPasswordSuccess("Password " + (hasPassword ? "updated" : "created") + " successfully! You can now login with your password.");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setIsChangingPassword(false);
+
+      // Auto clear success message after 5 seconds
+      setTimeout(() => setPasswordSuccess(""), 5000);
+    } catch (err) {
+      const errorMsg = err.response?.data?.error || "Failed to update password. Please try again.";
+      setPasswordError(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -563,6 +626,7 @@ export default function Account() {
     { tab: "profile", label: "Profile", icon: User },
     { tab: "orders", label: "Orders", icon: PackageCheck },
     { tab: "addresses", label: "Addresses", icon: MapPin },
+    { tab: "security", label: "Security", icon: Lock },
     { tab: "faq", label: "FAQ", icon: HelpCircle },
     { tab: "support", label: "Support", icon: Phone },
   ];
@@ -1025,7 +1089,7 @@ export default function Account() {
                 <div className="bg-gray-50 p-6 rounded-xl space-y-4">
                   <div className="border-b border-gray-200 pb-4">
                     <h3 className="font-semibold text-gray-800 mb-2">How do I change my password?</h3>
-                    <p className="text-gray-600 text-sm">You can change your password by going to the Profile section and clicking on the security settings.</p>
+                    <p className="text-gray-600 text-sm">You can change your password by going to the Security section in your account settings.</p>
                   </div>
                   <div className="border-b border-gray-200 pb-4">
                     <h3 className="font-semibold text-gray-800 mb-2">Where can I track my orders?</h3>
@@ -1041,6 +1105,115 @@ export default function Account() {
                   </div>
                 </div>
               </div>
+            )}
+
+            {/* Security / Password Change */}
+            {activeTab === "security" && (
+              <>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                  <h2 className="text-xl font-semibold text-orange-600 mb-4 sm:mb-0">
+                    🔒 Security Settings
+                  </h2>
+                </div>
+
+                <div className="bg-gray-50 p-6 rounded-xl">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-6">
+                    {user?.password && user.password.trim() !== '' ? "Change Password" : "Set Password"}
+                  </h3>
+
+                  {/* Success Message */}
+                  {passwordSuccess && (
+                    <div className="bg-green-50 border border-green-200 p-4 rounded-lg mb-4">
+                      <p className="text-green-700 text-sm font-medium">{passwordSuccess}</p>
+                    </div>
+                  )}
+
+                  {/* Error Message */}
+                  {passwordError && (
+                    <div className="bg-red-50 border border-red-200 p-4 rounded-lg mb-4">
+                      <p className="text-red-700 text-sm font-medium">{passwordError}</p>
+                    </div>
+                  )}
+
+                  {!isChangingPassword ? (
+                    <button
+                      onClick={() => setIsChangingPassword(true)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 px-6 py-3 rounded-xl shadow-md transition-all"
+                    >
+                      <Lock className="w-4 h-4" /> {user?.password && user.password.trim() !== '' ? "Change Password" : "Set Password"}
+                    </button>
+                  ) : (
+                    <div className="space-y-4">
+                      {/* Current Password field - only for users who already have a password */}
+                      {user?.password && user.password.trim() !== '' && (
+                        <div>
+                          <Label htmlFor="currentPassword">Current Password</Label>
+                          <Input
+                            id="currentPassword"
+                            type="password"
+                            placeholder="Enter your current password"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            className="mt-2"
+                          />
+                        </div>
+                      )}
+
+                      {/* New Password field */}
+                      <div>
+                        <Label htmlFor="newPassword">
+                          {user?.password && user.password.trim() !== '' ? "New Password" : "Password"}
+                        </Label>
+                        <Input
+                          id="newPassword"
+                          type="password"
+                          placeholder={user?.password && user.password.trim() !== '' ? "Enter your new password (min 6 characters)" : "Create a password (min 6 characters)"}
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          className="mt-2"
+                        />
+                      </div>
+
+                      {/* Confirm Password field */}
+                      <div>
+                        <Label htmlFor="confirmPassword">
+                          {user?.password && user.password.trim() !== '' ? "Confirm New Password" : "Confirm Password"}
+                        </Label>
+                        <Input
+                          id="confirmPassword"
+                          type="password"
+                          placeholder="Re-enter your password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          className="mt-2"
+                        />
+                      </div>
+
+                      <div className="flex gap-3 pt-4">
+                        <button
+                          onClick={handlePasswordUpdate}
+                          disabled={loading}
+                          className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-medium transition-all disabled:opacity-50"
+                        >
+                          {loading ? "Processing..." : (user?.password && user.password.trim() !== '' ? "Update Password" : "Set Password")}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsChangingPassword(false);
+                            setCurrentPassword("");
+                            setNewPassword("");
+                            setConfirmPassword("");
+                            setPasswordError("");
+                          }}
+                          className="bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 px-6 py-2 rounded-lg font-medium transition-all"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
             )}
           </div>
         </div>

@@ -7,9 +7,43 @@ const { User, UserInfo } = require("../models");
 const bcrypt = require("bcrypt");
 const authenticateUser = require("../middleware/auth"); // Import your middleware
 
-// Regular auth routes
+// Regular auth routes (public - no auth required)
 router.post("/register", authController.register);
 router.post("/login", authController.login);
+// Phone-first helpers
+router.post("/check-user", authController.checkUser);
+router.post("/login-phone-password", authController.loginWithPhonePassword);
+
+// OTP routes (public - no auth required for first-time signup/login)
+router.post("/send-otp", authController.sendOtp);
+router.post("/verify-otp", authController.verifyOtp);
+
+// Password update route (requires authentication)
+router.post("/update-password", authenticateUser, authController.updatePassword);
+
+// Test SMS endpoint (for debugging)
+router.post("/test-sms", async (req, res) => {
+  try {
+    const { phoneNumber } = req.body;
+    if (!phoneNumber) {
+      return res.status(400).json({ error: 'Phone number is required' });
+    }
+
+    const { sendOTP } = require('../utils/sendOtp');
+    const testOtp = '123456';
+    const result = await sendOTP(phoneNumber, testOtp);
+
+    res.status(200).json({
+      message: 'Test SMS sent',
+      phoneNumber,
+      otp: testOtp,
+      result
+    });
+  } catch (error) {
+    console.error('Test SMS error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // // Google OAuth routes
 // router.get(
@@ -88,17 +122,43 @@ router.get(
         return res.redirect(`${process.env.CLIENT_URL}/auth/login?error=auth_failed`);
       }
 
+      // Check if user has name and phone number
+      if (!user.phoneNumber) {
+        // Redirect to OTP verification page with user ID
+        return res.redirect(
+          `${process.env.CLIENT_URL}/auth/otp?userId=${user.id}&email=${user.email}&name=${user.name}`
+        );
+      }
+
+      // Generate OTP for verification
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiryTime = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+
+      // Save OTP to user
+      user.otpCode = otp;
+      user.otpExpiryTime = expiryTime;
+      user.save().catch(err => console.error('Error saving OTP:', err));
+
+      // Send OTP via SMS
+      if (user.phoneNumber) {
+        const { sendOTP } = require('../utils/sendOtp');
+        sendOTP(user.phoneNumber, otp).catch(err => 
+          console.error('Error sending OTP:', err)
+        );
+      }
+
+      // Generate JWT token
       const token = jwt.sign(
         { userId: user.id, email: user.email },
         process.env.JWT_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: "7d" }
       );
 
       res.cookie("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "Lax",
-        maxAge: 3600000, // 1 hour
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
 
       // Get returnUrl from cookie (if set)

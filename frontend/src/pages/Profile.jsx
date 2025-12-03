@@ -153,7 +153,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api";
 import {
   User,
   PackageCheck,
@@ -193,9 +193,7 @@ export default function Account() {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        const res = await axios.get(`${backendUrl}/api/auth/profile`, {
-          withCredentials: true,
-        });
+        const res = await api.get(`/api/auth/profile`);
         const u = res.data;
         setUser(u);
         const [f, l] = u.name?.split(" ") || ["", ""];
@@ -229,9 +227,7 @@ export default function Account() {
 
     try {
       setLoading(true);
-      const res = await axios.put(`${backendUrl}/api/auth/profile`, updatedUser, {
-        withCredentials: true,
-      });
+      const res = await api.put(`/api/auth/profile`, updatedUser);
       setUser(res.data);
       setIsEditing(false);
       alert("Profile updated successfully!");
@@ -257,12 +253,15 @@ export default function Account() {
 
   const handleLogout = async () => {
     try {
-      await axios.post(`${backendUrl}/api/auth/logout`, {}, { withCredentials: true });
-      navigate("/auth/login");
+      await api.post(`/api/auth/logout`, {});
     } catch (err) {
-      console.error("Logout failed:", err);
-      alert("Logout failed, please try again.");
+      console.error("Logout request failed:", err);
     }
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    } catch (e) {}
+    navigate("/auth/login");
   };
 
   if (loading) {

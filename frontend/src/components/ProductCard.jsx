@@ -13,6 +13,13 @@ export function ProductCard({ product }) {
   const [isAdding, setIsAdding] = useState(false);
   const [isAdded, setIsAdded] = useState(false);
   const [showGoogleLoginModal, setShowGoogleLoginModal] = useState(false);
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { dispatch } = useCart();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -80,9 +87,98 @@ export function ProductCard({ product }) {
     window.location.href = `${api.defaults.baseURL}/api/auth/google?returnUrl=${encodedRedirectUrl}`;
   };
 
+  const handleSendOtp = async () => {
+    if (!name.trim()) {
+      alert("Please enter your name");
+      return;
+    }
+    if (!/^\d{10}$/.test(phoneNumber)) {
+      alert("Please enter a valid 10-digit phone number");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const res = await api.post("/api/auth/send-otp", {
+        phoneNumber,
+        name,
+      });
+
+      setUserId(res.data.userId);
+      setOtpSent(true);
+      alert("✅ OTP sent to your phone!");
+    } catch (error) {
+      alert(error.response?.data?.error || "Failed to send OTP");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!/^\d{6}$/.test(otp)) {
+      alert("Please enter a valid 6-digit OTP");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const res = await api.post("/api/auth/verify-otp", {
+        userId,
+        otp,
+      });
+
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      // Now add to cart
+      await handleAddToCartAfterAuth(res.data.user.id);
+
+      setShowOtpModal(false);
+      setName("");
+      setPhoneNumber("");
+      setOtp("");
+      setOtpSent(false);
+      alert("✅ Login successful! Item added to cart!");
+    } catch (error) {
+      alert(error.response?.data?.error || "Failed to verify OTP");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddToCartAfterAuth = async (userId) => {
+    try {
+      const cartItem = {
+        userId: userId,
+        projectId: product.id,
+        quantity: 1,
+      };
+
+      // Get token from localStorage
+      const token = localStorage.getItem("token");
+
+      const response = await api.post("/api/cart/add", cartItem, {
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}` // Include the token
+        },
+        withCredentials: true,
+      });
+
+      if (response.status === 200 || response.status === 201) {
+        dispatch({ type: "ADD_ITEM", payload: product });
+        setIsAdded(true);
+        setTimeout(() => setIsAdded(false), 2000);
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      throw error;
+    }
+  };
+
   const handleAddToCart = async () => {
     if (!user || !isAuthenticated) {
-      setShowGoogleLoginModal(true);
+      setShowOtpModal(true);
       return;
     }
 
@@ -329,8 +425,8 @@ export function ProductCard({ product }) {
         </CardFooter>
       </Card>
 
-      {/* Google Login Modal */}
-      {showGoogleLoginModal && (
+      {/* Login Modal - Name + Phone + OTP/Google */}
+      {showOtpModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
             <div className="flex items-center justify-between p-6 border-b">
@@ -338,32 +434,103 @@ export function ProductCard({ product }) {
                 Login Required
               </h3>
               <button
-                onClick={() => setShowGoogleLoginModal(false)}
+                onClick={() => {
+                  setShowOtpModal(false);
+                  setName("");
+                  setPhoneNumber("");
+                  setOtp("");
+                  setOtpSent(false);
+                }}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <X className="h-6 w-6" />
               </button>
             </div>
             
-            <div className="p-6">
-              <p className="text-gray-600 mb-6 text-center">
-                Please log in to add items to your cart and make purchases.
+            <div className="p-6 space-y-4">
+              <p className="text-gray-600 text-center text-sm">
+                Please verify your details to add items to cart.
               </p>
               
-              <div className="space-y-3">
-                <Button
-                  onClick={handleGoogleLogin}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-3 transition duration-300"
-                >
-                  <svg className="w-5 h-5" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                    <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                    <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                    <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                  </svg>
-                  Continue with Google
-                </Button>
-              </div>
+              {!otpSent ? (
+                <>
+                  {/* Name & Phone Fields */}
+                  <div className="space-y-3 mb-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                      <input
+                        type="text"
+                        placeholder="Enter your name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                      <div className="flex">
+                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                          +91
+                        </span>
+                        <input
+                          type="tel"
+                          placeholder="10-digit number"
+                          maxLength="10"
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Send OTP Button */}
+                  <Button
+                    onClick={handleSendOtp}
+                    disabled={isLoading || !name.trim() || phoneNumber.length !== 10}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
+                  >
+                    {isLoading ? "Sending OTP..." : "Send OTP"}
+                  </Button>
+
+                  {/* Google login removed: only OTP flow available */}
+                  <div className="text-center text-sm text-gray-500 my-4">Only login with OTP is available</div>
+                </>
+              ) : (
+                <>
+                  {/* OTP Verification */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Enter 6-digit OTP</label>
+                    <input
+                      type="text"
+                      placeholder="000000"
+                      maxLength="6"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-center text-2xl tracking-widest focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    <p className="text-sm text-gray-600 mt-2">
+                      OTP sent to +91 {phoneNumber}
+                    </p>
+                  </div>
+
+                  <Button
+                    onClick={handleVerifyOtp}
+                    disabled={isLoading || otp.length !== 6}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
+                  >
+                    {isLoading ? "Verifying..." : "Verify & Add to Cart"}
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    onClick={() => setOtpSent(false)}
+                    className="w-full"
+                  >
+                    Change Phone Number
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

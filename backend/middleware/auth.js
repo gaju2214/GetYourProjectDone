@@ -27,7 +27,8 @@ const authenticateUser = (req, res, next) => {
   }
 
   if (!token) {
-    console.log(" No token provided in header or cookie");
+    // Suppress the repeated console.log for missing tokens
+    // console.log(" No token provided in header or cookie");
     return res.status(401).json({ error: "Unauthorized: No token provided" });
   }
 

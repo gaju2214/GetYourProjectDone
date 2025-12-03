@@ -103,6 +103,20 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM("male", "female", "other"),
         allowNull: true,
       },
+
+      // OTP verification fields
+      otpCode: {
+        type: DataTypes.STRING(6),
+        allowNull: true,
+      },
+      otpExpiryTime: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      otpVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
     },
     {
       tableName: "users",

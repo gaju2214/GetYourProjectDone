@@ -10,18 +10,28 @@ export const AuthProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : null;
   });
 
-  const login = (userData) => {
+  const [token, setToken] = useState(() => {
+    return localStorage.getItem("token") || null;
+  });
+
+  const login = (userData, authToken) => {
     setUser(userData);
+    setToken(authToken);
     localStorage.setItem("user", JSON.stringify(userData));
+    if (authToken) {
+      localStorage.setItem("token", authToken);
+    }
   };
 
   const logout = () => {
     setUser(null);
+    setToken(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, isLoggedIn: !!token }}>
       {children}
     </AuthContext.Provider>
   );

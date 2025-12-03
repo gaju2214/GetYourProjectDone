@@ -61,8 +61,19 @@ const Navigation = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleLogout = () => {
-    navigate("/auth/login");
+  const handleLogout = async () => {
+    try {
+      await api.post('/api/auth/logout', {});
+    } catch (err) {
+      // ignore errors during logout request
+    }
+    try {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    } catch (e) {}
+    setUser(null);
+    setCartCount(0);
+    navigate('/auth/login');
   };
 
   return (

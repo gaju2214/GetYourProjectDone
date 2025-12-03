@@ -42,6 +42,9 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5000",
   "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:5175",
+  "http://localhost:3000",
   "http://192.168.31.24:5173",
   "https://www.getyourprojectdone.in",
   "https://getyourprojectdone.in",
@@ -49,7 +52,6 @@ const allowedOrigins = [
   "https://getyourprojectdone-backend.up.railway.app",
   "https://master.getyourprojectdone.in",
   "https://reauth.getyourprojectdone.in",
-   "http://localhost:3000",
   "https://gypdcontroller-production.up.railway.app"
 ];
 
