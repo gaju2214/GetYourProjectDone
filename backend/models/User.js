@@ -90,7 +90,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       provider: {
-        type: DataTypes.ENUM("google", "local"),
+        type: DataTypes.ENUM("google", "local", "otp"),
         defaultValue: "local",
       },
 

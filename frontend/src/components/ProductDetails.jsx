@@ -33,9 +33,7 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1);
   const [product, setProduct] = useState(null);
 
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { user: authUser, isLoggedIn, login } = useAuth();
   
   // New states for backend discount integration
   const [globalDiscount, setGlobalDiscount] = useState(null);
@@ -179,28 +177,8 @@ const handleResendOtp = async () => {
 
   
 
-  // Check auth on mount
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await api.get("/api/protected/checkAuth");
-        if (res.data?.success === true && res.data?.status === 200) {
-          setUser(res.data.user);
-          setIsAuthenticated(true);
-        } else {
-          setUser(null);
-          setIsAuthenticated(false);
-        }
-      } catch (error) {
-        console.error("Authentication check failed:", error);
-        setUser(null);
-        setIsAuthenticated(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkAuth();
-  }, []);
+  // Auth state is read from AuthContext so the component updates
+  // automatically when the user logs in/out elsewhere in the app.
 
   // Fetch product data
   // First useEffect: Fetch product data
@@ -389,6 +367,13 @@ useEffect(() => {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
+      // Update global auth context so other components reflect login immediately
+      try {
+        login && login(res.data.user, res.data.token);
+      } catch (err) {
+        console.warn('Failed to update AuthContext after OTP verify', err);
+      }
+
       // Now add to cart
       const cartItem = {
         userId: res.data.user.id,
@@ -488,16 +473,16 @@ const getDiscountInfo = () => {
 
   // Handle Add to Cart - Show OTP modal if not authenticated
   const handleAddToCart = async () => {
-    if (!user || !isAuthenticated) {
+    if (!authUser || !isLoggedIn) {
       setShowOtpModal(true);
       return;
     }
 
-    console.log("User object:", user);
+    console.log("Auth user object:", authUser);
 
     try {
       const cartItem = {
-        userId: user.userId,
+        userId: authUser?.id || authUser?.userId,
         projectId: product.id,
         quantity: 1,
       };
