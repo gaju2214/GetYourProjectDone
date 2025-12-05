@@ -218,16 +218,23 @@ export function OrderButton({
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [userProfile, setUserProfile] = useState(profile || null);
 
-  // Load Razorpay script once
+  // Sync profile from parent
   useEffect(() => {
-    if (!document.querySelector("#razorpay-script")) {
-      const script = document.createElement("script");
-      script.id = "razorpay-script";
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => setScriptLoaded(true);
-      document.body.appendChild(script);
-    } else setScriptLoaded(true);
-  }, []);
+    setUserProfile(profile || null);
+  }, [profile]);
+
+  // Refresh profile when popup closes (after user updates address)
+  const handlePopupClose = async () => {
+    setIsPopupOpen(false);
+    // Fetch fresh profile data to get updated address fields
+    try {
+      const res = await api.get(`/api/auth/profile`);
+      setUserProfile(res.data);
+      console.log('✅ Profile refreshed:', res.data);
+    } catch (err) {
+      console.error('Failed to refresh profile:', err);
+    }
+  };
 
   // Razorpay payment
   const handlePayment = async () => {
@@ -257,12 +264,19 @@ export function OrderButton({
 
 const createOrderWithShipping = async () => {
   try {
+    console.log('📋 userProfile object:', userProfile);
+    
     const payload = {
       user_id: userProfile?.id || userProfile?.user_id,
       mobile: userProfile?.phoneNumber || "9999999999",
       customerName: `${userProfile?.name || "Customer"} ${userProfile?.lastname || ""}`.trim(),
       productId: cartItems?.[0]?.projectId || null,
       shippingAddress: userProfile?.address || "Default Address",
+      address: userProfile?.address || null,
+      city: userProfile?.city || null,
+      pincode: userProfile?.pincode || null,
+      state: userProfile?.state || null,
+      country: userProfile?.country || null,
       paymentMethod,
       totalAmount: finalTotal,
       quantity: cartItems?.reduce((sum, item) => sum + (item.quantity || 1), 0) || 1,
@@ -271,6 +285,13 @@ const createOrderWithShipping = async () => {
     };
 
     console.log("📦 Sending order payload:", payload);
+    console.log("📍 Address fields in payload:", { 
+      address: payload.address, 
+      city: payload.city, 
+      pincode: payload.pincode,
+      state: payload.state,
+      country: payload.country
+    });
 
     const orderRes = await api.post("/api/orders/create-with-shipping", payload);
 

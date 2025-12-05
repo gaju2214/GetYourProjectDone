@@ -1,4 +1,4 @@
-const { Order, OrderItem, CartItem, Project, UserInfo } = require("../models");
+const { Order, OrderItem, CartItem, Project, UserInfo, User } = require("../models");
 const generateOrderId = require("../utils/generateOrderId");
 const axios = require("axios");
 const { Op } = require("sequelize");
@@ -11,6 +11,11 @@ exports.addOrder = async (req, res) => {
       customerName,
       productId,
       shippingAddress,
+      address,
+      city,
+      pincode,
+      state,
+      country,
       paymentMethod,
       totalAmount,
       status,
@@ -26,6 +31,11 @@ exports.addOrder = async (req, res) => {
       customerName,
       productId,
       shippingAddress,
+      address,
+      city,
+      pincode,
+      state,
+      country,
       paymentMethod,
       totalAmount,
       status,
@@ -103,6 +113,11 @@ exports.createOrder = async (req, res) => {
       customerName,
       productId,
       shippingAddress,
+      address,
+      city,
+      pincode,
+      state,
+      country,
       paymentMethod,
       totalAmount,
       quantity,
@@ -117,6 +132,11 @@ exports.createOrder = async (req, res) => {
       customerName,
       productId,
       shippingAddress,
+      address,
+      city,
+      pincode,
+      state,
+      country,
       paymentMethod,
       totalAmount,
       status: "pending",
@@ -146,6 +166,11 @@ exports.createOrderWithShipping = async (req, res) => {
       customerName,
       productId,
       shippingAddress,
+      address,
+      city,
+      pincode,
+      state,
+      country,
       paymentMethod,
       totalAmount,
       quantity,
@@ -160,6 +185,18 @@ exports.createOrderWithShipping = async (req, res) => {
         error: "Missing required fields: user_id, mobile, customerName, totalAmount"
       });
     }
+
+    console.log('📍 Order address data received:', {
+      address, city, pincode, state, country,
+      profile_address: profile?.address,
+      profile_city: profile?.city,
+      profile_pincode: profile?.pincode,
+      profile_state: profile?.state,
+      profile_country: profile?.country,
+      shippingAddress,
+    });
+    
+    console.log('📦 Full request body:', JSON.stringify(req.body, null, 2));
 
     // Check for duplicate orders (last 5 minutes)
     const existingOrder = await Order.findOne({
@@ -191,6 +228,31 @@ exports.createOrderWithShipping = async (req, res) => {
 
     // Generate order ID and create order in DB
     const orderId = generateOrderId();
+    
+    // Try to fill in address fields from user profile if not provided in payload
+    let finalAddress = address || (profile && profile.address) || null;
+    let finalCity = city || (profile && profile.city) || null;
+    let finalPincode = pincode || (profile && profile.pincode) || null;
+    let finalState = state || (profile && profile.state) || null;
+    let finalCountry = country || (profile && profile.country) || null;
+    
+    // If still not available, try to fetch from User table
+    if (user_id && (!finalAddress || !finalCity)) {
+      try {
+        const userRecord = await User.findByPk(user_id);
+        if (userRecord) {
+          finalAddress = finalAddress || userRecord.address || null;
+          finalCity = finalCity || userRecord.city || null;
+          finalPincode = finalPincode || userRecord.pincode || null;
+          finalState = finalState || userRecord.state || null;
+          finalCountry = finalCountry || userRecord.country || null;
+          console.log('✅ Fetched user address from DB:', {finalAddress, finalCity, finalPincode, finalState, finalCountry});
+        }
+      } catch (e) {
+        console.warn('Could not fetch user record for address', e.message);
+      }
+    }
+    
     const newOrder = await Order.create({
       orderId,
       user_id,
@@ -198,6 +260,11 @@ exports.createOrderWithShipping = async (req, res) => {
       customerName,
       productId,
       shippingAddress,
+      address: finalAddress,
+      city: finalCity,
+      pincode: finalPincode,
+      state: finalState,
+      country: finalCountry,
       paymentMethod,
       totalAmount,
       status: "pending",

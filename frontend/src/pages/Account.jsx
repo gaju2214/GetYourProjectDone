@@ -934,10 +934,68 @@ export default function Account() {
                         )}
 
                         {/* Shipping Address */}
-                        {order.shippingAddress && (
+                        {(order.shippingAddress || order.address || order.city || order.pincode || order.state || order.country) && (
                           <div className="border-t pt-4 mt-4">
-                            <h4 className="font-semibold text-gray-700 mb-2">Shipping Address:</h4>
-                            <p className="text-sm text-gray-600">{order.shippingAddress}</p>
+                            <h4 className="font-semibold text-gray-700 mb-3">📍 Shipping Address:</h4>
+                            <div className="text-sm text-gray-600 space-y-2">
+                              {/* Full address line with wrapping */}
+                              <div className="whitespace-normal break-words max-w-full bg-gray-50 p-3 rounded-lg">
+                                <p className="font-medium text-gray-700">
+                                  {[order.address, order.city, order.state, order.pincode, order.country]
+                                    .filter(Boolean)
+                                    .join(', ')}
+                                </p>
+                              </div>
+                              
+                              {/* Detailed breakdown */}
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                                {order.address && (
+                                  <div className="flex items-start gap-2">
+                                    <span className="text-gray-500">🏠</span>
+                                    <div>
+                                      <p className="text-xs text-gray-500 font-semibold">STREET ADDRESS</p>
+                                      <p className="font-medium text-gray-800 break-words">{order.address}</p>
+                                    </div>
+                                  </div>
+                                )}
+                                {order.city && (
+                                  <div className="flex items-start gap-2">
+                                    <span className="text-gray-500">🏙️</span>
+                                    <div>
+                                      <p className="text-xs text-gray-500 font-semibold">CITY</p>
+                                      <p className="font-medium text-gray-800">{order.city}</p>
+                                    </div>
+                                  </div>
+                                )}
+                                {order.state && (
+                                  <div className="flex items-start gap-2">
+                                    <span className="text-gray-500">🗺️</span>
+                                    <div>
+                                      <p className="text-xs text-gray-500 font-semibold">STATE</p>
+                                      <p className="font-medium text-gray-800">{order.state}</p>
+                                    </div>
+                                  </div>
+                                )}
+                                {order.pincode && (
+                                  <div className="flex items-start gap-2">
+                                    <span className="text-gray-500">📮</span>
+                                    <div>
+                                      <p className="text-xs text-gray-500 font-semibold">PINCODE</p>
+                                      <p className="font-medium text-gray-800">{order.pincode}</p>
+                                    </div>
+                                  </div>
+                                )}
+                                {order.country && (
+                                  <div className="flex items-start gap-2">
+                                    <span className="text-gray-500">🌍</span>
+                                    <div>
+                                      <p className="text-xs text-gray-500 font-semibold">COUNTRY</p>
+                                      <p className="font-medium text-gray-800">{order.country}</p>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         )}
 

@@ -215,7 +215,7 @@ router.get("/profile", authenticateUser, async (req, res) => {
       city: user.city,
       pincode: user.pincode,
       state: user.state,
-      country: "India",
+      country: user.country || "India",
     });
   } catch (error) {
     console.error("Get profile error:", error);
