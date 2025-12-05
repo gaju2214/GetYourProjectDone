@@ -347,7 +347,7 @@ export default function Account() {
         const [f, l] = u.name?.split(" ") || ["", ""];
         setFirstName(f);
         setLastName(l);
-        setEmail(u.email || "");
+        setEmail("");
         setPhone(u.phoneNumber || "");
         setDob(u.dob || "");
         setGender(u.gender || "female");
