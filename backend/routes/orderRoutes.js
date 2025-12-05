@@ -11,6 +11,7 @@ router.post("/", orderController.createOrder);
 router.get("/", orderController.getAllOrders);
 router.put("/:id", orderController.updateOrderStatus);
 router.post('/create-with-shipping', orderController.createOrderWithShipping);
+router.post('/:orderId/cancel', orderController.cancelOrder);
 
 
 // ✅ Fix: Add the missing tracking routes

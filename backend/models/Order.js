@@ -96,6 +96,15 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       defaultValue: "manual", // "manual", "shiprocket_checkout"
     },
+    // ✅ NEW: Cancellation fields
+    cancellationReason: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    cancelledAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
   });
 
   Order.associate = (models) => {

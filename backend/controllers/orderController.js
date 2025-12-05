@@ -524,3 +524,54 @@ exports.updateOrderStatus = async (req, res) => {
     });
   }
 };
+
+// ✅ Cancel Order with Reason
+exports.cancelOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { reason } = req.body;
+
+    if (!reason) {
+      return res.status(400).json({
+        success: false,
+        message: "Cancellation reason is required"
+      });
+    }
+
+    const order = await Order.findByPk(orderId);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found"
+      });
+    }
+
+    // Only allow cancellation if order is pending or confirmed
+    if (!['pending', 'confirmed'].includes(order.status?.toLowerCase())) {
+      return res.status(400).json({
+        success: false,
+        message: `Cannot cancel order with status: ${order.status}`
+      });
+    }
+
+    // Update order status to cancelled
+    await order.update({
+      status: 'cancelled',
+      cancellationReason: reason,
+      cancelledAt: new Date()
+    });
+
+    res.json({
+      success: true,
+      message: "Order cancellation request submitted successfully",
+      data: order
+    });
+  } catch (error) {
+    console.error("Error cancelling order:", error);
+    res.status(500).json({
+      success: false,
+      error: "Failed to cancel order"
+    });
+  }
+};

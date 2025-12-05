@@ -308,6 +308,10 @@ export default function Account() {
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersError, setOrdersError] = useState(null);
+  const [selectedOrderDetails, setSelectedOrderDetails] = useState(null);
+  const [cancelOrderModal, setCancelOrderModal] = useState(null);
+  const [cancelReason, setCancelReason] = useState("");
+  const [cancelSubmitting, setCancelSubmitting] = useState(false);
 
   // Password update fields
   const [currentPassword, setCurrentPassword] = useState("");
@@ -1001,7 +1005,10 @@ export default function Account() {
 
                         {/* Order Actions */}
                         <div className="border-t pt-4 mt-4 flex justify-end space-x-3">
-                          <button className="px-4 py-2 text-orange-600 border border-orange-600 rounded-lg hover:bg-orange-50 transition-colors">
+                          <button 
+                            onClick={() => setSelectedOrderDetails(order)}
+                            className="px-4 py-2 text-orange-600 border border-orange-600 rounded-lg hover:bg-orange-50 transition-colors"
+                          >
                             View Details
                           </button>
                           {order.status === 'delivered' && (
@@ -1010,7 +1017,10 @@ export default function Account() {
                             </button>
                           )}
                           {order.status === 'pending' && (
-                            <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                            <button 
+                              onClick={() => setCancelOrderModal(order)}
+                              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                            >
                               Cancel Order
                             </button>
                           )}
@@ -1276,6 +1286,257 @@ export default function Account() {
           </div>
         </div>
       </div>
+
+      {/* Order Details Modal */}
+      {selectedOrderDetails && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="sticky top-0 bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-bold">Order #{selectedOrderDetails.orderId || selectedOrderDetails.id}</h2>
+                <p className="text-sm text-orange-100">{formatDate(selectedOrderDetails.createdAt)}</p>
+              </div>
+              <button
+                onClick={() => setSelectedOrderDetails(null)}
+                className="text-white hover:bg-white/20 p-2 rounded-full transition-colors"
+              >
+                <XCircle className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-6">
+              {/* Order Status */}
+              <div>
+                <h3 className="font-bold text-gray-800 mb-3">Current Status</h3>
+                <span className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(selectedOrderDetails.status)}`}>
+                  {selectedOrderDetails.status?.toUpperCase() || 'PENDING'}
+                </span>
+              </div>
+
+              {/* Order Timeline */}
+              <div>
+                <h3 className="font-bold text-gray-800 mb-3">Tracking Timeline</h3>
+                <div className="flex items-center justify-between gap-2 sm:gap-1 overflow-x-auto pb-4">
+                  {/* Step 1: Confirmed */}
+                  <div className="flex flex-col items-center min-w-max flex-1">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
+                      ['confirmed', 'shipped', 'in_transit', 'delivered'].includes(selectedOrderDetails.status?.toLowerCase())
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-300 text-gray-600'
+                    }`}>
+                      ✓
+                    </div>
+                    <p className="text-xs font-semibold mt-2 text-center text-gray-800">Confirmed</p>
+                    <p className="text-xs text-gray-500 text-center mt-1">Order confirmed</p>
+                  </div>
+
+                  {/* Connector Line 1 */}
+                  <div className={`flex-1 h-1 mb-8 ${
+                    ['shipped', 'in_transit', 'delivered'].includes(selectedOrderDetails.status?.toLowerCase())
+                      ? 'bg-green-500'
+                      : 'bg-gray-300'
+                  }`}></div>
+
+                  {/* Step 2: Pickup */}
+                  <div className="flex flex-col items-center min-w-max flex-1">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
+                      ['shipped', 'in_transit', 'delivered'].includes(selectedOrderDetails.status?.toLowerCase())
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-300 text-gray-600'
+                    }`}>
+                      📦
+                    </div>
+                    <p className="text-xs font-semibold mt-2 text-center text-gray-800">Pickup</p>
+                    <p className="text-xs text-gray-500 text-center mt-1">Picked up</p>
+                  </div>
+
+                  {/* Connector Line 2 */}
+                  <div className={`flex-1 h-1 mb-8 ${
+                    ['in_transit', 'delivered'].includes(selectedOrderDetails.status?.toLowerCase())
+                      ? 'bg-green-500'
+                      : 'bg-gray-300'
+                  }`}></div>
+
+                  {/* Step 3: In Transit */}
+                  <div className="flex flex-col items-center min-w-max flex-1">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
+                      ['in_transit', 'delivered'].includes(selectedOrderDetails.status?.toLowerCase())
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-300 text-gray-600'
+                    }`}>
+                      🚚
+                    </div>
+                    <p className="text-xs font-semibold mt-2 text-center text-gray-800">In Transit</p>
+                    <p className="text-xs text-gray-500 text-center mt-1">On the way</p>
+                  </div>
+
+                  {/* Connector Line 3 */}
+                  <div className={`flex-1 h-1 mb-8 ${
+                    selectedOrderDetails.status?.toLowerCase() === 'delivered'
+                      ? 'bg-green-500'
+                      : 'bg-gray-300'
+                  }`}></div>
+
+                  {/* Step 4: Delivered */}
+                  <div className="flex flex-col items-center min-w-max flex-1">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
+                      selectedOrderDetails.status?.toLowerCase() === 'delivered'
+                        ? 'bg-green-500 text-white'
+                        : 'bg-gray-300 text-gray-600'
+                    }`}>
+                      ✓
+                    </div>
+                    <p className="text-xs font-semibold mt-2 text-center text-gray-800">Delivered</p>
+                    <p className="text-xs text-gray-500 text-center mt-1">Delivered</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Order Items */}
+              <div>
+                <h3 className="font-bold text-gray-800 mb-3">Items</h3>
+                <div className="space-y-2">
+                  {selectedOrderDetails.OrderItems && selectedOrderDetails.OrderItems.map((item, idx) => (
+                    <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                      <p className="text-gray-800">{item.Project?.title || 'Product'}</p>
+                      <p className="text-gray-600">Qty: {item.quantity} × ₹{item.price}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Shipping Address */}
+              <div>
+                <h3 className="font-bold text-gray-800 mb-3">Delivery Address</h3>
+                <div className="bg-gray-50 p-4 rounded-lg text-sm text-gray-700">
+                  <p>
+                    {[selectedOrderDetails.address, selectedOrderDetails.city, selectedOrderDetails.state, selectedOrderDetails.pincode, selectedOrderDetails.country]
+                      .filter(Boolean)
+                      .join(', ')}
+                  </p>
+                </div>
+              </div>
+
+              {/* Order Total */}
+              <div className="border-t pt-4">
+                <div className="flex justify-between items-center">
+                  <p className="text-lg font-bold text-gray-800">Total Amount:</p>
+                  <p className="text-2xl font-bold text-orange-600">₹{selectedOrderDetails.totalAmount || 0}</p>
+                </div>
+                <p className="text-sm text-gray-600 mt-2">Payment: {selectedOrderDetails.paymentStatus || 'Unknown'}</p>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-gray-50 p-4 flex justify-end gap-3 border-t">
+              <button
+                onClick={() => setSelectedOrderDetails(null)}
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors"
+              >
+                Close
+              </button>
+              {selectedOrderDetails.status === 'delivered' && (
+                <button className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+                  Reorder
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Cancel Order Modal */}
+      {cancelOrderModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-red-500 to-red-600 text-white p-6 flex justify-between items-center rounded-t-xl">
+              <h2 className="text-xl font-bold">Cancel Order</h2>
+              <button
+                onClick={() => {
+                  setCancelOrderModal(null);
+                  setCancelReason("");
+                }}
+                className="text-white hover:bg-white/20 p-2 rounded-full transition-colors"
+              >
+                <XCircle className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Content */}
+            <div className="p-6 space-y-4">
+              <div>
+                <h3 className="font-bold text-gray-800 mb-2">Order #{cancelOrderModal.orderId || cancelOrderModal.id}</h3>
+                <p className="text-sm text-gray-600 mb-4">Amount: ₹{cancelOrderModal.totalAmount || 0}</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Why do you want to cancel this order?
+                </label>
+                <textarea
+                  value={cancelReason}
+                  onChange={(e) => setCancelReason(e.target.value)}
+                  placeholder="Please tell us the reason for cancellation..."
+                  rows={5}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                />
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg">
+                <p className="text-xs text-blue-700">
+                  ℹ️ Your refund will be processed within 5-7 business days if the order hasn't been shipped yet.
+                </p>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-gray-50 p-4 flex justify-end gap-3 border-t rounded-b-xl">
+              <button
+                onClick={() => {
+                  setCancelOrderModal(null);
+                  setCancelReason("");
+                }}
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors"
+              >
+                Keep Order
+              </button>
+              <button
+                onClick={async () => {
+                  if (!cancelReason.trim()) {
+                    alert("Please provide a reason for cancellation");
+                    return;
+                  }
+                  
+                  try {
+                    setCancelSubmitting(true);
+                    // API call to cancel order
+                    await api.post(`/api/orders/${cancelOrderModal.id}/cancel`, {
+                      reason: cancelReason
+                    });
+                    
+                    alert("Order cancellation request submitted successfully!");
+                    setCancelOrderModal(null);
+                    setCancelReason("");
+                    handleRefreshOrders(); // Refresh orders list
+                  } catch (error) {
+                    console.error("Error cancelling order:", error);
+                    alert("Failed to cancel order. Please try again.");
+                  } finally {
+                    setCancelSubmitting(false);
+                  }
+                }}
+                disabled={cancelSubmitting || !cancelReason.trim()}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {cancelSubmitting ? "Submitting..." : "Submit Request"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
