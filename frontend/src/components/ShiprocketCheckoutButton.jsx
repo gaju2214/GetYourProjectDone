@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-// ✅ Set to true for mock checkout, false when Shiprocket is ready
-const USE_MOCK = true;
-
 const ShiprocketCheckoutButton = ({ cartItems, userId, onSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -14,6 +11,7 @@ const ShiprocketCheckoutButton = ({ cartItems, userId, onSuccess }) => {
     setError(null);
 
     try {
+      // Validate cart
       if (!cartItems || cartItems.length === 0) {
         setError('Your cart is empty');
         setLoading(false);
@@ -26,58 +24,41 @@ const ShiprocketCheckoutButton = ({ cartItems, userId, onSuccess }) => {
         return;
       }
 
-      console.log('🔄 Generating checkout token...');
+      console.log('🔄 Generating Shiprocket Checkout token...');
 
-      // Choose endpoint based on USE_MOCK flag
-      const endpoint = USE_MOCK 
-        ? '/api/shiprocket-checkout/generate-token-mock'
-        : '/api/shiprocket-checkout/generate-token';
-
+      // Generate checkout token from your backend
       const { data } = await axios.post(
-        `http://localhost:5000${endpoint}`,
+        'http://localhost:5000/api/shiprocket-checkout/generate-token',
         {
           userId: userId,
           cartItems: cartItems.map(item => ({
-            id: item.id,
             projectId: item.projectId || item.id,
-            quantity: item.quantity || 1,
-            price: item.price || 0,
-            title: item.title
+            quantity: item.quantity || 1
           }))
         }
       );
 
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to generate checkout token');
+      if (!data.success || !data.token) {
+        throw new Error('Failed to generate checkout token');
       }
 
       console.log('✅ Token generated:', data.token);
+      console.log('📦 Shiprocket Order ID:', data.order_id);
 
-      // If using mock, redirect to success page after 2 seconds
-      if (USE_MOCK || data.mock) {
-        console.log('⚠️ Mock checkout mode - redirecting to success page');
-        
-        // Show success message
-        alert('🧪 Mock checkout successful! Redirecting to order confirmation...');
-        
-        setTimeout(() => {
-          if (onSuccess) onSuccess(data.order_id);
-          window.location.href = `/order-success?mock=true&order_id=${data.order_id}`;
-        }, 2500); // Wait 2.5 seconds for order to be created
-        
-        return;
-      }
-
-      // Real Shiprocket Checkout (when ready)
+      // Check if Shiprocket Checkout is loaded
       if (!window.HeadlessCheckout) {
         throw new Error('Shiprocket Checkout not loaded. Please refresh the page.');
       }
 
+      // Open Shiprocket Checkout iframe
       window.HeadlessCheckout.addToCart(e, data.token, {
         fallbackUrl: window.location.origin + '/cart'
       });
 
-      if (onSuccess) onSuccess(data.order_id);
+      // Optional: Call success callback
+      if (onSuccess) {
+        onSuccess(data.order_id);
+      }
 
     } catch (err) {
       console.error('❌ Checkout error:', err);
@@ -89,12 +70,6 @@ const ShiprocketCheckoutButton = ({ cartItems, userId, onSuccess }) => {
 
   return (
     <div>
-      {USE_MOCK && (
-        <div className="mb-3 p-2 bg-yellow-100 border border-yellow-400 rounded text-sm text-yellow-800 text-center">
-          🧪 Test Mode Active
-        </div>
-      )}
-      
       <button
         onClick={handleCheckout}
         disabled={loading || !cartItems || cartItems.length === 0}
@@ -109,20 +84,18 @@ const ShiprocketCheckoutButton = ({ cartItems, userId, onSuccess }) => {
             Processing...
           </span>
         ) : (
-          <>
-            {USE_MOCK ? '🧪 Test Checkout' : '🚀 Checkout with Shiprocket'}
-          </>
+          '🚀 Checkout with Shiprocket'
         )}
       </button>
 
       {error && (
-        <div className="mt-3 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
+        <div className="mt-3 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
           {error}
         </div>
       )}
 
       <p className="mt-2 text-xs text-gray-500 text-center">
-        {USE_MOCK ? '🧪 No payment required in test mode' : '🔒 Secure checkout powered by Shiprocket'}
+        Secure checkout powered by Shiprocket
       </p>
     </div>
   );
