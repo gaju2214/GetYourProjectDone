@@ -1,0 +1,15 @@
+{
+"appId": "com.getyourprojectdone.app",
+  "appName": "getyourprojectdone",
+  "webDir": "dist",
+  "server": {
+    "cleartext": true,
+    "androidScheme": "https",
+    "allowNavigation": ["https://master.getyourprojectdone.in"]
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}
