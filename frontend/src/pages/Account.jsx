@@ -947,7 +947,7 @@ export default function Account() {
                                 <p className="font-medium text-gray-700">
                                   {[order.address, order.city, order.state, order.pincode, order.country]
                                     .filter(Boolean)
-                                    .join(', ')}
+                                    .join(', ') || order.shippingAddress || 'Address not available'}
                                 </p>
                               </div>
                               
