@@ -5,6 +5,12 @@ const generateOrderId = require("../utils/generateOrderId");
 
 // HMAC Generation
 function generateCheckoutHMAC(secretKey, requestBody) {
+  // If secret key is not provided, return empty string (HMAC will be skipped)
+  if (!secretKey) {
+    console.warn("⚠️ SHIPROCKET_CHECKOUT_SECRET_KEY is not set. HMAC will not be generated.");
+    return '';
+  }
+  
   const message = JSON.stringify(requestBody);
   return crypto
     .createHmac('sha256', secretKey)
@@ -410,6 +416,12 @@ exports.getCheckoutOrderDetails = async (req, res) => {
 
 exports.syncProductUpdate = async (projectId) => {
   try {
+    // Check if required env variables are set
+    if (!process.env.SHIPROCKET_CHECKOUT_API_KEY || !process.env.SHIPROCKET_CHECKOUT_SECRET_KEY) {
+      console.warn("⚠️ Shiprocket Checkout credentials not configured. Skipping sync for product " + projectId);
+      return;
+    }
+
     const project = await Project.findByPk(projectId, {
       include: [{ model: Subcategory, as: "subcategory" }]
     });
@@ -445,15 +457,21 @@ exports.syncProductUpdate = async (projectId) => {
       requestBody
     );
 
+    const headers = {
+      'X-Api-Key': process.env.SHIPROCKET_CHECKOUT_API_KEY,
+      'Content-Type': 'application/json'
+    };
+
+    // Only add HMAC header if it was generated
+    if (hmac) {
+      headers['X-Api-HMAC-SHA256'] = hmac;
+    }
+
     await axios.post(
       'https://checkout-api.shiprocket.com/wh/v1/custom/product',
       requestBody,
       {
-        headers: {
-          'X-Api-Key': process.env.SHIPROCKET_CHECKOUT_API_KEY,
-          'X-Api-HMAC-SHA256': hmac,
-          'Content-Type': 'application/json'
-        },
+        headers,
         timeout: 10000
       }
     );

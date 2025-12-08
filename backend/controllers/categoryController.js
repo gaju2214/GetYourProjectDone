@@ -184,8 +184,7 @@ exports.getAllSubcategories = async (req, res) => {
     const subcategories = await Subcategory.findAll({
       include: [{ 
         model: Category, 
-        // Try without alias first, then with alias if you have one set up
-        // as: 'category', // Uncomment if you have this alias set up
+        as: 'category', // Use the alias defined in Subcategory.associate
         attributes: ['id', 'name', 'slug']
       }]
     });
