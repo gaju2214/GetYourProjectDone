@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 
 const ProjectList = () => {
   const [projects, setProjects] = useState([]);
+  const [showAll, setShowAll] = useState(false); // Track if 'Load More' was clicked
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [page, setPage] = useState(1);
@@ -246,6 +247,11 @@ const ProjectList = () => {
     </div>
   );
 
+  // Determine featured projects (first 6, or those with isFeatured)
+  const featuredProjects = projects.filter(p => p.isFeatured).length > 0
+    ? projects.filter(p => p.isFeatured)
+    : projects.slice(0, 6);
+
   return (
     <div className="p-4 min-h-screen">
       {loading ? (
@@ -255,7 +261,7 @@ const ProjectList = () => {
       ) : projects.length > 0 ? (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {projects.map((project) => (
+            {(showAll ? projects : featuredProjects).map((project) => (
               <ProductCard key={project.id} product={project} />
             ))}
           </div>
@@ -267,17 +273,18 @@ const ProjectList = () => {
               </button>
             )}
 
-            {!loadingMore && hasMore && (
+            {!loadingMore && hasMore && !showAll && (
               <button
                 onClick={async () => {
+                  setShowAll(true);
                   const nextPage = page + 1;
                   const q = getQuery();
                   await fetchProjects(q, { reset: false, page: nextPage, limit: 12 });
                   setPage(nextPage);
                 }}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
+                className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors duration-200 font-medium"
               >
-                Load More
+                Load More Projects
               </button>
             )}
           </div>
