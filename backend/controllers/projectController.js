@@ -85,19 +85,21 @@ exports.createProject = async (req, res) => {
   }
 };
 
-// ==================== GET ALL PROJECTS ====================
+// ==================== GET ALL PROJECTS (with optional pagination) ====================
 exports.getAllProjects = async (req, res) => {
-  const { q, subcategoryId } = req.query;
+  const { q, subcategoryId, page = 1, limit = 12 } = req.query;
+  const pageNum = Math.max(1, parseInt(page, 10) || 1);
+  const pageLimit = Math.max(1, Math.min(100, parseInt(limit, 10) || 12));
 
   try {
     // Build where clause
     let whereClause = {};
-    
+
     if (subcategoryId) {
       whereClause.subcategoryId = subcategoryId;
     }
 
-    // If search query is provided
+    // If search query is provided, keep existing detailed search behavior (no pagination)
     if (q && q.trim() !== "") {
       // Search by title
       let projects = await Project.findAll({
@@ -142,14 +144,27 @@ exports.getAllProjects = async (req, res) => {
         .json({ error: "No projects found for your search query." });
     }
 
-    // If no search query provided, return all projects
-    const projects = await Project.findAll({
+    // If no search query provided, return paginated projects
+    const offset = (pageNum - 1) * pageLimit;
+    const { count, rows } = await Project.findAndCountAll({
       where: whereClause,
       include: { model: Subcategory, as: "subcategory" },
-      order: [['createdAt', 'DESC']]
+      order: [['createdAt', 'DESC']],
+      limit: pageLimit,
+      offset
     });
 
-    return res.json(projects);
+    const totalPages = Math.ceil(count / pageLimit) || 1;
+
+    return res.json({
+      data: rows,
+      pagination: {
+        currentPage: pageNum,
+        totalPages,
+        total: count,
+        limit: pageLimit
+      }
+    });
   } catch (err) {
     console.error("Error fetching projects:", err);
     res.status(500).json({ error: "Failed to fetch projects" });

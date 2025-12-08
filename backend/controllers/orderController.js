@@ -384,6 +384,12 @@ exports.getAllOrders = async (req, res) => {
             }
           ]
         }
+        ,
+        {
+          model: User,
+          as: 'User',
+          attributes: ['id', 'name', 'email']
+        }
       ],
       order: [["createdAt", "DESC"]]
     });
@@ -555,11 +561,15 @@ exports.cancelOrder = async (req, res) => {
       });
     }
 
+    // Determine who initiated cancellation (authenticated user if present)
+    const cancelledBy = req.user?.id || order.user_id || null;
+
     // Update order status to cancelled
     await order.update({
       status: 'cancelled',
       cancellationReason: reason,
-      cancelledAt: new Date()
+      cancelledAt: new Date(),
+      cancelledBy
     });
 
     res.json({

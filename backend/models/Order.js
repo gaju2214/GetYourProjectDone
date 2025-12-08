@@ -105,6 +105,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: true,
     },
+    cancelledBy: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
   });
 
   Order.associate = (models) => {

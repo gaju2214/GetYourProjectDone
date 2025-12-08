@@ -7,6 +7,10 @@ const ProjectList = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const sentinelRef = React.useRef(null);
 
   const location = useLocation();
 
@@ -16,25 +20,53 @@ const ProjectList = () => {
     return params.get("q") || "";
   };
 
-  const fetchProjects = async (q = "") => {
-    setLoading(true);
-    setError("");
-    try {
-      const url = q ? `/api/projects/search?q=${encodeURIComponent(q)}` : "/api/projects";
-      const res = await api.get(url);
+  const fetchProjects = async (q = "", opts = { reset: true, page: 1, limit: 12 }) => {
+    const { reset, page: fetchPage, limit } = opts;
+    if (reset) {
+      setLoading(true);
+      setError("");
+    } else {
+      setLoadingMore(true);
+    }
 
-      setProjects(res.data);
-    } catch (err) {
-      if (err.response && err.response.status === 404) {
-        setProjects([]);
-        setError(err.response.data.error);
+    try {
+      if (q) {
+        // For searches keep legacy behavior (returns full array)
+        const url = `/api/projects/search?q=${encodeURIComponent(q)}`;
+        const res = await api.get(url);
+        setProjects(res.data || []);
+        setHasMore(false);
+        setPage(1);
       } else {
-        console.error(err);
-        setError("Failed to fetch projects");
-        setProjects([]);
+        const url = `/api/projects?page=${fetchPage}&limit=${limit}`;
+        const res = await api.get(url);
+        // Support both new paginated shape and legacy array
+        const data = res.data && res.data.data ? res.data.data : res.data;
+
+        if (reset) {
+          setProjects(data || []);
+        } else {
+          setProjects(prev => [...prev, ...(data || [])]);
+        }
+
+        // Determine hasMore from pagination object if available
+        const pagination = res.data && res.data.pagination;
+        if (pagination) {
+          setHasMore(pagination.currentPage < pagination.totalPages);
+          setPage(pagination.currentPage);
+        } else {
+          // Fallback: if we received less than requested limit, no more
+          setHasMore((data || []).length >= limit);
+          setPage(fetchPage);
+        }
       }
+    } catch (err) {
+      console.error(err);
+      setError("Failed to fetch projects");
+      if (reset) setProjects([]);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
@@ -50,8 +82,46 @@ const ProjectList = () => {
 
   useEffect(() => {
     const q = getQuery();
-    fetchProjects(q);
+    // Reset to first page whenever search or location changes
+    setPage(1);
+    fetchProjects(q, { reset: true, page: 1, limit: 12 });
   }, [location.search]);
+
+  // Auto-load next page when sentinel is visible (infinite scroll)
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    if (!hasMore) return; // don't observe if no more pages
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Load next page
+            if (!loadingMore && hasMore) {
+              const nextPage = page + 1;
+              const q = getQuery();
+              // Only auto paginate when not searching
+              if (!q) {
+                fetchProjects(q, { reset: false, page: nextPage, limit: 12 });
+                setPage(nextPage);
+              }
+            }
+          }
+        });
+      },
+      {
+        root: null,
+        rootMargin: '200px', // start loading a bit before reaching the bottom
+        threshold: 0.1,
+      }
+    );
+
+    observer.observe(sentinelRef.current);
+
+    return () => {
+      try { observer.disconnect(); } catch (e) {}
+    };
+  }, [sentinelRef.current, hasMore, loadingMore, page, location.search]);
 
   // Enhanced No Data Found Component
   const NoDataFound = () => {
@@ -183,11 +253,37 @@ const ProjectList = () => {
       ) : error ? (
         <ErrorState />
       ) : projects.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {projects.map((project) => (
-            <ProductCard key={project.id} product={project} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {projects.map((project) => (
+              <ProductCard key={project.id} product={project} />
+            ))}
+          </div>
+
+          <div className="mt-6 flex justify-center">
+            {loadingMore && (
+              <button className="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg" disabled>
+                Loading...
+              </button>
+            )}
+
+            {!loadingMore && hasMore && (
+              <button
+                onClick={async () => {
+                  const nextPage = page + 1;
+                  const q = getQuery();
+                  await fetchProjects(q, { reset: false, page: nextPage, limit: 12 });
+                  setPage(nextPage);
+                }}
+                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium"
+              >
+                Load More
+              </button>
+            )}
+          </div>
+          {/* sentinel for infinite scroll */}
+          <div ref={sentinelRef} />
+        </>
       ) : (
         <NoDataFound />
       )}

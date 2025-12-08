@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const orderController = require("../controllers/orderController");
+const authenticateUser = require('../middleware/auth');
 const axios = require('axios');
 
 // Your existing routes
@@ -11,7 +12,7 @@ router.post("/", orderController.createOrder);
 router.get("/", orderController.getAllOrders);
 router.put("/:id", orderController.updateOrderStatus);
 router.post('/create-with-shipping', orderController.createOrderWithShipping);
-router.post('/:orderId/cancel', orderController.cancelOrder);
+router.post('/:orderId/cancel', authenticateUser, orderController.cancelOrder);
 
 
 // ✅ Fix: Add the missing tracking routes
