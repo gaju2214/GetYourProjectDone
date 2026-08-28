@@ -87,11 +87,11 @@
 //     ];
 
 //     return (
-//         <div className="min-h-screen bg-gradient-to-br from-orange-50 via-blue-50 to-orange-100 p-4 sm:p-6 flex justify-center">
+//         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-50 to-blue-100 p-4 sm:p-6 flex justify-center">
 //             <div className="w-full max-w-6xl bg-white shadow-xl rounded-3xl overflow-hidden">
 //                 <div className="flex flex-col md:flex-row">
 //                     {/* Sidebar */}
-//                     <div className="w-full md:w-1/4 border-b md:border-b-0 md:border-r border-orange-100 p-4 space-y-4 bg-white">
+//                     <div className="w-full md:w-1/4 border-b md:border-b-0 md:border-r border-blue-100 p-4 space-y-4 bg-white">
 //                         {sidebarItems.map(({ tab, label, icon: Icon }) => (
 //                             <div
 //                                 key={tab}
@@ -103,7 +103,7 @@
 //                                         )
 //                                         : setActiveTab(tab)
 //                                 }
-//                                 className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 text-sm font-medium ${activeTab === tab ? "bg-orange-100 text-orange-700" : "text-gray-700 hover:bg-blue-50"
+//                                 className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 text-sm font-medium ${activeTab === tab ? "bg-blue-100 text-blue-800" : "text-gray-700 hover:bg-blue-50"
 //                                     }`}
 //                             >
 //                                 <Icon className="w-4 h-4 text-blue-400" /> {label}
@@ -114,7 +114,7 @@
 //                                 localStorage.removeItem("user");
 //                                 navigate("/login");
 //                             }}
-//                             className="w-full mt-4 bg-gradient-to-r from-red-100 to-orange-200 text-red-700 border border-red-200 hover:shadow-md rounded-xl py-2 font-semibold flex items-center justify-center gap-2"
+//                             className="w-full mt-4 bg-gradient-to-r from-red-100 to-blue-200 text-red-700 border border-red-200 hover:shadow-md rounded-xl py-2 font-semibold flex items-center justify-center gap-2"
 //                         >
 //                             <LogOut className="w-4 h-4" /> Logout
 //                         </Button>
@@ -125,7 +125,7 @@
 //                         {activeTab === "profile" && (
 //                             <>
 //                                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-//                                     <div className="text-xl font-bold text-orange-700 mb-4 sm:mb-0">
+//                                     <div className="text-xl font-bold text-blue-800 mb-4 sm:mb-0">
 //                                         Hello, {firstName}!
 //                                     </div>
 //                                     {!isEditing ? (
@@ -139,7 +139,7 @@
 //                                         <div className="flex flex-col sm:flex-row gap-3">
 //                                             <button
 //                                                 onClick={handleSave}
-//                                                 className="bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-2 px-4 py-2 rounded-xl shadow-md transition-all"
+//                                                 className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 px-4 py-2 rounded-xl shadow-md transition-all"
 //                                             >
 //                                                 <Save className="w-4 h-4" /> Save
 //                                             </button>
@@ -161,7 +161,7 @@
 //                                             onChange={(e) => setFirstName(e.target.value)}
 //                                             readOnly={!isEditing}
 //                                             className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${isEditing
-//                                                 ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
+//                                                 ? "border-blue-300 bg-white focus:ring-2 focus:ring-blue-400"
 //                                                 : "bg-gray-100 border-transparent"
 //                                                 }`}
 //                                         />
@@ -173,7 +173,7 @@
 //                                             onChange={(e) => setLastName(e.target.value)}
 //                                             readOnly={!isEditing}
 //                                             className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${isEditing
-//                                                 ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
+//                                                 ? "border-blue-300 bg-white focus:ring-2 focus:ring-blue-400"
 //                                                 : "bg-gray-100 border-transparent"
 //                                                 }`}
 //                                         />
@@ -187,7 +187,7 @@
 //                                             onChange={(e) => setEmail(e.target.value)}
 //                                             readOnly={!isEditing}
 //                                             className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${isEditing
-//                                                 ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
+//                                                 ? "border-blue-300 bg-white focus:ring-2 focus:ring-blue-400"
 //                                                 : "bg-gray-100 border-transparent"
 //                                                 }`}
 //                                         />
@@ -201,7 +201,7 @@
 //                                             onChange={(e) => setPhone(e.target.value)}
 //                                             readOnly={!isEditing}
 //                                             className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${isEditing
-//                                                 ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
+//                                                 ? "border-blue-300 bg-white focus:ring-2 focus:ring-blue-400"
 //                                                 : "bg-gray-100 border-transparent"
 //                                                 }`}
 //                                         />
@@ -216,7 +216,7 @@
 //                                             onChange={(e) => setDob(e.target.value)}
 //                                             readOnly={!isEditing}
 //                                             className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${isEditing
-//                                                 ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
+//                                                 ? "border-blue-300 bg-white focus:ring-2 focus:ring-blue-400"
 //                                                 : "bg-gray-100 border-transparent"
 //                                                 }`}
 //                                         />
@@ -245,21 +245,21 @@
 
 //                         {activeTab === "orders" && (
 //                             <div>
-//                                 <h2 className="text-xl font-semibold text-orange-600 mb-2">📦 Your Orders</h2>
+//                                 <h2 className="text-xl font-semibold text-blue-700 mb-2">📦 Your Orders</h2>
 //                                 <p className="text-gray-500">No orders placed yet.</p>
 //                             </div>
 //                         )}
 
 //                         {activeTab === "addresses" && (
 //                             <div>
-//                                 <h2 className="text-xl font-semibold text-orange-600 mb-2">🏠 Saved Addresses</h2>
+//                                 <h2 className="text-xl font-semibold text-blue-700 mb-2">🏠 Saved Addresses</h2>
 //                                 <p className="text-gray-500">You haven't added any address yet.</p>
 //                             </div>
 //                         )}
 
 //                         {activeTab === "faq" && (
 //                             <div>
-//                                 <h2 className="text-xl font-semibold text-orange-600 mb-2">❓ Frequently Asked Questions</h2>
+//                                 <h2 className="text-xl font-semibold text-blue-700 mb-2">❓ Frequently Asked Questions</h2>
 //                                 <ul className="list-disc pl-5 text-gray-600 space-y-1">
 //                                     <li>How do I change my password?</li>
 //                                     <li>Where can I track my orders?</li>
@@ -392,32 +392,32 @@ export default function Account() {
 
     setOrdersLoading(true);
     setOrdersError(null);
-    
+
     try {
       console.log('Fetching orders for user:', user.id);
-      
+
       // Use dynamic user ID instead of hardcoded 5
       const response = await api.get(`/api/orders/user/${user.id}`);
-      
+
       console.log('Orders response:', response.data);
       console.log('Response status:', response.status);
-      
+
       // Handle both array and object responses
       const ordersData = Array.isArray(response.data) ? response.data : [];
       setOrders(ordersData);
-      
+
       if (ordersData.length === 0) {
         console.log('No orders found for user');
       }
-      
+
     } catch (err) {
       console.error('Error fetching orders:', err);
       console.error('Error response:', err.response);
-      
-      const errorMessage = err.response?.data?.message || 
-                          err.response?.data?.error || 
-                          err.message || 
-                          'Failed to fetch orders';
+
+      const errorMessage = err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        'Failed to fetch orders';
       setOrdersError(errorMessage);
     } finally {
       setOrdersLoading(false);
@@ -448,7 +448,7 @@ export default function Account() {
     const colors = {
       'pending': 'bg-yellow-100 text-yellow-800',
       'confirmed': 'bg-blue-100 text-blue-800',
-      'processing': 'bg-orange-100 text-orange-800',
+      'processing': 'bg-blue-100 text-blue-900',
       'delivered': 'bg-green-100 text-green-800',
       'cancelled': 'bg-red-100 text-red-800'
     };
@@ -523,7 +523,7 @@ export default function Account() {
 
   const handleCancelAddress = () => {
     if (!user) return;
-    setAddress(user.address|| "");
+    setAddress(user.address || "");
     setCity(user.city || "");
     setPincode(user.pincode || "");
     setState(user.state || "");
@@ -540,7 +540,7 @@ export default function Account() {
     try {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-    } catch (e) {}
+    } catch (e) { }
     navigate("/auth/login");
   };
 
@@ -566,7 +566,7 @@ export default function Account() {
 
     // Check if user has existing password (for existing users)
     const hasPassword = user?.password && user.password.trim() !== '';
-    
+
     // For existing users, current password is required
     if (hasPassword && !currentPassword) {
       setPasswordError("Current password is required");
@@ -636,159 +636,166 @@ export default function Account() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-blue-50 to-orange-100 p-4 sm:p-6 flex justify-center">
-      <div className="w-full max-w-6xl bg-white shadow-xl rounded-3xl overflow-hidden">
+    <div className="min-h-screen bg-gray-50 py-8 px-4 flex justify-center">
+      <div className="w-full max-w-6xl bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden">
         <div className="flex flex-col md:flex-row">
           {/* Sidebar */}
-          <div className="w-full md:w-1/4 border-b md:border-b-0 md:border-r border-orange-100 p-4 space-y-4 bg-white">
+          <div className="w-full md:w-1/4 border-b md:border-b-0 md:border-r border-gray-200 p-4 space-y-2 bg-white shrink-0">
+            <div className="pb-3 border-b border-gray-100 mb-3 px-2">
+              <h2 className="text-sm font-extrabold text-gray-800 uppercase tracking-wider">My Account</h2>
+            </div>
+
             {sidebarItems.map(({ tab, label, icon: Icon }) => (
               <div
                 key={tab}
                 onClick={() =>
                   tab === "support"
                     ? window.open(
-                        "https://wa.me/917030023573?text=Hi%20Support%2C%20I%20need%20help",
-                        "_blank"
-                      )
+                      "https://wa.me/917030023573?text=Hi%20Support%2C%20I%20need%20help",
+                      "_blank"
+                    )
                     : setActiveTab(tab)
                 }
-                className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 text-sm font-medium ${
-                  activeTab === tab
-                    ? "bg-orange-100 text-orange-700"
-                    : "text-gray-700 hover:bg-blue-50"
-                }`}
+                className={`flex items-center gap-3 p-2.5 rounded cursor-pointer transition-all duration-150 text-xs font-bold ${activeTab === tab
+                    ? "bg-blue-50 text-[#003e8b] border-l-4 border-[#003e8b] rounded-l-none pl-3.5"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-[#003e8b]"
+                  }`}
               >
-                <Icon className="w-4 h-4 text-blue-400" /> {label}
+                <Icon className={`w-4 h-4 ${activeTab === tab ? "text-[#003e8b]" : "text-gray-400"}`} />
+                {label}
               </div>
             ))}
-            <Button
-              onClick={handleLogout}
-              className="w-full mt-4 bg-gradient-to-r from-red-100 to-orange-200 text-red-700 border border-red-200 hover:shadow-md rounded-xl py-2 font-semibold flex items-center justify-center gap-2"
-            >
-              <LogOut className="w-4 h-4" /> Logout
-            </Button>
+
+            <div className="pt-4 border-t border-gray-100 mt-4">
+              <Button
+                onClick={handleLogout}
+                className="w-full bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 py-2.5 rounded font-bold flex items-center justify-center gap-2 cursor-pointer transition-colors text-xs"
+              >
+                <LogOut className="w-3.5 h-3.5" /> Logout
+              </Button>
+            </div>
           </div>
 
           {/* Main Content */}
-          <div className="w-full md:w-3/4 p-4 sm:p-8 space-y-6">
+          <div className="w-full md:w-3/4 p-6 sm:p-8 space-y-6 min-h-[500px]">
             {/* Profile Section */}
             {activeTab === "profile" && (
               <>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                  <div className="text-xl font-bold text-orange-700 mb-4 sm:mb-0">
-                    👋 Hello, {firstName}!
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-100 pb-4">
+                  <div>
+                    <h2 className="text-xl font-extrabold text-gray-800">
+                      👋 Hello, {firstName}!
+                    </h2>
+                    <p className="text-xs text-gray-400 mt-1">Manage your personal settings and profile info</p>
                   </div>
-                  {!isEditingProfile ? (
-                    <button
-                      onClick={() => setIsEditingProfile(true)}
-                      className="bg-blue-300 hover:bg-blue-400 text-white flex items-center gap-2 px-4 py-2 rounded-xl shadow-md transition-all"
-                    >
-                      <Pencil className="w-4 h-4" /> Edit Profile
-                    </button>
-                  ) : (
-                    <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="mt-3 sm:mt-0">
+                    {!isEditingProfile ? (
                       <button
-                        onClick={handleSaveProfile}
-                        className="bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-2 px-4 py-2 rounded-xl shadow-md transition-all"
+                        onClick={() => setIsEditingProfile(true)}
+                        className="bg-[#003e8b] hover:bg-[#002e66] text-white flex items-center gap-1.5 px-4 py-2 rounded font-bold text-xs shadow-sm cursor-pointer border-0 transition-colors"
                       >
-                        <Save className="w-4 h-4" /> Save
+                        <Pencil className="w-3.5 h-3.5" /> Edit Profile
                       </button>
-                      <button
-                        onClick={handleCancelProfile}
-                        className="bg-white hover:bg-blue-50 text-blue-600 border border-blue-400 flex items-center gap-2 px-4 py-2 rounded-xl shadow-sm transition-all"
-                      >
-                        <XCircle className="w-4 h-4" /> Cancel
-                      </button>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleSaveProfile}
+                          className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-1.5 px-4 py-2 rounded font-bold text-xs shadow-sm cursor-pointer border-0 transition-colors"
+                        >
+                          <Save className="w-3.5 h-3.5" /> Save
+                        </button>
+                        <button
+                          onClick={handleCancelProfile}
+                          className="bg-white hover:bg-gray-50 text-gray-500 border border-gray-200 flex items-center gap-1.5 px-4 py-2 rounded font-bold text-xs cursor-pointer transition-all"
+                        >
+                          <XCircle className="w-3.5 h-3.5" /> Cancel
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Profile Form */}
-                <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Personal Information</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="bg-gray-50 border border-gray-100 p-6 rounded-lg">
+                  <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-4">Personal Information</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Name */}
                     <div>
-                      <label className="text-sm text-gray-600">First Name</label>
+                      <label className="text-xs font-semibold text-gray-500">First Name</label>
                       <input
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                         readOnly={!isEditingProfile}
-                        className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
-                          isEditingProfile
-                            ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
-                            : "bg-gray-100 border-transparent"
-                        }`}
+                        className={`w-full px-3 py-2 rounded border text-xs mt-1 transition-all ${isEditingProfile
+                            ? "border-gray-300 bg-white focus:border-[#003e8b] outline-none"
+                            : "bg-gray-100 border-transparent text-gray-700"
+                          }`}
                       />
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Last Name</label>
+                      <label className="text-xs font-semibold text-gray-500">Last Name</label>
                       <input
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         readOnly={!isEditingProfile}
-                        className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
-                          isEditingProfile
-                            ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
-                            : "bg-gray-100 border-transparent"
-                        }`}
+                        className={`w-full px-3 py-2 rounded border text-xs mt-1 transition-all ${isEditingProfile
+                            ? "border-gray-300 bg-white focus:border-[#003e8b] outline-none"
+                            : "bg-gray-100 border-transparent text-gray-700"
+                          }`}
                       />
                     </div>
 
                     {/* Email & Phone */}
                     <div>
-                      <label className="text-sm text-gray-600 flex gap-1 items-center">
-                        <Mail className="w-4 h-4 text-blue-400" /> Email
+                      <label className="text-xs font-semibold text-gray-500 flex gap-1 items-center">
+                        <Mail className="w-3.5 h-3.5 text-gray-400" /> Email
                       </label>
                       <input
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         readOnly={!isEditingProfile}
-                        className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
-                          isEditingProfile
-                            ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
-                            : "bg-gray-100 border-transparent"
-                        }`}
+                        className={`w-full px-3 py-2 rounded border text-xs mt-1 transition-all ${isEditingProfile
+                            ? "border-gray-300 bg-white focus:border-[#003e8b] outline-none"
+                            : "bg-gray-100 border-transparent text-gray-700"
+                          }`}
                       />
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600 flex gap-1 items-center">
-                        <Phone className="w-4 h-4 text-blue-400" /> Phone
+                      <label className="text-xs font-semibold text-gray-500 flex gap-1 items-center">
+                        <Phone className="w-3.5 h-3.5 text-gray-400" /> Phone
                       </label>
                       <input
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         readOnly={!isEditingProfile}
-                        className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
-                          isEditingProfile
-                            ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
-                            : "bg-gray-100 border-transparent"
-                        }`}
+                        className={`w-full px-3 py-2 rounded border text-xs mt-1 transition-all ${isEditingProfile
+                            ? "border-gray-300 bg-white focus:border-[#003e8b] outline-none"
+                            : "bg-gray-100 border-transparent text-gray-700"
+                          }`}
                       />
                     </div>
 
                     {/* DOB & Gender */}
                     <div>
-                      <label className="text-sm text-gray-600 flex gap-1 items-center">
-                        <Calendar className="w-4 h-4 text-blue-400" /> Date of Birth
+                      <label className="text-xs font-semibold text-gray-500 flex gap-1 items-center">
+                        <Calendar className="w-3.5 h-3.5 text-gray-400" /> Date of Birth
                       </label>
                       <input
                         type="date"
                         value={dob}
                         onChange={(e) => setDob(e.target.value)}
                         readOnly={!isEditingProfile}
-                        className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
-                          isEditingProfile
-                            ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
-                            : "bg-gray-100 border-transparent"
-                        }`}
+                        className={`w-full px-3 py-2 rounded border text-xs mt-1 transition-all ${isEditingProfile
+                            ? "border-gray-300 bg-white focus:border-[#003e8b] outline-none"
+                            : "bg-gray-100 border-transparent text-gray-700"
+                          }`}
                       />
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Gender</label>
-                      <div className="mt-2 space-x-6">
+                      <label className="text-xs font-semibold text-gray-500">Gender</label>
+                      <div className="mt-3 space-x-6">
                         {["male", "female"].map((g) => (
-                          <label key={g} className="inline-flex items-center gap-2">
+                          <label key={g} className="inline-flex items-center gap-1.5 text-xs text-gray-600 font-medium">
                             <input
                               type="radio"
                               value={g}
@@ -796,6 +803,7 @@ export default function Account() {
                               checked={gender === g}
                               onChange={() => setGender(g)}
                               disabled={!isEditingProfile}
+                              className="accent-[#003e8b]"
                             />
                             {g.charAt(0).toUpperCase() + g.slice(1)}
                           </label>
@@ -807,45 +815,38 @@ export default function Account() {
               </>
             )}
 
-            {/* Orders Section - FIXED */}
+            {/* Orders Section */}
             {activeTab === "orders" && (
               <div>
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-semibold text-orange-600">
-                    📦 Your Orders
-                  </h2>
-                  <button 
+                <div className="flex justify-between items-center border-b border-gray-100 pb-4 mb-5">
+                  <div>
+                    <h2 className="text-lg font-extrabold text-gray-800">
+                      Your Orders
+                    </h2>
+                    <p className="text-xs text-gray-400 mt-1">Track and manage your order history</p>
+                  </div>
+                  <button
                     onClick={handleRefreshOrders}
                     disabled={ordersLoading}
-                    className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-[#003e8b] hover:bg-[#002e66] text-white rounded font-bold text-xs cursor-pointer border-0 transition-colors disabled:opacity-50"
                   >
                     {ordersLoading ? 'Loading...' : 'Refresh'}
                   </button>
                 </div>
 
-                {/* Debug Info (remove in production) */}
-                {/* <div className="mb-4 p-3 bg-gray-100 rounded text-xs text-gray-600">
-                  <strong>Debug Info:</strong><br/>
-                  User ID: {user?.id || 'Not available'}<br/>
-                  Orders Count: {orders.length}<br/>
-                  Loading: {ordersLoading ? 'Yes' : 'No'}<br/>
-                  Error: {ordersError || 'None'}<br/>
-                  API URL: {`${backendUrl}/api/orders/user/${user?.id || 'undefined'}`}
-                </div> */}
-
                 {ordersLoading && (
-                  <div className="bg-gray-50 p-6 rounded-xl text-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600 mx-auto mb-2"></div>
-                    <p className="text-gray-500">Loading your orders...</p>
+                  <div className="bg-gray-50 border border-gray-100 p-8 rounded text-center">
+                    <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-[#003e8b] mx-auto mb-2"></div>
+                    <p className="text-xs text-gray-500">Loading your orders...</p>
                   </div>
                 )}
 
                 {ordersError && (
-                  <div className="bg-red-50 p-4 rounded-xl text-center mb-4">
-                    <p className="text-red-600 mb-2">Error: {ordersError}</p>
-                    <button 
+                  <div className="bg-red-50 border border-red-100 p-4 rounded text-center mb-4">
+                    <p className="text-xs text-red-600 mb-2">Error: {ordersError}</p>
+                    <button
                       onClick={handleRefreshOrders}
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                      className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded font-bold text-xs border-0 cursor-pointer"
                     >
                       Try Again
                     </button>
@@ -853,173 +854,94 @@ export default function Account() {
                 )}
 
                 {!ordersLoading && !ordersError && orders.length === 0 && (
-                  <div className="bg-gray-50 p-6 rounded-xl text-center">
-                    <p className="text-gray-500">No orders found.</p>
-                    <p className="text-sm text-gray-400 mt-2">
+                  <div className="bg-gray-50 border border-gray-100 p-8 rounded text-center">
+                    <p className="text-xs text-gray-500 font-bold">No orders found.</p>
+                    <p className="text-[11px] text-gray-400 mt-1">
                       Your order history will appear here once you make a purchase.
                     </p>
                   </div>
                 )}
 
                 {!ordersLoading && !ordersError && orders.length > 0 && (
-                  <div className="space-y-6">
+                  <div className="space-y-4">
                     {orders.map((order) => (
-                      <div key={order.id} className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                      <div key={order.id} className="bg-white p-5 rounded-lg shadow-sm border border-gray-200">
                         {/* Order Header */}
-                        <div className="flex justify-between items-start mb-4">
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4 pb-4 border-b border-gray-100">
                           <div>
-                            <h3 className="font-bold text-lg text-gray-800">
+                            <h3 className="font-bold text-sm text-gray-800">
                               Order #{order.orderId || order.id}
                             </h3>
-                            <p className="text-sm text-gray-600">
-                              {formatDate(order.createdAt)}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              Customer: {order.customerName}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              Mobile: {order.mobile}
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              Quantity: {order.quantity}
+                            <p className="text-[10px] text-gray-400 mt-0.5">
+                              Ordered on {formatDate(order.createdAt)}
                             </p>
                           </div>
-                          <div className="text-right">
-                            <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(order.status)}`}>
-                              {order.status?.toUpperCase() || 'PENDING'}
+                          <div className="flex sm:flex-col items-center sm:items-end gap-2 justify-between w-full sm:w-auto">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase ${getStatusColor(order.status)}`}>
+                              {order.status || 'PENDING'}
                             </span>
-                            <p className="text-lg font-bold text-orange-600 mt-2">
+                            <span className="text-base font-extrabold text-[#003e8b]">
                               ₹{order.totalAmount || 0}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              Payment: {order.paymentStatus || 'Unknown'}
-                            </p>
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Order Summary details */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-gray-600 mb-4">
+                          <div className="space-y-1">
+                            <p><span className="font-semibold text-gray-700">Customer:</span> {order.customerName}</p>
+                            <p><span className="font-semibold text-gray-700">Mobile:</span> {order.mobile}</p>
+                            <p><span className="font-semibold text-gray-700">Total Items:</span> {order.quantity}</p>
+                          </div>
+                          <div className="space-y-1">
+                            <p><span className="font-semibold text-gray-700">Payment Status:</span> {order.paymentStatus || 'Pending'}</p>
+                            <p><span className="font-semibold text-gray-700">Method:</span> {order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}</p>
                           </div>
                         </div>
 
                         {/* Order Items */}
                         {order.OrderItems && order.OrderItems.length > 0 && (
-                          <div className="border-t pt-4">
-                            <h4 className="font-semibold mb-3 text-gray-700">Items:</h4>
-                            <div className="space-y-3">
-                              {order.OrderItems.map((item, index) => (
-                                <div key={index} className="flex justify-between items-center py-3 px-3 bg-gray-50 rounded-lg">
-                                  <div className="flex items-center space-x-4">
-                                    {item.Project?.image && (
-                                      <img 
-                                        src={item.Project.image} 
-                                        alt={item.Project.title}
-                                        className="w-16 h-16 rounded-lg object-cover border"
-                                      />
-                                    )}
-                                    <div>
-                                      <p className="font-semibold text-gray-800">
-                                        {item.Project?.title || 'Product Name Not Available'}
-                                      </p>
-                                      <p className="text-sm text-gray-600">
-                                        Quantity: {item.quantity} × ₹{item.price}
-                                      </p>
-                                      {item.Project?.description && (
-                                        <p className="text-xs text-gray-500 mt-1">
-                                          {item.Project.description.substring(0, 100)}...
-                                        </p>
-                                      )}
-                                    </div>
-                                  </div>
-                                  <div className="text-right">
-                                    <p className="font-bold text-gray-800">
-                                      ₹{(item.price * item.quantity).toFixed(2)}
+                          <div className="bg-gray-50 border border-gray-100 rounded p-3 mb-4 space-y-2">
+                            {order.OrderItems.map((item, idx) => (
+                              <div key={idx} className="flex justify-between items-center text-xs">
+                                <div className="flex items-center gap-2">
+                                  {item.Project?.image && (
+                                    <img
+                                      src={item.Project.image}
+                                      alt={item.Project.title}
+                                      className="w-10 h-10 rounded border object-contain bg-white shrink-0"
+                                    />
+                                  )}
+                                  <div>
+                                    <p className="font-bold text-gray-800 truncate max-w-[200px] sm:max-w-md">
+                                      {item.Project?.title || 'Project Kit'}
                                     </p>
+                                    <p className="text-[10px] text-gray-400">Qty: {item.quantity} × ₹{item.price}</p>
                                   </div>
                                 </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Shipping Address */}
-                        {(order.shippingAddress || order.address || order.city || order.pincode || order.state || order.country) && (
-                          <div className="border-t pt-4 mt-4">
-                            <h4 className="font-semibold text-gray-700 mb-3">📍 Shipping Address:</h4>
-                            <div className="text-sm text-gray-600 space-y-2">
-                              {/* Full address line with wrapping */}
-                              <div className="whitespace-normal break-words max-w-full bg-gray-50 p-3 rounded-lg">
-                                <p className="font-medium text-gray-700">
-                                  {[order.address, order.city, order.state, order.pincode, order.country]
-                                    .filter(Boolean)
-                                    .join(', ') || order.shippingAddress || 'Address not available'}
-                                </p>
+                                <span className="font-bold text-gray-800">₹{item.price * item.quantity}</span>
                               </div>
-                              
-                              {/* Detailed breakdown */}
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
-                                {order.address && (
-                                  <div className="flex items-start gap-2">
-                                    <span className="text-gray-500">🏠</span>
-                                    <div>
-                                      <p className="text-xs text-gray-500 font-semibold">STREET ADDRESS</p>
-                                      <p className="font-medium text-gray-800 break-words">{order.address}</p>
-                                    </div>
-                                  </div>
-                                )}
-                                {order.city && (
-                                  <div className="flex items-start gap-2">
-                                    <span className="text-gray-500">🏙️</span>
-                                    <div>
-                                      <p className="text-xs text-gray-500 font-semibold">CITY</p>
-                                      <p className="font-medium text-gray-800">{order.city}</p>
-                                    </div>
-                                  </div>
-                                )}
-                                {order.state && (
-                                  <div className="flex items-start gap-2">
-                                    <span className="text-gray-500">🗺️</span>
-                                    <div>
-                                      <p className="text-xs text-gray-500 font-semibold">STATE</p>
-                                      <p className="font-medium text-gray-800">{order.state}</p>
-                                    </div>
-                                  </div>
-                                )}
-                                {order.pincode && (
-                                  <div className="flex items-start gap-2">
-                                    <span className="text-gray-500">📮</span>
-                                    <div>
-                                      <p className="text-xs text-gray-500 font-semibold">PINCODE</p>
-                                      <p className="font-medium text-gray-800">{order.pincode}</p>
-                                    </div>
-                                  </div>
-                                )}
-                                {order.country && (
-                                  <div className="flex items-start gap-2">
-                                    <span className="text-gray-500">🌍</span>
-                                    <div>
-                                      <p className="text-xs text-gray-500 font-semibold">COUNTRY</p>
-                                      <p className="font-medium text-gray-800">{order.country}</p>
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
+                            ))}
                           </div>
                         )}
 
                         {/* Order Actions */}
-                        <div className="border-t pt-4 mt-4 flex justify-end space-x-3">
-                          <button 
+                        <div className="flex justify-end gap-2">
+                          <button
                             onClick={() => setSelectedOrderDetails(order)}
-                            className="px-4 py-2 text-orange-600 border border-orange-600 rounded-lg hover:bg-orange-50 transition-colors"
+                            className="px-3.5 py-1.5 text-xs text-[#003e8b] border border-[#003e8b] hover:bg-blue-50 font-bold rounded cursor-pointer transition-colors bg-white"
                           >
                             View Details
                           </button>
                           {order.status === 'delivered' && (
-                            <button className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+                            <button className="px-3.5 py-1.5 text-xs bg-[#003e8b] text-white hover:bg-[#002e66] font-bold rounded cursor-pointer border-0 transition-colors">
                               Reorder
                             </button>
                           )}
                           {order.status === 'pending' && (
-                            <button 
+                            <button
                               onClick={() => setCancelOrderModal(order)}
-                              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                              className="px-3.5 py-1.5 text-xs bg-red-600 text-white hover:bg-red-700 font-bold rounded cursor-pointer border-0 transition-colors"
                             >
                               Cancel Order
                             </button>
@@ -1035,111 +957,111 @@ export default function Account() {
             {/* Addresses Section */}
             {activeTab === "addresses" && (
               <>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                  <h2 className="text-xl font-semibold text-orange-600 mb-4 sm:mb-0">
-                    🏠 Delivery Address
-                  </h2>
-                  {!isEditingAddress ? (
-                    <button
-                      onClick={() => setIsEditingAddress(true)}
-                      className="bg-blue-300 hover:bg-blue-400 text-white flex items-center gap-2 px-4 py-2 rounded-xl shadow-md transition-all"
-                    >
-                      <Pencil className="w-4 h-4" /> Edit Address
-                    </button>
-                  ) : (
-                    <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-100 pb-4 mb-5">
+                  <div>
+                    <h2 className="text-lg font-extrabold text-gray-800">
+                      Delivery Address
+                    </h2>
+                    <p className="text-xs text-gray-400 mt-1">Update your shipping and destination address</p>
+                  </div>
+                  <div className="mt-3 sm:mt-0">
+                    {!isEditingAddress ? (
                       <button
-                        onClick={handleSaveAddress}
-                        className="bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-2 px-4 py-2 rounded-xl shadow-md transition-all"
+                        onClick={() => setIsEditingAddress(true)}
+                        className="bg-[#003e8b] hover:bg-[#002e66] text-white flex items-center gap-1.5 px-4 py-2 rounded font-bold text-xs shadow-sm cursor-pointer border-0 transition-colors"
                       >
-                        <Save className="w-4 h-4" /> Save
+                        <Pencil className="w-3.5 h-3.5" /> Edit Address
                       </button>
-                      <button
-                        onClick={handleCancelAddress}
-                        className="bg-white hover:bg-blue-50 text-blue-600 border border-blue-400 flex items-center gap-2 px-4 py-2 rounded-xl shadow-sm transition-all"
-                      >
-                        <XCircle className="w-4 h-4" /> Cancel
-                      </button>
-                    </div>
-                  )}
+                    ) : (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleSaveAddress}
+                          className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-1.5 px-4 py-2 rounded font-bold text-xs shadow-sm cursor-pointer border-0 transition-colors"
+                        >
+                          <Save className="w-3.5 h-3.5" /> Save
+                        </button>
+                        <button
+                          onClick={handleCancelAddress}
+                          className="bg-white hover:bg-gray-50 text-gray-500 border border-gray-200 flex items-center gap-1.5 px-4 py-2 rounded font-bold text-xs cursor-pointer transition-all"
+                        >
+                          <XCircle className="w-3.5 h-3.5" /> Cancel
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Address Details</h3>
-                  <div className="grid grid-cols-1 gap-6">
-                    {/* Local Address - Full width */}
+                <div className="bg-gray-50 border border-gray-100 p-6 rounded-lg">
+                  <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-4">Address Details</h3>
+                  <div className="grid grid-cols-1 gap-4">
+                    {/* Local Address */}
                     <div>
-                      <label className="text-sm text-gray-600 flex gap-1 items-center">
-                        <Home className="w-4 h-4 text-blue-400" /> Local Address
+                      <label className="text-xs font-semibold text-gray-500 flex gap-1 items-center">
+                        <Home className="w-3.5 h-3.5 text-gray-400" /> Local Address
                       </label>
                       <textarea
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                         readOnly={!isEditingAddress}
                         rows={3}
-                        placeholder="Enter your house number, street name, locality, landmarks..."
-                        className={`w-full px-4 py-2 rounded-md border text-sm mt-1 resize-none ${
-                          isEditingAddress
-                            ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
-                            : "bg-gray-100 border-transparent"
-                        }`}
+                        placeholder="House/Plot No, Street, Locality, Landmarks..."
+                        className={`w-full px-3 py-2 rounded border text-xs mt-1 resize-none transition-all ${isEditingAddress
+                            ? "border-gray-300 bg-white focus:border-[#003e8b] outline-none"
+                            : "bg-gray-100 border-transparent text-gray-700"
+                          }`}
                       />
                     </div>
 
-                    {/* Other address fields */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {/* Other fields */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-sm text-gray-600 flex gap-1 items-center">
-                          <MapPin className="w-4 h-4 text-blue-400" /> City
+                        <label className="text-xs font-semibold text-gray-500 flex gap-1 items-center">
+                          <MapPin className="w-3.5 h-3.5 text-gray-400" /> City
                         </label>
                         <input
                           value={city}
                           onChange={(e) => setCity(e.target.value)}
                           readOnly={!isEditingAddress}
-                          className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
-                            isEditingAddress
-                              ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
-                              : "bg-gray-100 border-transparent"
-                          }`}
+                          className={`w-full px-3 py-2 rounded border text-xs mt-1 transition-all ${isEditingAddress
+                              ? "border-gray-300 bg-white focus:border-[#003e8b] outline-none"
+                              : "bg-gray-100 border-transparent text-gray-700"
+                            }`}
                         />
                       </div>
                       <div>
-                        <label className="text-sm text-gray-600">Pincode</label>
+                        <label className="text-xs font-semibold text-gray-500">Pincode</label>
                         <input
                           value={pincode}
                           onChange={(e) => setPincode(e.target.value)}
                           readOnly={!isEditingAddress}
-                          className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
-                            isEditingAddress
-                              ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
-                              : "bg-gray-100 border-transparent"
-                          }`}
+                          className={`w-full px-3 py-2 rounded border text-xs mt-1 transition-all ${isEditingAddress
+                              ? "border-gray-300 bg-white focus:border-[#003e8b] outline-none"
+                              : "bg-gray-100 border-transparent text-gray-700"
+                            }`}
                         />
                       </div>
                       <div>
-                        <label className="text-sm text-gray-600">State</label>
+                        <label className="text-xs font-semibold text-gray-500">State</label>
                         <input
                           value={state}
                           onChange={(e) => setState(e.target.value)}
                           readOnly={!isEditingAddress}
-                          className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
-                            isEditingAddress
-                              ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
-                              : "bg-gray-100 border-transparent"
-                          }`}
+                          className={`w-full px-3 py-2 rounded border text-xs mt-1 transition-all ${isEditingAddress
+                              ? "border-gray-300 bg-white focus:border-[#003e8b] outline-none"
+                              : "bg-gray-100 border-transparent text-gray-700"
+                            }`}
                         />
                       </div>
                       <div>
-                        <label className="text-sm text-gray-600">Country</label>
+                        <label className="text-xs font-semibold text-gray-500">Country</label>
                         <input
                           value={country}
                           onChange={(e) => setCountry(e.target.value)}
                           readOnly={!isEditingAddress}
-                          className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
-                            isEditingAddress
-                              ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
-                              : "bg-gray-100 border-transparent"
-                          }`}
+                          className={`w-full px-3 py-2 rounded border text-xs mt-1 transition-all ${isEditingAddress
+                              ? "border-gray-300 bg-white focus:border-[#003e8b] outline-none"
+                              : "bg-gray-100 border-transparent text-gray-700"
+                            }`}
                         />
                       </div>
                     </div>
@@ -1151,25 +1073,25 @@ export default function Account() {
             {/* FAQ */}
             {activeTab === "faq" && (
               <div>
-                <h2 className="text-xl font-semibold text-orange-600 mb-4">
+                <h2 className="text-lg font-extrabold text-gray-800 border-b border-gray-100 pb-4 mb-5">
                   Frequently Asked Questions
                 </h2>
-                <div className="bg-gray-50 p-6 rounded-xl space-y-4">
-                  <div className="border-b border-gray-200 pb-4">
-                    <h3 className="font-semibold text-gray-800 mb-2">How do I change my password?</h3>
-                    <p className="text-gray-600 text-sm">You can change your password by going to the Security section in your account settings.</p>
+                <div className="bg-gray-50 border border-gray-100 p-6 rounded-lg space-y-4">
+                  <div className="border-b border-gray-150 pb-3">
+                    <h3 className="font-bold text-xs text-gray-700 mb-1">How do I change my password?</h3>
+                    <p className="text-gray-500 text-xs leading-relaxed">You can change your password by going to the Security section in your account settings.</p>
                   </div>
-                  <div className="border-b border-gray-200 pb-4">
-                    <h3 className="font-semibold text-gray-800 mb-2">Where can I track my orders?</h3>
-                    <p className="text-gray-600 text-sm">Visit the Orders section to view all your past and current orders with tracking information.</p>
+                  <div className="border-b border-gray-150 pb-3">
+                    <h3 className="font-bold text-xs text-gray-700 mb-1">Where can I track my orders?</h3>
+                    <p className="text-gray-500 text-xs leading-relaxed">Visit the Orders section to view all your past and current orders with tracking information.</p>
                   </div>
-                  <div className="border-b border-gray-200 pb-4">
-                    <h3 className="font-semibold text-gray-800 mb-2">How to reach student support?</h3>
-                    <p className="text-gray-600 text-sm">Click on the Support option in the sidebar to connect with our WhatsApp support team.</p>
+                  <div className="border-b border-gray-150 pb-3">
+                    <h3 className="font-bold text-xs text-gray-700 mb-1">How to reach student support?</h3>
+                    <p className="text-gray-500 text-xs leading-relaxed">Click on the Support option in the sidebar to connect with our WhatsApp support team.</p>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-800 mb-2">How do I update my delivery address?</h3>
-                    <p className="text-gray-600 text-sm">Go to the Addresses section and click 'Edit Address' to update your delivery information.</p>
+                    <h3 className="font-bold text-xs text-gray-700 mb-1">How do I update my delivery address?</h3>
+                    <p className="text-gray-500 text-xs leading-relaxed">Go to the Addresses section and click 'Edit Address' to update your delivery information.</p>
                   </div>
                 </div>
               </div>
@@ -1178,73 +1100,74 @@ export default function Account() {
             {/* Security / Password Change */}
             {activeTab === "security" && (
               <>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                  <h2 className="text-xl font-semibold text-orange-600 mb-4 sm:mb-0">
-                    🔒 Security Settings
+                <div className="border-b border-gray-100 pb-4 mb-5">
+                  <h2 className="text-lg font-extrabold text-gray-800">
+                    Security Settings
                   </h2>
+                  <p className="text-xs text-gray-400 mt-1">Manage and update your login password credentials</p>
                 </div>
 
-                <div className="bg-gray-50 p-6 rounded-xl">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-6">
+                <div className="bg-gray-50 border border-gray-100 p-6 rounded-lg">
+                  <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-4">
                     {user?.password && user.password.trim() !== '' ? "Change Password" : "Set Password"}
                   </h3>
 
                   {/* Success Message */}
                   {passwordSuccess && (
-                    <div className="bg-green-50 border border-green-200 p-4 rounded-lg mb-4">
-                      <p className="text-green-700 text-sm font-medium">{passwordSuccess}</p>
+                    <div className="bg-green-50 border border-green-200 p-4 rounded-lg mb-4 text-xs font-semibold text-green-700">
+                      {passwordSuccess}
                     </div>
                   )}
 
                   {/* Error Message */}
                   {passwordError && (
-                    <div className="bg-red-50 border border-red-200 p-4 rounded-lg mb-4">
-                      <p className="text-red-700 text-sm font-medium">{passwordError}</p>
+                    <div className="bg-red-50 border border-red-200 p-4 rounded-lg mb-4 text-xs font-semibold text-red-700">
+                      {passwordError}
                     </div>
                   )}
 
                   {!isChangingPassword ? (
                     <button
                       onClick={() => setIsChangingPassword(true)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 px-6 py-3 rounded-xl shadow-md transition-all"
+                      className="bg-[#003e8b] hover:bg-[#002e66] text-white flex items-center gap-1.5 px-5 py-2.5 rounded shadow-sm transition-all text-xs font-bold border-0 cursor-pointer"
                     >
-                      <Lock className="w-4 h-4" /> {user?.password && user.password.trim() !== '' ? "Change Password" : "Set Password"}
+                      <Lock className="w-3.5 h-3.5" /> {user?.password && user.password.trim() !== '' ? "Change Password" : "Set Password"}
                     </button>
                   ) : (
                     <div className="space-y-4">
-                      {/* Current Password field - only for users who already have a password */}
+                      {/* Current Password field */}
                       {user?.password && user.password.trim() !== '' && (
                         <div>
-                          <Label htmlFor="currentPassword">Current Password</Label>
+                          <Label htmlFor="currentPassword" className="text-xs font-semibold text-gray-500">Current Password</Label>
                           <Input
                             id="currentPassword"
                             type="password"
                             placeholder="Enter your current password"
                             value={currentPassword}
                             onChange={(e) => setCurrentPassword(e.target.value)}
-                            className="mt-2"
+                            className="mt-1 text-xs px-3 py-2 border border-gray-300 rounded focus:border-[#003e8b]"
                           />
                         </div>
                       )}
 
                       {/* New Password field */}
                       <div>
-                        <Label htmlFor="newPassword">
+                        <Label htmlFor="newPassword" className="text-xs font-semibold text-gray-500">
                           {user?.password && user.password.trim() !== '' ? "New Password" : "Password"}
                         </Label>
                         <Input
                           id="newPassword"
                           type="password"
-                          placeholder={user?.password && user.password.trim() !== '' ? "Enter your new password (min 6 characters)" : "Create a password (min 6 characters)"}
+                          placeholder={user?.password && user.password.trim() !== '' ? "Enter new password (min 6 characters)" : "Create password (min 6 characters)"}
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
-                          className="mt-2"
+                          className="mt-1 text-xs px-3 py-2 border border-gray-300 rounded focus:border-[#003e8b]"
                         />
                       </div>
 
                       {/* Confirm Password field */}
                       <div>
-                        <Label htmlFor="confirmPassword">
+                        <Label htmlFor="confirmPassword" className="text-xs font-semibold text-gray-500">
                           {user?.password && user.password.trim() !== '' ? "Confirm New Password" : "Confirm Password"}
                         </Label>
                         <Input
@@ -1253,15 +1176,15 @@ export default function Account() {
                           placeholder="Re-enter your password"
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="mt-2"
+                          className="mt-1 text-xs px-3 py-2 border border-gray-300 rounded focus:border-[#003e8b]"
                         />
                       </div>
 
-                      <div className="flex gap-3 pt-4">
+                      <div className="flex gap-2.5 pt-2">
                         <button
                           onClick={handlePasswordUpdate}
                           disabled={loading}
-                          className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-medium transition-all disabled:opacity-50"
+                          className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded font-bold text-xs transition-colors border-0 cursor-pointer disabled:opacity-50"
                         >
                           {loading ? "Processing..." : (user?.password && user.password.trim() !== '' ? "Update Password" : "Set Password")}
                         </button>
@@ -1273,7 +1196,7 @@ export default function Account() {
                             setConfirmPassword("");
                             setPasswordError("");
                           }}
-                          className="bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 px-6 py-2 rounded-lg font-medium transition-all"
+                          className="bg-white hover:bg-gray-50 text-gray-600 border border-gray-250 px-5 py-2 rounded font-bold text-xs transition-colors cursor-pointer"
                         >
                           Cancel
                         </button>
@@ -1289,119 +1212,108 @@ export default function Account() {
 
       {/* Order Details Modal */}
       {selectedOrderDetails && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-100">
             {/* Modal Header */}
-            <div className="sticky top-0 bg-gradient-to-r from-orange-500 to-red-500 text-white p-6 flex justify-between items-center">
+            <div className="sticky top-0 bg-[#1c1c1c] text-white p-5 flex justify-between items-center z-10">
               <div>
-                <h2 className="text-2xl font-bold">Order #{selectedOrderDetails.orderId || selectedOrderDetails.id}</h2>
-                <p className="text-sm text-orange-100">{formatDate(selectedOrderDetails.createdAt)}</p>
+                <h2 className="text-lg font-bold">Order #{selectedOrderDetails.orderId || selectedOrderDetails.id}</h2>
+                <p className="text-[10px] text-gray-400 mt-0.5">{formatDate(selectedOrderDetails.createdAt)}</p>
               </div>
               <button
                 onClick={() => setSelectedOrderDetails(null)}
-                className="text-white hover:bg-white/20 p-2 rounded-full transition-colors"
+                className="text-gray-300 hover:text-white p-1 rounded hover:bg-white/10 transition-colors bg-transparent border-0 cursor-pointer"
               >
-                <XCircle className="w-6 h-6" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Modal Content */}
-            <div className="p-6 space-y-6">
+            <div className="p-6 space-y-5">
               {/* Order Status */}
               <div>
-                <h3 className="font-bold text-gray-800 mb-3">Current Status</h3>
-                <span className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(selectedOrderDetails.status)}`}>
-                  {selectedOrderDetails.status?.toUpperCase() || 'PENDING'}
+                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Current Status</h3>
+                <span className={`px-3 py-1 rounded text-xs font-bold tracking-wide uppercase ${getStatusColor(selectedOrderDetails.status)}`}>
+                  {selectedOrderDetails.status || 'PENDING'}
                 </span>
               </div>
 
               {/* Order Timeline */}
               <div>
-                <h3 className="font-bold text-gray-800 mb-3">Tracking Timeline</h3>
-                <div className="flex items-center justify-between gap-2 sm:gap-1 overflow-x-auto pb-4">
+                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Tracking Timeline</h3>
+                <div className="flex items-center justify-between gap-1 overflow-x-auto pb-3 pt-2">
                   {/* Step 1: Confirmed */}
-                  <div className="flex flex-col items-center min-w-max flex-1">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
-                      ['confirmed', 'shipped', 'in_transit', 'delivered'].includes(selectedOrderDetails.status?.toLowerCase())
+                  <div className="flex flex-col items-center min-w-[70px] flex-1">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shadow-sm ${['confirmed', 'shipped', 'in_transit', 'delivered'].includes(selectedOrderDetails.status?.toLowerCase())
                         ? 'bg-green-500 text-white'
-                        : 'bg-gray-300 text-gray-600'
-                    }`}>
+                        : 'bg-gray-200 text-gray-400'
+                      }`}>
                       ✓
                     </div>
-                    <p className="text-xs font-semibold mt-2 text-center text-gray-800">Confirmed</p>
-                    <p className="text-xs text-gray-500 text-center mt-1">Order confirmed</p>
+                    <p className="text-[10px] font-bold mt-2 text-center text-gray-800">Confirmed</p>
                   </div>
 
                   {/* Connector Line 1 */}
-                  <div className={`flex-1 h-1 mb-8 ${
-                    ['shipped', 'in_transit', 'delivered'].includes(selectedOrderDetails.status?.toLowerCase())
+                  <div className={`flex-1 h-0.5 mb-5 ${['shipped', 'in_transit', 'delivered'].includes(selectedOrderDetails.status?.toLowerCase())
                       ? 'bg-green-500'
-                      : 'bg-gray-300'
-                  }`}></div>
+                      : 'bg-gray-200'
+                    }`}></div>
 
                   {/* Step 2: Pickup */}
-                  <div className="flex flex-col items-center min-w-max flex-1">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
-                      ['shipped', 'in_transit', 'delivered'].includes(selectedOrderDetails.status?.toLowerCase())
+                  <div className="flex flex-col items-center min-w-[70px] flex-1">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shadow-sm ${['shipped', 'in_transit', 'delivered'].includes(selectedOrderDetails.status?.toLowerCase())
                         ? 'bg-green-500 text-white'
-                        : 'bg-gray-300 text-gray-600'
-                    }`}>
+                        : 'bg-gray-200 text-gray-400'
+                      }`}>
                       📦
                     </div>
-                    <p className="text-xs font-semibold mt-2 text-center text-gray-800">Pickup</p>
-                    <p className="text-xs text-gray-500 text-center mt-1">Picked up</p>
+                    <p className="text-[10px] font-bold mt-2 text-center text-gray-800">Pickup</p>
                   </div>
 
                   {/* Connector Line 2 */}
-                  <div className={`flex-1 h-1 mb-8 ${
-                    ['in_transit', 'delivered'].includes(selectedOrderDetails.status?.toLowerCase())
+                  <div className={`flex-1 h-0.5 mb-5 ${['in_transit', 'delivered'].includes(selectedOrderDetails.status?.toLowerCase())
                       ? 'bg-green-500'
-                      : 'bg-gray-300'
-                  }`}></div>
+                      : 'bg-gray-200'
+                    }`}></div>
 
                   {/* Step 3: In Transit */}
-                  <div className="flex flex-col items-center min-w-max flex-1">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${
-                      ['in_transit', 'delivered'].includes(selectedOrderDetails.status?.toLowerCase())
+                  <div className="flex flex-col items-center min-w-[70px] flex-1">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shadow-sm ${['in_transit', 'delivered'].includes(selectedOrderDetails.status?.toLowerCase())
                         ? 'bg-green-500 text-white'
-                        : 'bg-gray-300 text-gray-600'
-                    }`}>
+                        : 'bg-gray-200 text-gray-400'
+                      }`}>
                       🚚
                     </div>
-                    <p className="text-xs font-semibold mt-2 text-center text-gray-800">In Transit</p>
-                    <p className="text-xs text-gray-500 text-center mt-1">On the way</p>
+                    <p className="text-[10px] font-bold mt-2 text-center text-gray-800">In Transit</p>
                   </div>
 
                   {/* Connector Line 3 */}
-                  <div className={`flex-1 h-1 mb-8 ${
-                    selectedOrderDetails.status?.toLowerCase() === 'delivered'
+                  <div className={`flex-1 h-0.5 mb-5 ${selectedOrderDetails.status?.toLowerCase() === 'delivered'
                       ? 'bg-green-500'
-                      : 'bg-gray-300'
-                  }`}></div>
+                      : 'bg-gray-200'
+                    }`}></div>
 
                   {/* Step 4: Delivered */}
-                  <div className="flex flex-col items-center min-w-max flex-1">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
-                      selectedOrderDetails.status?.toLowerCase() === 'delivered'
+                  <div className="flex flex-col items-center min-w-[70px] flex-1">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shadow-sm ${selectedOrderDetails.status?.toLowerCase() === 'delivered'
                         ? 'bg-green-500 text-white'
-                        : 'bg-gray-300 text-gray-600'
-                    }`}>
+                        : 'bg-gray-200 text-gray-400'
+                      }`}>
                       ✓
                     </div>
-                    <p className="text-xs font-semibold mt-2 text-center text-gray-800">Delivered</p>
-                    <p className="text-xs text-gray-500 text-center mt-1">Delivered</p>
+                    <p className="text-[10px] font-bold mt-2 text-center text-gray-800">Delivered</p>
                   </div>
                 </div>
               </div>
 
               {/* Order Items */}
               <div>
-                <h3 className="font-bold text-gray-800 mb-3">Items</h3>
-                <div className="space-y-2">
+                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Items Ordered</h3>
+                <div className="space-y-2 border border-gray-100 rounded overflow-hidden">
                   {selectedOrderDetails.OrderItems && selectedOrderDetails.OrderItems.map((item, idx) => (
-                    <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                      <p className="text-gray-800">{item.Project?.title || 'Product'}</p>
-                      <p className="text-gray-600">Qty: {item.quantity} × ₹{item.price}</p>
+                    <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 border-b border-gray-100 last:border-b-0 text-xs">
+                      <p className="font-bold text-gray-800">{item.Project?.title || 'Product Kit'}</p>
+                      <p className="text-gray-500">Qty: {item.quantity} × ₹{item.price}</p>
                     </div>
                   ))}
                 </div>
@@ -1409,9 +1321,9 @@ export default function Account() {
 
               {/* Shipping Address */}
               <div>
-                <h3 className="font-bold text-gray-800 mb-3">Delivery Address</h3>
-                <div className="bg-gray-50 p-4 rounded-lg text-sm text-gray-700">
-                  <p>
+                <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Delivery Address</h3>
+                <div className="bg-gray-50 p-4 rounded text-xs text-gray-700 leading-relaxed border border-gray-100">
+                  <p className="font-medium">
                     {[selectedOrderDetails.address, selectedOrderDetails.city, selectedOrderDetails.state, selectedOrderDetails.pincode, selectedOrderDetails.country]
                       .filter(Boolean)
                       .join(', ')}
@@ -1420,25 +1332,27 @@ export default function Account() {
               </div>
 
               {/* Order Total */}
-              <div className="border-t pt-4">
-                <div className="flex justify-between items-center">
-                  <p className="text-lg font-bold text-gray-800">Total Amount:</p>
-                  <p className="text-2xl font-bold text-orange-600">₹{selectedOrderDetails.totalAmount || 0}</p>
+              <div className="border-t border-gray-200 pt-4 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                <div>
+                  <p className="text-xs text-gray-400">Payment status: {selectedOrderDetails.paymentStatus || 'Unknown'}</p>
                 </div>
-                <p className="text-sm text-gray-600 mt-2">Payment: {selectedOrderDetails.paymentStatus || 'Unknown'}</p>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-xs font-bold text-gray-500">Total Paid:</span>
+                  <span className="text-xl font-extrabold text-[#003e8b]">₹{selectedOrderDetails.totalAmount || 0}</span>
+                </div>
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="bg-gray-50 p-4 flex justify-end gap-3 border-t">
+            <div className="bg-gray-50 p-4 flex justify-end gap-2 border-t">
               <button
                 onClick={() => setSelectedOrderDetails(null)}
-                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors"
+                className="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded text-xs font-bold hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 Close
               </button>
               {selectedOrderDetails.status === 'delivered' && (
-                <button className="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+                <button className="px-4 py-2 bg-[#003e8b] text-white rounded text-xs font-bold hover:bg-[#002e66] transition-colors border-0 cursor-pointer">
                   Reorder
                 </button>
               )}
@@ -1449,57 +1363,57 @@ export default function Account() {
 
       {/* Cancel Order Modal */}
       {cancelOrderModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-lg max-w-md w-full overflow-hidden shadow-2xl">
             {/* Modal Header */}
-            <div className="bg-gradient-to-r from-red-500 to-red-600 text-white p-6 flex justify-between items-center rounded-t-xl">
-              <h2 className="text-xl font-bold">Cancel Order</h2>
+            <div className="bg-red-600 text-white p-5 flex justify-between items-center">
+              <h2 className="text-base font-bold">Cancel Order Request</h2>
               <button
                 onClick={() => {
                   setCancelOrderModal(null);
                   setCancelReason("");
                 }}
-                className="text-white hover:bg-white/20 p-2 rounded-full transition-colors"
+                className="text-white/80 hover:text-white p-1 rounded hover:bg-white/10 transition-colors bg-transparent border-0 cursor-pointer"
               >
-                <XCircle className="w-5 h-5" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Modal Content */}
-            <div className="p-6 space-y-4">
-              <div>
-                <h3 className="font-bold text-gray-800 mb-2">Order #{cancelOrderModal.orderId || cancelOrderModal.id}</h3>
-                <p className="text-sm text-gray-600 mb-4">Amount: ₹{cancelOrderModal.totalAmount || 0}</p>
+            <div className="p-5 space-y-4">
+              <div className="pb-3 border-b border-gray-100 text-xs">
+                <h3 className="font-bold text-gray-800">Order #{cancelOrderModal.orderId || cancelOrderModal.id}</h3>
+                <p className="text-gray-500 mt-1">Amount to be refunded: <span className="font-extrabold text-[#003e8b]">₹{cancelOrderModal.totalAmount || 0}</span></p>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Why do you want to cancel this order?
+                <label className="block text-xs font-bold text-gray-600 mb-1.5">
+                  Reason for Cancellation <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   value={cancelReason}
                   onChange={(e) => setCancelReason(e.target.value)}
-                  placeholder="Please tell us the reason for cancellation..."
-                  rows={5}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"
+                  placeholder="Please describe why you wish to cancel this order..."
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded text-xs focus:border-[#003e8b] outline-none resize-none"
                 />
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 p-3 rounded-lg">
-                <p className="text-xs text-blue-700">
-                  ℹ️ Your refund will be processed within 5-7 business days if the order hasn't been shipped yet.
+              <div className="bg-blue-50 border border-blue-100 p-3 rounded">
+                <p className="text-[10px] text-blue-700 leading-relaxed font-semibold">
+                  ℹ️ If the order has not been dispatched, your refund will be automatically processed back to the source account in 5-7 business days.
                 </p>
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="bg-gray-50 p-4 flex justify-end gap-3 border-t rounded-b-xl">
+            <div className="bg-gray-50 p-4 flex justify-end gap-2 border-t">
               <button
                 onClick={() => {
                   setCancelOrderModal(null);
                   setCancelReason("");
                 }}
-                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors"
+                className="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded text-xs font-bold hover:bg-gray-50 cursor-pointer"
               >
                 Keep Order
               </button>
@@ -1509,18 +1423,17 @@ export default function Account() {
                     alert("Please provide a reason for cancellation");
                     return;
                   }
-                  
+
                   try {
                     setCancelSubmitting(true);
-                    // API call to cancel order
                     await api.post(`/api/orders/${cancelOrderModal.id}/cancel`, {
                       reason: cancelReason
                     });
-                    
+
                     alert("Order cancellation request submitted successfully!");
                     setCancelOrderModal(null);
                     setCancelReason("");
-                    handleRefreshOrders(); // Refresh orders list
+                    handleRefreshOrders();
                   } catch (error) {
                     console.error("Error cancelling order:", error);
                     alert("Failed to cancel order. Please try again.");
@@ -1529,9 +1442,9 @@ export default function Account() {
                   }
                 }}
                 disabled={cancelSubmitting || !cancelReason.trim()}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-red-600 text-white rounded text-xs font-bold hover:bg-red-700 transition-colors border-0 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {cancelSubmitting ? "Submitting..." : "Submit Request"}
+                {cancelSubmitting ? "Submitting..." : "Submit Cancel"}
               </button>
             </div>
           </div>

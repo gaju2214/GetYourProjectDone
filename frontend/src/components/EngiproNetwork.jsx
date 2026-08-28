@@ -399,16 +399,18 @@ export default function EngiProNetwork({ isOpen, onClose }) {
             className="relative bg-white rounded-2xl shadow-2xl max-w-4xl w-full mx-4 overflow-hidden"
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-red-600 to-orange-500 text-white p-6">
+            <div className="bg-gradient-to-r from-red-600 to-blue-600 text-white p-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <img
-                    src="/logo.png"
-                    alt="Get Your Project Done"
-                    width={200}
-                    height={45}
-                    className="h-12 w-auto"
-                  />
+                  <div className="bg-white px-3 py-1.5 rounded-lg flex items-center justify-center shadow-sm">
+                    <img
+                      src="/logo.png"
+                      alt="Get Your Project Done"
+                      width={200}
+                      height={45}
+                      className="h-9 w-auto object-contain"
+                    />
+                  </div>
                   <div>
                     <h2 className="text-2xl font-bold">Project Ecosystem</h2>
                     <p className="text-red-100 mt-1">
@@ -428,7 +430,7 @@ export default function EngiProNetwork({ isOpen, onClose }) {
             </div>
 
             {/* Network Visualization using SVG */}
-            <div className="p-6 bg-gradient-to-br from-gray-50 to-orange-50">
+            <div className="p-6 bg-gradient-to-br from-gray-50 to-blue-50">
               <motion.svg
                 viewBox="0 0 800 600"
                 className="w-full h-[400px] border rounded-lg bg-white shadow-inner"

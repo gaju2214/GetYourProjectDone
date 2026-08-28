@@ -184,7 +184,7 @@ export default function CartPage() {
       await api.delete(`/api/cart/${id}`);
       const updatedCart = cartItems.filter((item) => item.id !== id);
       setCartItems(updatedCart);
-      
+
       // Recalculate totals after removal
       const newTotal = updatedCart.reduce(
         (sum, item) => sum + (item.price || 0) * item.quantity,
@@ -244,7 +244,7 @@ export default function CartPage() {
 
     try {
       setError(null); // Clear any previous errors
-      
+
       // Create an array to store all order promises
       const orderPromises = cartItems.map(async (item) => {
         const orderData = {
@@ -329,23 +329,26 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+        {/* Page Title Header */}
+        <div className="mb-8 flex flex-col">
+          <h1 className="text-3xl font-extrabold text-gray-900 mb-1">
             Shopping Cart
           </h1>
-          <p className="text-gray-600 text-lg">
+          <div className="h-1 w-12 bg-[#003e8b] mb-3 rounded"></div>
+          <p className="text-gray-500 text-sm">
             Review your items and complete your order
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 md:gap-8">
-          <div className="xl:col-span-3 space-y-6">
-            <Card className="shadow-lg border-0 w-full">
-              <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
-                <CardTitle className="text-xl flex items-center gap-2">
-                  <Package className="h-6 w-6" />
+          {/* Left Column: Cart Items List */}
+          <div className="lg:col-span-3 space-y-6">
+            <Card className="shadow-sm border border-gray-200 bg-white w-full rounded-lg overflow-hidden">
+              <CardHeader className="bg-[#1c1c1c] text-white p-4">
+                <CardTitle className="text-base font-bold flex items-center gap-2">
+                  <Package className="h-5 w-5 text-[#003e8b]" />
                   Order Items ({itemCount})
                 </CardTitle>
               </CardHeader>
@@ -353,34 +356,35 @@ export default function CartPage() {
                 {cartItems.map((item, index) => (
                   <div
                     key={item.id}
-                    className={`p-6 ${
-                      index !== cartItems.length - 1 ? "border-b" : ""
-                    }`}
+                    className={`p-5 ${index !== cartItems.length - 1 ? "border-b border-gray-100" : ""
+                      }`}
                   >
                     <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                      <div className="relative">
+                      {/* Item Thumbnail */}
+                      <div className="relative shrink-0 flex justify-center items-center">
                         <img
-                          src={item.image || '/placeholder-image.jpg'} // Add fallback image
+                          src={item.image || '/placeholder-image.jpg'}
                           alt={item.title || 'Product'}
                           loading="lazy"
-                          className="w-full sm:w-[120px] sm:h-[120px] object-cover rounded-xl shadow-md"
+                          className="w-24 h-24 sm:w-28 sm:h-28 object-contain rounded border border-gray-100 bg-gray-50"
                           onError={(e) => {
-                            e.target.src = '/placeholder-image.jpg'; // Fallback on error
+                            e.target.src = '/placeholder-image.jpg';
                           }}
                         />
 
-                        <Badge className="absolute -top-2 -right-2 bg-blue-600">
-                          {item.difficulty || 'N/A'}
-                        </Badge>
+                        <span className="absolute -top-1.5 -right-1.5 bg-gray-800 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm border border-white">
+                          {item.difficulty || 'Beginner'}
+                        </span>
                       </div>
 
-                      <div className="flex-1 space-y-4">
+                      {/* Item details */}
+                      <div className="flex-1 space-y-3">
                         <div>
-                          <h3 className="font-bold text-xl text-gray-900 mb-2">
+                          <h3 className="font-bold text-base text-gray-800 hover:text-[#003e8b] transition-colors leading-snug">
                             {item.title || 'Untitled Product'}
                           </h3>
                           <div
-                            className="text-gray-600 leading-relaxed"
+                            className="text-gray-500 text-xs mt-1 leading-relaxed line-clamp-2"
                             dangerouslySetInnerHTML={{
                               __html:
                                 item.description?.length > 120
@@ -388,54 +392,55 @@ export default function CartPage() {
                                   : item.description || 'No description available',
                             }}
                           ></div>
-                          <div className="flex gap-2 mt-3">
-                            <Badge variant="outline">
+                          <div className="flex gap-1.5 mt-2.5">
+                            <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded font-semibold">
                               {typeof item.category === "object"
                                 ? item.category?.name || 'Category'
                                 : item.category || 'Category'}
-                            </Badge>
-                            <Badge variant="outline">
+                            </span>
+                            <span className="text-[9px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded font-semibold">
                               {typeof item.subcategory === "object"
                                 ? item.subcategory?.name || 'Subcategory'
                                 : item.subcategory || 'Subcategory'}
-                            </Badge>
+                            </span>
                           </div>
                         </div>
 
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                          <div className="flex items-center gap-3">
+                        {/* Quantity controls and price tag */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-gray-50 pt-3">
+                          <div className="flex items-center gap-2 bg-white border border-gray-200 rounded overflow-hidden max-w-fit">
                             <Button
-                              variant="outline"
+                              variant="ghost"
                               size="sm"
                               onClick={() =>
                                 updateQuantity(item.id, item.quantity - 1)
                               }
-                              className="h-8 w-8 p-0"
+                              className="h-8 w-8 p-0 rounded-none bg-gray-50 hover:bg-gray-100 border-r border-gray-200 text-gray-600 cursor-pointer"
                               disabled={item.quantity <= 1}
                             >
-                              <Minus className="h-4 w-4" />
+                              <Minus className="h-3 w-3" />
                             </Button>
-                            <span className="px-4 py-2 bg-gray-100 rounded-lg font-semibold min-w-[60px] text-center">
+                            <span className="px-3 text-xs font-bold text-gray-800 min-w-[30px] text-center">
                               {item.quantity}
                             </span>
                             <Button
-                              variant="outline"
+                              variant="ghost"
                               size="sm"
                               onClick={() =>
                                 updateQuantity(item.id, item.quantity + 1)
                               }
-                              className="h-8 w-8 p-0"
+                              className="h-8 w-8 p-0 rounded-none bg-gray-50 hover:bg-gray-100 border-l border-gray-200 text-gray-600 cursor-pointer"
                             >
-                              <Plus className="h-4 w-4" />
+                              <Plus className="h-3 w-3" />
                             </Button>
                           </div>
 
-                          <div className="flex items-center gap-4">
+                          <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
                             <div className="text-right">
-                              <div className="text-2xl font-bold text-green-600">
+                              <div className="text-base font-extrabold text-[#003e8b]">
                                 ₹{((item.price || 0) * item.quantity).toLocaleString()}
                               </div>
-                              <div className="text-sm text-gray-500">
+                              <div className="text-[10px] text-gray-400">
                                 ₹{(item.price || 0).toLocaleString()} each
                               </div>
                             </div>
@@ -443,9 +448,9 @@ export default function CartPage() {
                               variant="ghost"
                               size="sm"
                               onClick={() => removeItem(item.id)}
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                              className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded-full cursor-pointer transition-colors"
                             >
-                              <Trash2 className="h-5 w-5" />
+                              <Trash2 className="h-4.5 w-4.5" />
                             </Button>
                           </div>
                         </div>
@@ -457,46 +462,47 @@ export default function CartPage() {
             </Card>
           </div>
 
-          <div className="xl:col-span-2 space-y-6">
-            {/* Payment Method */}
-            <Card className="shadow-lg border-0">
-              <CardHeader className="bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-t-lg">
-                <CardTitle className="text-xl">Payment Method</CardTitle>
+          {/* Right Column: Checkout block */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Payment Method Selector */}
+            <Card className="shadow-sm border border-gray-200 bg-white rounded-lg overflow-hidden">
+              <CardHeader className="bg-[#1c1c1c] text-white p-4">
+                <CardTitle className="text-sm font-bold">Payment Method</CardTitle>
               </CardHeader>
-              <CardContent className="p-6">
-                <div className="space-y-3">
+              <CardContent className="p-4">
+                <div className="space-y-2.5">
                   {[
                     {
                       id: "op",
                       icon: Smartphone,
                       label: "Online Payment",
-                      color: "text-blue-600",
+                      color: "text-[#003e8b]",
                     },
                     {
                       id: "cod",
                       icon: Banknote,
-                      label: "Cash on Delivery",
-                      color: "text-gray-600",
+                      label: "Cash on Delivery (COD)",
+                      color: "text-gray-500",
                     },
                   ].map((method) => (
                     <div
                       key={method.id}
-                      className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-md ${
-                        paymentMethod === method.id
-                          ? "border-blue-500 bg-blue-50 shadow-md"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
+                      className={`p-3 border rounded-lg cursor-pointer transition-all duration-200 flex items-center justify-between ${paymentMethod === method.id
+                        ? "border-[#003e8b] bg-blue-50/50 shadow-sm"
+                        : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                        }`}
                       onClick={() => setPaymentMethod(method.id)}
                     >
-                      <div className="flex items-center gap-3">
-                        <method.icon className={`h-6 w-6 ${method.color}`} />
-                        <span className="font-semibold text-gray-900">
+                      <div className="flex items-center gap-2.5">
+                        <method.icon className={`h-5 w-5 ${method.color}`} />
+                        <span className="text-xs font-bold text-gray-700">
                           {method.label}
                         </span>
+                      </div>
+                      <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${paymentMethod === method.id ? "border-[#003e8b]" : "border-gray-300"
+                        }`}>
                         {paymentMethod === method.id && (
-                          <div className="ml-auto w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                            <div className="w-2 h-2 bg-white rounded-full"></div>
-                          </div>
+                          <div className="w-1.5 h-1.5 bg-[#003e8b] rounded-full"></div>
                         )}
                       </div>
                     </div>
@@ -505,16 +511,16 @@ export default function CartPage() {
               </CardContent>
             </Card>
 
-            {/* Order Summary */}
-            <Card className="shadow-lg border-0">
-              <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-t-lg">
-                <CardTitle className="text-xl">Order Summary</CardTitle>
+            {/* Order Summary Checkout details */}
+            <Card className="shadow-sm border border-gray-200 bg-white rounded-lg overflow-hidden">
+              <CardHeader className="bg-[#1c1c1c] text-white p-4">
+                <CardTitle className="text-sm font-bold">Order Summary</CardTitle>
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
-                <div className="space-y-3">
-                  <div className="flex justify-between text-lg">
+              <CardContent className="p-5 space-y-4">
+                <div className="space-y-2.5 text-xs text-gray-500">
+                  <div className="flex justify-between">
                     <span>Subtotal ({itemCount} items)</span>
-                    <span className="font-semibold">
+                    <span className="font-semibold text-gray-800">
                       ₹{total.toLocaleString()}
                     </span>
                   </div>
@@ -528,7 +534,7 @@ export default function CartPage() {
 
                   <div className="flex justify-between">
                     <span>GST (18%)</span>
-                    <span className="font-semibold">
+                    <span className="font-semibold text-gray-800">
                       ₹{gstAmount.toLocaleString()}
                     </span>
                   </div>
@@ -536,25 +542,24 @@ export default function CartPage() {
                   <div className="flex justify-between">
                     <span>Delivery Charges</span>
                     <span
-                      className={`font-semibold ${
-                        deliveryCharge === 0 ? "text-green-600" : ""
-                      }`}
+                      className={`font-semibold ${deliveryCharge === 0 ? "text-green-600" : "text-gray-800"
+                        }`}
                     >
                       {deliveryCharge === 0 ? "FREE" : `₹${deliveryCharge}`}
                     </span>
                   </div>
 
-                  <Separator className="my-4" />
+                  <Separator className="my-3" />
 
-                  <div className="flex justify-between text-xl font-bold">
+                  <div className="flex justify-between text-sm font-bold text-gray-800 pt-1">
                     <span>Total Amount</span>
-                    <span className="text-green-600">
+                    <span className="text-[#003e8b] text-base font-extrabold">
                       ₹{finalTotal.toLocaleString()}
                     </span>
                   </div>
                 </div>
 
-                <div className="pt-4 flex justify-center">
+                <div className="pt-2 flex justify-center w-full">
                   <OrderButton
                     onOrderComplete={handleCheckout}
                     finalTotal={finalTotal}
@@ -568,8 +573,8 @@ export default function CartPage() {
                   />
                 </div>
 
-                <div className="text-center text-sm text-gray-500 mt-4">
-                  <p>🔒 Your payment information is secure and encrypted</p>
+                <div className="text-center text-[10px] text-gray-400 mt-2">
+                  <p>🔒 Your payment details are encrypted and secure.</p>
                 </div>
               </CardContent>
             </Card>

@@ -23,3 +23,15 @@ table td {
 table thead th {
   white-space: nowrap !important;
 }
+
+/* Global override to widen main page layout wrapper containers and decrease empty margins on desktop */
+@media (min-width: 1024px) {
+  .max-w-7xl {
+    max-width: 97% !important;
+  }
+}
+@media (min-width: 1680px) {
+  .max-w-7xl {
+    max-width: 1720px !important;
+  }
+}

@@ -17,12 +17,12 @@ export default function CategoriesPage() {
 
   useEffect(() => {
     // Set page title
-    document.title = "Engineering Project Categories | Electronics, Mechanical, Software | Get Your Project Done";
-    
+    document.title = "Engineering Project Categories | Electronics, Mechanical, Software | KitsIndia";
+
     // Set meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 
+      metaDescription.setAttribute('content',
         'Explore 6+ engineering project categories: Electronics, Software, Mechanical, Electrical, Civil & Mechatronics. 500+ complete project kits with source code & expert support!'
       );
     } else {
@@ -42,16 +42,26 @@ export default function CategoriesPage() {
     Electrical: "🔌",
     Civil: "🏗️",
     Mechatronics: "🤖",
+    Robotics: "🤖",
+    IoT: "🌐",
+    "AI/ML": "🧠",
+    "Data Science": "📊",
+    "Engineering kits": "🛠️",
   };
 
   const categoryColors = {
-    Electronics: "from-blue-500 to-cyan-500",
-    Software: "from-purple-500 to-pink-500",
-    Computer: "from-purple-500 to-pink-500",
-    Mechanical: "from-orange-500 to-red-500",
-    Electrical: "from-yellow-500 to-orange-500",
-    Civil: "from-green-500 to-teal-500",
-    Mechatronics: "from-indigo-500 to-purple-500",
+    Electronics: "from-[#003e8b] to-[#002e66]",
+    Software: "from-[#003e8b] to-[#002e66]",
+    Computer: "from-[#003e8b] to-[#002e66]",
+    Mechanical: "from-[#003e8b] to-[#002e66]",
+    Electrical: "from-[#003e8b] to-[#002e66]",
+    Civil: "from-[#003e8b] to-[#002e66]",
+    Mechatronics: "from-[#003e8b] to-[#002e66]",
+    Robotics: "from-[#003e8b] to-[#002e66]",
+    IoT: "from-[#003e8b] to-[#002e66]",
+    "AI/ML": "from-[#003e8b] to-[#002e66]",
+    "Data Science": "from-[#003e8b] to-[#002e66]",
+    "Engineering kits": "from-[#003e8b] to-[#002e66]",
   };
 
   useEffect(() => {
@@ -81,8 +91,54 @@ export default function CategoriesPage() {
       .catch((err) => console.error("Error fetching categories:", err));
   }, []);
 
-  if (!categoriesData.length)
-    return <p className="text-center">Loading categories...</p>;
+  if (!categoriesData.length) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
+        <div className="max-w-7xl mx-auto px-4">
+          {/* Skeleton Header */}
+          <div className="text-center mb-12 animate-pulse">
+            <div className="h-12 bg-gray-200 rounded w-1/3 mx-auto mb-4"></div>
+            <div className="h-6 bg-gray-200 rounded w-2/3 mx-auto mb-2"></div>
+            <div className="h-6 bg-gray-200 rounded w-1/2 mx-auto"></div>
+          </div>
+
+          {/* Skeleton Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100 animate-pulse">
+                {/* Header aspect */}
+                <div className="h-24 bg-gray-200 p-6 flex items-center justify-between">
+                  <div className="flex items-center gap-3 w-full">
+                    <div className="w-12 h-12 rounded-full bg-gray-300"></div>
+                    <div className="space-y-2 w-2/3">
+                      <div className="h-6 bg-gray-300 rounded w-3/4"></div>
+                      <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+                    </div>
+                  </div>
+                </div>
+                {/* Content aspect */}
+                <div className="p-6 space-y-5">
+                  <div className="space-y-2">
+                    <div className="h-3.5 bg-gray-200 rounded w-full"></div>
+                    <div className="h-3.5 bg-gray-200 rounded w-5/6"></div>
+                  </div>
+                  <div className="space-y-2.5">
+                    <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                    <div className="flex gap-2">
+                      <div className="h-6 bg-gray-200 rounded w-16"></div>
+                      <div className="h-6 bg-gray-200 rounded w-20"></div>
+                      <div className="h-6 bg-gray-200 rounded w-14"></div>
+                    </div>
+                  </div>
+                  <div className="h-10 bg-gray-200 rounded w-full mt-4"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-8">
@@ -162,11 +218,13 @@ export default function CategoriesPage() {
                     </div>
 
                     {category && categorySlug && (
-                      <Link to={`/categories/${categorySlug}`}>
-                        <Button className="text-white mt-4 grouptext-lg px-20 bg-red-500 hover:bg-red-700">
-                          Explore {category} Projects
-                        </Button>
-                      </Link>
+                      <div className="flex justify-center mt-6">
+                        <Link to={`/categories/${categorySlug}`} className="w-full">
+                          <Button className="w-full text-white bg-red-500 hover:bg-red-700 font-semibold py-2.5 rounded-lg transition-colors text-sm">
+                            Explore {category} Projects
+                          </Button>
+                        </Link>
+                      </div>
                     )}
                   </div>
                 </CardContent>
@@ -193,7 +251,7 @@ export default function CategoriesPage() {
             <div className="text-gray-600">Support</div>
           </div>
           <div className="text-center p-6 bg-white rounded-xl shadow-lg">
-            <Zap className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+            <Zap className="h-8 w-8 text-blue-700 mx-auto mb-2" />
             <div className="text-2xl font-bold text-gray-900">4.8/5</div>
             <div className="text-gray-600">Rating</div>
           </div>

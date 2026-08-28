@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import api from "../api"; // adjust path based on file location
 import { User, Lock, Eye, EyeOff, Shield } from "lucide-react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 const AdminRegister = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -9,7 +9,7 @@ const AdminRegister = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -19,38 +19,38 @@ const navigate = useNavigate();
   };
 
   const handleSubmit = async () => {
-  setIsLoading(true);
-  try {
-    const res = await api.post("/api/admin/register", formData, {
-      withCredentials: true,
-    });
+    setIsLoading(true);
+    try {
+      const res = await api.post("/api/admin/register", formData, {
+        withCredentials: true,
+      });
 
-    // Axios returns data directly
-    if (res.status === 200) {
-      alert(res.data.message);
-      console.log(res.data.admin);
-      navigate("/getproject"); // ✅ Soft redirect using React Router
-    } else {
-      alert(res.data.message);
+      // Axios returns data directly
+      if (res.status === 200) {
+        alert(res.data.message);
+        console.log(res.data.admin);
+        navigate("/getproject"); // ✅ Soft redirect using React Router
+      } else {
+        alert(res.data.message);
+      }
+    } catch (err) {
+      alert("Registration failed");
+      console.error(err); // For debugging
+    } finally {
+      setIsLoading(false);
     }
-  } catch (err) { 
-    alert("Registration failed");
-    console.error(err); // For debugging
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-orange-50 to-yellow-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-50 to-yellow-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md relative overflow-hidden">
         {/* Top accent bar */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-orange-600"></div>
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-blue-700"></div>
 
         {/* Logo Section */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
               <Shield className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -80,7 +80,7 @@ const navigate = useNavigate();
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 transition-colors duration-200"
+                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 transition-colors duration-200"
                 placeholder="admin@example.com"
               />
             </div>
@@ -105,7 +105,7 @@ const navigate = useNavigate();
                 value={formData.password}
                 onChange={handleInputChange}
                 required
-                className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-500 transition-colors duration-200"
+                className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600 transition-colors duration-200"
                 placeholder="Enter your password"
               />
               <button
@@ -127,7 +127,7 @@ const navigate = useNavigate();
             type="button"
             onClick={handleSubmit}
             disabled={isLoading}
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
+            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
           >
             {isLoading ? (
               <div className="flex items-center">
@@ -140,25 +140,25 @@ const navigate = useNavigate();
           </button>
         </div>
         {/* Register Link */}
-<div className="text-center mt-4">
-  <p className="text-sm text-gray-600">
-    Don’t have an account?{" "}
-    <span
-      className="text-orange-600 font-medium cursor-pointer hover:underline"
-      onClick={() => navigate("/adlogin")}
-    >
-     login here
-    </span>
-  </p>
-</div>
+        <div className="text-center mt-4">
+          <p className="text-sm text-gray-600">
+            Don’t have an account?{" "}
+            <span
+              className="text-blue-700 font-medium cursor-pointer hover:underline"
+              onClick={() => navigate("/adlogin")}
+            >
+              login here
+            </span>
+          </p>
+        </div>
 
 
         {/* Background decoration */}
-        <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full opacity-20"></div>
-        <div className="absolute -top-10 -left-10 w-24 h-24 bg-gradient-to-br from-orange-100 to-yellow-100 rounded-full opacity-20"></div>
+        <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full opacity-20"></div>
+        <div className="absolute -top-10 -left-10 w-24 h-24 bg-gradient-to-br from-blue-100 to-yellow-100 rounded-full opacity-20"></div>
       </div>
     </div>
   );
 };
 
-export default AdminRegister ;
+export default AdminRegister;

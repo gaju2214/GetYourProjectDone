@@ -91,14 +91,14 @@
 
 
 //   return (
-//     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
+//     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-red-50 flex items-center justify-center p-4">
 //       <div className="w-full max-w-md">
 //         <Card className="shadow-xl">
 //           <CardHeader className="text-center">
 //             <div className="flex justify-center mb-4">
 //               <img
-//                 src="/logo.png"
-//                 alt="Get Your Project Done"
+//                 src="/logo-kitsindia.png"
+//                 alt="KitsIndia"
 //                 width={200}
 //                 height={45}
 //                 className="h-12 w-auto"
@@ -285,7 +285,7 @@
 //                 <p>Don’t have an account?</p>
 //                 <Link
 //                   to="/auth/register"
-//                   className="text-orange-600 hover:underline"
+//                   className="text-blue-700 hover:underline"
 //                 >
 //                   Register Now
 //                 </Link>
@@ -434,32 +434,33 @@ export default function LoginPage() {
   // If coming from Google OAuth
   if (googleUserId) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-slate-100/50 flex items-center justify-center py-6 px-4">
         <div className="w-full max-w-md">
-          <Card className="shadow-xl">
-            <CardHeader className="text-center">
-              <div className="flex justify-center mb-4">
+          <div className="bg-white/90 backdrop-blur-xl border border-gray-100 shadow-xl rounded-2xl overflow-hidden p-5 sm:p-6">
+            <div className="text-center mb-4">
+              <div className="flex justify-center mb-3">
                 <img
-                  src="/logo.png"
-                  alt="Get Your Project Done"
-                  width={200}
-                  height={45}
-                  className="h-12 w-auto"
+                  src="/logo-kitsindia.png"
+                  alt="KitsIndia"
+                  width={170}
+                  height={38}
+                  className="h-10 w-auto"
                 />
               </div>
-              <CardTitle className="text-2xl font-bold">Complete Your Profile</CardTitle>
-              <p className="text-gray-600 text-sm">
+              <h1 className="text-2xl font-black text-gray-900 tracking-tight">Complete Your Profile</h1>
+              <p className="text-xs text-gray-500 mt-1">
                 Hi {googleName}, please verify your contact number
               </p>
-            </CardHeader>
+              <div className="w-10 h-1 bg-[#003e8b] mx-auto mt-2.5 rounded-full"></div>
+            </div>
 
-            <CardContent className="space-y-6">
+            <div className="space-y-4">
               {!otpSent ? (
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="google-phone">Phone Number</Label>
-                    <div className="flex mt-1">
-                      <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
+                    <Label htmlFor="google-phone" className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Phone Number</Label>
+                    <div className="flex mt-1 shadow-sm rounded-lg overflow-hidden border border-gray-200 focus-within:border-[#003e8b] focus-within:ring-4 focus-within:ring-blue-100/50 transition-all duration-200">
+                      <span className="inline-flex items-center px-3.5 bg-gray-50 text-gray-500 text-xs font-semibold border-r border-gray-200">
                         +91
                       </span>
                       <Input
@@ -470,17 +471,17 @@ export default function LoginPage() {
                         onChange={(e) =>
                           setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))
                         }
-                        className="rounded-l-none"
+                        className="border-0 focus:ring-0 focus:border-0 rounded-l-none text-sm h-10 px-3 w-full outline-none focus:outline-none"
                       />
                     </div>
                   </div>
 
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-gray-400 font-semibold">
                     Email: {googleEmail}
                   </p>
 
                   <Button
-                    className="w-full bg-red-600 hover:bg-red-700 text-white"
+                    className="w-full bg-[#003e8b] hover:bg-[#002e66] text-white font-bold h-10 rounded-lg shadow-sm hover:shadow transition-all cursor-pointer border-0 text-xs uppercase tracking-wider mt-2"
                     onClick={handleGoogleOtpSend}
                     disabled={loading || phoneNumber.length !== 10}
                   >
@@ -490,24 +491,28 @@ export default function LoginPage() {
               ) : (
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="otp">Enter OTP</Label>
-                    <Input
-                      id="otp"
-                      type="text"
-                      placeholder="000000"
-                      value={otp}
-                      onChange={(e) =>
-                        setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
-                      }
-                      className="text-center text-2xl tracking-widest"
-                    />
-                    <p className="text-sm text-gray-600 mt-2">
+                    <Label htmlFor="otp" className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Enter OTP</Label>
+                    <div className="mt-1 shadow-sm rounded-lg overflow-hidden border border-gray-200 focus-within:border-[#003e8b] focus-within:ring-4 focus-within:ring-blue-100/50 transition-all duration-200">
+                      <Input
+                        id="otp"
+                        type="text"
+                        placeholder="000000"
+                        value={otp}
+                        onChange={(e) =>
+                          setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
+                        }
+                        className="border-0 focus:ring-0 focus:border-0 text-center text-xl tracking-widest h-10 w-full outline-none focus:outline-none"
+                        maxLength="6"
+                        autoFocus
+                      />
+                    </div>
+                    <p className="text-[10px] text-gray-400 mt-1.5 text-center">
                       OTP sent to +91 {phoneNumber}
                     </p>
                   </div>
 
                   <Button
-                    className="w-full bg-red-600 hover:bg-red-700 text-white"
+                    className="w-full bg-[#003e8b] hover:bg-[#002e66] text-white font-bold h-10 rounded-lg shadow-sm transition-all cursor-pointer border-0 text-xs uppercase tracking-wider"
                     onClick={handleVerifyOtp}
                     disabled={loading || otp.length !== 6}
                   >
@@ -516,18 +521,18 @@ export default function LoginPage() {
 
                   <Button
                     variant="ghost"
-                    className="w-full"
+                    className="w-full text-xs font-bold text-gray-500 hover:text-gray-800 cursor-pointer h-9 mt-1"
                     onClick={() => setOtpSent(false)}
                   >
                     Change Phone Number
                   </Button>
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          <div className="mt-6 p-4 bg-white/80 rounded-lg text-center">
-            <p className="text-xs text-gray-600">
+          <div className="mt-3 p-2.5 bg-white/60 border border-gray-100/50 rounded-xl text-center">
+            <p className="text-[10px] text-gray-505">
               🔒 Your phone number will be verified via OTP for security.
             </p>
           </div>
@@ -538,97 +543,93 @@ export default function LoginPage() {
 
   // Normal login with OTP
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/20 to-slate-100/50 flex items-center justify-center py-6 px-4">
       <div className="w-full max-w-md">
-        <Card className="shadow-xl">
-          <CardHeader className="text-center">
-            <div className="flex justify-center mb-4">
+        <div className="bg-white/90 backdrop-blur-xl border border-gray-100 shadow-xl rounded-2xl overflow-hidden p-5 sm:p-6">
+          <div className="text-center mb-4">
+            <div className="flex justify-center mb-3">
               <img
-                src="/logo.png"
-                alt="Get Your Project Done"
-                width={200}
-                height={45}
-                className="h-12 w-auto"
+                src="/logo-kitsindia.png"
+                alt="KitsIndia"
+                width={170}
+                height={38}
+                className="h-10 w-auto"
               />
             </div>
-            <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-            <p className="text-gray-600">Sign in to your account</p>
-          </CardHeader>
+            <h1 className="text-2xl font-black text-gray-900 tracking-tight">
+              Create Account
+            </h1>
+            <p className="text-xs text-gray-500 mt-1">Join our engineering platform to get started</p>
+            <div className="w-10 h-1 bg-[#003e8b] mx-auto mt-2.5 rounded-full"></div>
+          </div>
 
-          <CardContent className="space-y-6">
-            {/* Only OTP login is active. Google login removed temporarily. */}
-
-            <Separator />
-
-            {/* OTP Login Option */}
-            <div className="space-y-4">
-              <h3 className="text-center font-semibold text-gray-700">Login with OTP</h3>
-
-              {!otpSent ? (
-                <>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="name">Full Name</Label>
+          <div className="space-y-4">
+            {!otpSent ? (
+              <>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="name" className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Full Name</Label>
+                    <div className="mt-1 shadow-sm rounded-lg overflow-hidden border border-gray-200 focus-within:border-[#003e8b] focus-within:ring-4 focus-within:ring-blue-100/50 transition-all duration-200">
                       <Input
                         id="name"
                         type="text"
                         placeholder="Enter your name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
+                        className="border-0 focus:ring-0 focus:border-0 text-sm h-10 px-3 w-full outline-none focus:outline-none"
                       />
                     </div>
-
-                    <div>
-                      <Label htmlFor="phone">Phone Number</Label>
-                      <div className="flex mt-1">
-                        <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">
-                          +91
-                        </span>
-                        <Input
-                          id="phone"
-                          type="tel"
-                          placeholder="Enter 10-digit number"
-                          value={phoneNumber}
-                          onChange={(e) =>
-                            setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))
-                          }
-                          className="rounded-l-none"
-                        />
-                      </div>
-                    </div>
                   </div>
 
-                  <Button
-                    className="w-full bg-red-600 hover:bg-red-700 text-white"
-                    onClick={handleSendOtp}
-                    disabled={loading || !name.trim() || phoneNumber.length !== 10}
-                  >
-                    {loading ? "Sending..." : "OTP"}
-                  </Button>
-
-                  {/* Already have account section */}
-                  <div className="relative my-4">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-white text-gray-500">Or</span>
-                    </div>
-                  </div>
-
-                  <Link to="/auth/login">
-                    <Button
-                      type="button"
-                      className="w-full bg-white text-gray-900 border-2 border-gray-400 hover:bg-gray-50"
-                    >
-                      Already have account?
-                    </Button>
-                  </Link>
-                </>
-              ) : (
-                <>
                   <div>
-                    <Label htmlFor="otp">Enter OTP</Label>
+                    <Label htmlFor="phone" className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Phone Number</Label>
+                    <div className="flex mt-1 shadow-sm rounded-lg overflow-hidden border border-gray-200 focus-within:border-[#003e8b] focus-within:ring-4 focus-within:ring-blue-100/50 transition-all duration-200">
+                      <span className="inline-flex items-center px-3.5 bg-gray-50 text-gray-505 text-xs font-semibold border-r border-gray-200">
+                        +91
+                      </span>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        placeholder="Enter 10-digit number"
+                        value={phoneNumber}
+                        onChange={(e) =>
+                          setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 10))
+                        }
+                        className="border-0 focus:ring-0 focus:border-0 rounded-l-none text-sm h-10 px-3 w-full outline-none focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <Button
+                  className="w-full bg-[#003e8b] hover:bg-[#002e66] text-white font-bold h-10 rounded-lg mt-6 shadow-sm hover:shadow transition-all cursor-pointer border-0 text-xs uppercase tracking-wider"
+                  onClick={handleSendOtp}
+                  disabled={loading || !name.trim() || phoneNumber.length !== 10}
+                >
+                  {loading ? "Sending..." : "Create Account with OTP"}
+                </Button>
+
+                {/* Already have account section */}
+                <div className="flex items-center gap-3 my-1">
+                  <div className="flex-1 border-t border-gray-150"></div>
+                  <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">Or</span>
+                  <div className="flex-1 border-t border-gray-150"></div>
+                </div>
+
+                <Link to="/auth/login" className="block w-full">
+                  <button
+                    type="button"
+                    className="w-full h-10 border border-gray-200 hover:border-[#003e8b] bg-white text-gray-600 hover:text-[#003e8b] hover:bg-blue-50/20 font-bold rounded-lg text-xs uppercase tracking-wider transition-all duration-200 cursor-pointer shadow-sm"
+                  >
+                    Already have account? Login
+                  </button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <div>
+                  <Label htmlFor="otp" className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Enter OTP</Label>
+                  <div className="mt-1 shadow-sm rounded-lg overflow-hidden border border-gray-200 focus-within:border-[#003e8b] focus-within:ring-4 focus-within:ring-blue-100/50 transition-all duration-200">
                     <Input
                       id="otp"
                       type="text"
@@ -637,46 +638,41 @@ export default function LoginPage() {
                       onChange={(e) =>
                         setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
                       }
-                      className="text-center text-2xl tracking-widest"
+                      className="border-0 focus:ring-0 focus:border-0 text-center text-xl tracking-widest h-10 w-full outline-none focus:outline-none"
+                      maxLength="6"
+                      autoFocus
                     />
-                    <p className="text-sm text-gray-600 mt-2">
-                      OTP sent to +91 {phoneNumber}
-                    </p>
                   </div>
+                  <p className="text-[10px] text-gray-400 mt-1.5 text-center">
+                    OTP sent to +91 {phoneNumber}
+                  </p>
+                </div>
 
-                  <Button
-                    className="w-full bg-red-600 hover:bg-red-700 text-white"
-                    onClick={handleVerifyOtp}
-                    disabled={loading || otp.length !== 6}
-                  >
-                    {loading ? "Verifying..." : "Verify OTP"}
-                  </Button>
+                <Button
+                  className="w-full bg-[#003e8b] hover:bg-[#002e66] text-white font-bold h-10 rounded-lg shadow-sm transition-all cursor-pointer border-0 text-xs uppercase tracking-wider"
+                  onClick={handleVerifyOtp}
+                  disabled={loading || otp.length !== 6}
+                >
+                  {loading ? "Verifying..." : "Verify OTP"}
+                </Button>
 
-                  <Button
-                    variant="ghost"
-                    className="w-full"
-                    onClick={() => {
-                      setOtpSent(false);
-                      setOtp("");
-                    }}
-                  >
-                    Change Phone Number
-                  </Button>
-                </>
-              )}
-            </div>
+                <Button
+                  variant="ghost"
+                  className="w-full text-xs font-bold text-gray-500 hover:text-gray-800 cursor-pointer h-9 mt-1"
+                  onClick={() => {
+                    setOtpSent(false);
+                    setOtp("");
+                  }}
+                >
+                  ← Change Phone Number
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
 
-            <Separator />
-
-            <div className="text-center text-sm text-gray-600">
-              <p className="mb-2">✨ New to our platform?</p>
-              <p>Your account will be automatically created when you sign in for the first time.</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="mt-6 p-4 bg-white/80 rounded-lg text-center">
-          <p className="text-xs text-gray-600">
+        <div className="mt-3 p-2.5 bg-white/60 border border-gray-100/50 rounded-xl text-center">
+          <p className="text-[10px] text-gray-500">
             🔒 Your data is secure and encrypted.
           </p>
         </div>
