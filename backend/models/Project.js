@@ -45,6 +45,10 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
         allowNull: false,
       },
+      difficulty: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {
       tableName: "Projects",

@@ -37,6 +37,10 @@ const discountRoutes = require('./routes/discountRoutes');
 const sitemapRoutes = require('./routes/sitemap');
 
 // ✅ NEW: Shiprocket Checkout routes
+const publicBlogRoutes = require("./routes/publicBlogRoutes");
+const adminBlogRoutes = require("./routes/adminBlogRoutes");
+const authenticateAdmin = require("./middleware/adminauth");
+
 
 const app = express();
 
@@ -109,6 +113,9 @@ app.get("/protected", authenticateUser, (req, res) => {
 // Existing middlewares and routes
 app.use("/api/protected", protectedRoutes);
 app.use("/api/admin", adminRoutes);
+
+app.use("/api/blogs", publicBlogRoutes);
+app.use("/api/admin/blogs", authenticateAdmin, adminBlogRoutes);
 
 app.use('/api/userinfos', userinfo);
 

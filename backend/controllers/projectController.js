@@ -536,5 +536,31 @@ exports.deleteSubcategory = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+// ==================== GET PROJECTS BY CATEGORY SLUG ====================
+exports.getProjectsByCategorySlug = async (req, res) => {
+  const { slug } = req.params;
+  try {
+    const category = await Category.findOne({ where: { slug } });
+    if (!category) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+
+    const projects = await Project.findAll({
+      include: [
+        {
+          model: Subcategory,
+          as: "subcategory",
+          where: { categoryId: category.id },
+          include: [{ model: Category, as: "category" }]
+        }
+      ]
+    });
+
+    res.status(200).json(projects);
+  } catch (error) {
+    console.error("Error fetching projects by category slug:", error);
+    res.status(500).json({ error: "Failed to fetch projects by category" });
+  }
+};
 
 module.exports = exports;
