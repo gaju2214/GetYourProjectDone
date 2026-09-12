@@ -1,4 +1,4 @@
-const { Order, OrderItem, CartItem, Project, UserInfo, User } = require("../models");
+const { Order, OrderItem, CartItem, Project, EngineeringKit, UserInfo, User } = require("../models");
 const generateOrderId = require("../utils/generateOrderId");
 const axios = require("axios");
 const { Op } = require("sequelize");
@@ -276,9 +276,12 @@ exports.createOrderWithShipping = async (req, res) => {
     // ✅ CREATE ORDER ITEMS - This was missing!
     if (cartItems && cartItems.length > 0) {
       for (const item of cartItems) {
+        const isEngineeringKit = item.itemType === 'engineering_kit' || !!item.engineeringKitId;
         await OrderItem.create({
           orderId: newOrder.orderId,
-          projectId: item.projectId || item.id,
+          itemType: isEngineeringKit ? 'engineering_kit' : 'project',
+          projectId: isEngineeringKit ? null : (item.projectId || item.id),
+          engineeringKitId: isEngineeringKit ? (item.engineeringKitId || item.id) : null,
           quantity: item.quantity || 1,
           price: item.price || 0
         });
@@ -381,6 +384,11 @@ exports.getAllOrders = async (req, res) => {
               model: Project,
               as: "Project",
               attributes: ["id", "title", "price", "image"]
+            },
+            {
+              model: EngineeringKit,
+              as: "EngineeringKit",
+              attributes: ["id", "title", "price", "image"]
             }
           ]
         }
@@ -458,6 +466,10 @@ exports.getOrdersByUser = async (req, res) => {
             {
               model: Project,
               as: 'Project' // ✅ Use the alias from OrderItem association
+            },
+            {
+              model: EngineeringKit,
+              as: 'EngineeringKit'
             }
           ]
         }

@@ -11,6 +11,9 @@ router.get("/", projectController.getAllProjects);
 // Get single project by slug
 router.get("/by-slug/:slug", projectController.getProjectBySlug);
 
+// Get projects by category slug
+router.get("/by-category-slug/:slug", projectController.getProjectsByCategorySlug);
+
 // Get projects by subcategory
 router.get(
   "/by-subcategory/:subcategoryId",

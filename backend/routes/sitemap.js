@@ -5,10 +5,10 @@ const router = express.Router();
 
 router.get('/sitemap.xml', async (req, res) => {
   try {
-    const sitemap = new SitemapStream({ 
-      hostname: 'https://www.getyourprojectdone.in' 
+    const sitemap = new SitemapStream({
+      hostname: 'https://www.getyourprojectdone.in'
     });
-    
+
     // Static pages with consistent priorities
     const staticUrls = [
       { url: '/', changefreq: 'daily', priority: 1.0 },
@@ -16,7 +16,7 @@ router.get('/sitemap.xml', async (req, res) => {
       { url: '/categories', changefreq: 'weekly', priority: 0.8 },
       { url: '/auth', changefreq: 'monthly', priority: 0.3 },
       { url: '/cart', changefreq: 'monthly', priority: 0.3 },
-      
+
       // Category pages - fixed URLs to match your routes
       { url: '/categories/electronics', changefreq: 'weekly', priority: 0.7 },
       { url: '/categories/mechanical', changefreq: 'weekly', priority: 0.7 },
@@ -37,7 +37,7 @@ router.get('/sitemap.xml', async (req, res) => {
     try {
       // Dynamic project pages - using axios for API calls
       const projectsResponse = await axios.get(`${process.env.API_BASE_URL || 'http://localhost:5000'}/api/projects`);
-      
+
       if (projectsResponse.data && projectsResponse.data.length > 0) {
         projectsResponse.data.forEach(project => {
           sitemap.write({
@@ -55,8 +55,8 @@ router.get('/sitemap.xml', async (req, res) => {
 
     try {
       // Dynamic category pages - using axios for API calls  
-      const categoriesResponse = await axios.get(`${process.env.API_BASE_URL || 'http://localhost:5000'}/api/categories/categoryall`);
-      
+      const categoriesResponse = await axios.get(`${process.env.API_BASE_URL || 'https://www.getyourprojectdone.in'}/api/categories/categoryall`);
+
       if (categoriesResponse.data && categoriesResponse.data.length > 0) {
         categoriesResponse.data.forEach(category => {
           sitemap.write({
@@ -74,11 +74,11 @@ router.get('/sitemap.xml', async (req, res) => {
 
     sitemap.end();
     const sitemapXML = await streamToPromise(sitemap);
-    
+
     res.header('Content-Type', 'application/xml');
     res.header('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
     res.send(sitemapXML.toString());
-    
+
   } catch (error) {
     console.error('Error generating sitemap:', error);
     res.status(500).send('<?xml version="1.0" encoding="UTF-8"?><error>Sitemap generation failed</error>');

@@ -6,7 +6,7 @@ export const generateExcelInvoice = (invoiceData) => {
   const wb = XLSX.utils.book_new();
 
   const headerData = [
-    ["GET YOUR PROJECT DONE - INVOICE"],
+    ["KITSINDIA - INVOICE"],
     ["Premium Engineering Project Kits & Solutions"],
     ["Email: support@getyourprojectdone.com | Phone: +91-9876543210"],
     ["Website: www.getyourprojectdone.com"],
@@ -61,7 +61,7 @@ export const generateExcelInvoice = (invoiceData) => {
     [""],
     ["TOTAL AMOUNT:", `₹${invoiceData.pricing.finalTotal.toLocaleString()}`],
     [""],
-    ["Thank you for choosing Get Your Project Done!"],
+    ["Thank you for choosing KitsIndia!"],
     ["For support, contact us at support@getyourprojectdone.com"]
   );
 
@@ -77,7 +77,7 @@ export const generateExcelInvoice = (invoiceData) => {
 
   XLSX.utils.book_append_sheet(wb, ws, "Invoice");
 
-  const fileName = `GetYourProjectDone_Invoice_${invoiceData.orderId}.xlsx`;
+  const fileName = `KitsIndia_Invoice_${invoiceData.orderId}.xlsx`;
   XLSX.writeFile(wb, fileName);
 };
 
@@ -86,7 +86,7 @@ export const generatePDFInvoice = (invoiceData) => {
 
   doc.setFontSize(20);
   doc.setFont("helvetica", "bold");
-  doc.text("GET YOUR PROJECT DONE", 20, 20);
+  doc.text("KITSINDIA", 20, 20);
 
   doc.setFontSize(12);
   doc.setFont("helvetica", "normal");
@@ -201,13 +201,13 @@ export const generatePDFInvoice = (invoiceData) => {
 
   doc.setFontSize(10);
   doc.setFont("helvetica", "italic");
-  doc.text("Thank you for choosing Get Your Project Done!", 20, finalY + 80);
+  doc.text("Thank you for choosing KitsIndia!", 20, finalY + 80);
   doc.text(
     "For support, contact us at support@getyourprojectdone.com",
     20,
     finalY + 88
   );
 
-  const fileName = `GetYourProjectDone_Invoice_${invoiceData.orderId}.pdf`;
+  const fileName = `KitsIndia_Invoice_${invoiceData.orderId}.pdf`;
   doc.save(fileName);
 };

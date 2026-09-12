@@ -28,7 +28,7 @@ const ShiprocketCheckoutButton = ({ cartItems, userId, onSuccess }) => {
 
       // Generate checkout token from your backend
       const { data } = await axios.post(
-        'http://localhost:5000/api/shiprocket-checkout/generate-token',
+        'https://www.getyourprojectdone.in/api/shiprocket-checkout/generate-token',
         {
           userId: userId,
           cartItems: cartItems.map(item => ({

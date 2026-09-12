@@ -9,9 +9,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
+    itemType: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'project' // 'project' | 'engineering_kit'
+    },
     projectId: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true
+    },
+    engineeringKitId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     tableName: 'CartItems', // Ensure correct table name
@@ -20,12 +29,16 @@ module.exports = (sequelize, DataTypes) => {
 
   CartItem.associate = models => {
     // Make sure this references the correct table name
-    CartItem.belongsTo(models.User, { 
+    CartItem.belongsTo(models.User, {
       foreignKey: 'userId',
       targetKey: 'id' // Explicitly specify the target key
     });
-    CartItem.belongsTo(models.Project, { 
+    CartItem.belongsTo(models.Project, {
       foreignKey: 'projectId',
+      targetKey: 'id'
+    });
+    CartItem.belongsTo(models.EngineeringKit, {
+      foreignKey: 'engineeringKitId',
       targetKey: 'id'
     });
   };

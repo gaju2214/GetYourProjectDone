@@ -260,7 +260,7 @@ export default function Account() {
     try {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-    } catch (e) {}
+    } catch (e) { }
     navigate("/auth/login");
   };
 
@@ -298,34 +298,33 @@ export default function Account() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-blue-50 to-orange-100 p-4 sm:p-6 flex justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-50 to-blue-100 p-4 sm:p-6 flex justify-center">
       <div className="w-full max-w-6xl bg-white shadow-xl rounded-3xl overflow-hidden">
         <div className="flex flex-col md:flex-row">
           {/* Sidebar */}
-          <div className="w-full md:w-1/4 border-b md:border-b-0 md:border-r border-orange-100 p-4 space-y-4 bg-white">
+          <div className="w-full md:w-1/4 border-b md:border-b-0 md:border-r border-blue-100 p-4 space-y-4 bg-white">
             {sidebarItems.map(({ tab, label, icon: Icon }) => (
               <div
                 key={tab}
                 onClick={() =>
                   tab === "support"
                     ? window.open(
-                        "https://wa.me/917030023573?text=Hi%20Support%2C%20I%20need%20help",
-                        "_blank"
-                      )
+                      "https://wa.me/917030023573?text=Hi%20Support%2C%20I%20need%20help",
+                      "_blank"
+                    )
                     : setActiveTab(tab)
                 }
-                className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 text-sm font-medium ${
-                  activeTab === tab
-                    ? "bg-orange-100 text-orange-700"
+                className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 text-sm font-medium ${activeTab === tab
+                    ? "bg-blue-100 text-blue-800"
                     : "text-gray-700 hover:bg-blue-50"
-                }`}
+                  }`}
               >
                 <Icon className="w-4 h-4 text-blue-400" /> {label}
               </div>
             ))}
             <Button
               onClick={handleLogout}
-              className="w-full mt-4 bg-gradient-to-r from-red-100 to-orange-200 text-red-700 border border-red-200 hover:shadow-md rounded-xl py-2 font-semibold flex items-center justify-center gap-2"
+              className="w-full mt-4 bg-gradient-to-r from-red-100 to-blue-200 text-red-700 border border-red-200 hover:shadow-md rounded-xl py-2 font-semibold flex items-center justify-center gap-2"
             >
               <LogOut className="w-4 h-4" /> Logout
             </Button>
@@ -336,7 +335,7 @@ export default function Account() {
             {activeTab === "profile" && (
               <>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                  <div className="text-xl font-bold text-orange-700 mb-4 sm:mb-0">
+                  <div className="text-xl font-bold text-blue-800 mb-4 sm:mb-0">
                     Hello, {firstName}!
                   </div>
                   {!isEditing ? (
@@ -350,7 +349,7 @@ export default function Account() {
                     <div className="flex flex-col sm:flex-row gap-3">
                       <button
                         onClick={handleSave}
-                        className="bg-orange-500 hover:bg-orange-600 text-white flex items-center gap-2 px-4 py-2 rounded-xl shadow-md transition-all"
+                        className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 px-4 py-2 rounded-xl shadow-md transition-all"
                       >
                         <Save className="w-4 h-4" /> Save
                       </button>
@@ -372,11 +371,10 @@ export default function Account() {
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       readOnly={!isEditing}
-                      className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
-                        isEditing
-                          ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
+                      className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${isEditing
+                          ? "border-blue-300 bg-white focus:ring-2 focus:ring-blue-400"
                           : "bg-gray-100 border-transparent"
-                      }`}
+                        }`}
                     />
                   </div>
                   <div>
@@ -385,11 +383,10 @@ export default function Account() {
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       readOnly={!isEditing}
-                      className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
-                        isEditing
-                          ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
+                      className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${isEditing
+                          ? "border-blue-300 bg-white focus:ring-2 focus:ring-blue-400"
                           : "bg-gray-100 border-transparent"
-                      }`}
+                        }`}
                     />
                   </div>
                   <div>
@@ -400,11 +397,10 @@ export default function Account() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       readOnly={!isEditing}
-                      className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
-                        isEditing
-                          ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
+                      className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${isEditing
+                          ? "border-blue-300 bg-white focus:ring-2 focus:ring-blue-400"
                           : "bg-gray-100 border-transparent"
-                      }`}
+                        }`}
                     />
                   </div>
                   <div>
@@ -415,11 +411,10 @@ export default function Account() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       readOnly={!isEditing}
-                      className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
-                        isEditing
-                          ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
+                      className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${isEditing
+                          ? "border-blue-300 bg-white focus:ring-2 focus:ring-blue-400"
                           : "bg-gray-100 border-transparent"
-                      }`}
+                        }`}
                     />
                   </div>
                   <div>
@@ -431,11 +426,10 @@ export default function Account() {
                       value={dob}
                       onChange={(e) => setDob(e.target.value)}
                       readOnly={!isEditing}
-                      className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${
-                        isEditing
-                          ? "border-orange-300 bg-white focus:ring-2 focus:ring-orange-400"
+                      className={`w-full px-4 py-2 rounded-md border text-sm mt-1 ${isEditing
+                          ? "border-blue-300 bg-white focus:ring-2 focus:ring-blue-400"
                           : "bg-gray-100 border-transparent"
-                      }`}
+                        }`}
                     />
                   </div>
                   <div>
@@ -462,7 +456,7 @@ export default function Account() {
 
             {activeTab === "orders" && (
               <div>
-                <h2 className="text-xl font-semibold text-orange-600 mb-2">
+                <h2 className="text-xl font-semibold text-blue-700 mb-2">
                   📦 Your Orders
                 </h2>
                 <p className="text-gray-500">No orders placed yet.</p>
@@ -471,7 +465,7 @@ export default function Account() {
 
             {activeTab === "addresses" && (
               <div>
-                <h2 className="text-xl font-semibold text-orange-600 mb-2">
+                <h2 className="text-xl font-semibold text-blue-700 mb-2">
                   🏠 Saved Addresses
                 </h2>
                 <p className="text-gray-500">
@@ -482,7 +476,7 @@ export default function Account() {
 
             {activeTab === "faq" && (
               <div>
-                <h2 className="text-xl font-semibold text-orange-600 mb-2">
+                <h2 className="text-xl font-semibold text-blue-700 mb-2">
                   ❓ Frequently Asked Questions
                 </h2>
                 <ul className="list-disc pl-5 text-gray-600 space-y-1">

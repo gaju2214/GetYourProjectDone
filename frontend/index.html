@@ -1,61 +1,62 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="https://www.getyourprojectdone.in/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Get Your Project Done</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="/order-animation.css">
-     <!-- ConsentManager Script - ADD THIS FIRST -->
-    <!-- <script type="text/javascript" data-cmp-ab="1" src="https://cdn.consentmanager.net/delivery/autoblocking/7db589d7d2143.js" data-cmp-host="a.delivery.consentmanager.net" data-cmp-cdn="cdn.consentmanager.net" data-cmp-codesrc="16"></script> -->
-    
-    <!-- Google Analytics 4 - ADD THIS AFTER ConsentManager -->
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=AW-11465660758"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'AW-11465660758');
-</script>
-<!-- Google tag (gtag.js) event -->
-.
-<!-- Google tag (gtag.js) event - delayed navigation helper -->
-<script>
-  // Helper function to delay opening a URL until a gtag event is sent.
-  // Call it in response to an action that should navigate to a URL.
-  function gtagSendEvent(url) {
-    var callback = function () {
-      if (typeof url === 'string') {
-        window.location = url;
-      }
-    };
-    gtag('event', 'ads_conversion_Contact_1', {
-      'event_callback': callback,
-      'event_timeout': 2000,
-      // <event_parameters>
-    });
-    return false;
-  }
-</script>
-<!-- ✅ Shiprocket Checkout Styles -->
-    <link rel="stylesheet" href="https://checkout-ui.shiprocket.com/assets/styles/shopify.css">
-        <meta name="fastrr-disable-service-worker" content="true" />
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="https://www.getyourprojectdone.in/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KitsIndia</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="/order-animation.css">
+  <!-- ConsentManager Script - ADD THIS FIRST -->
+  <!-- <script type="text/javascript" data-cmp-ab="1" src="https://cdn.consentmanager.net/delivery/autoblocking/7db589d7d2143.js" data-cmp-host="a.delivery.consentmanager.net" data-cmp-cdn="cdn.consentmanager.net" data-cmp-codesrc="16"></script> -->
 
-  </head>
-  <body>
-    <div id="root" ></div>
-     <!-- ✅ Hidden field for Shiprocket (use your actual domain) -->
-    <input type="hidden" value="getyourprojectdone.in" id="sellerDomain"/>
-    
-    <!-- ✅ Shiprocket Checkout Script -->
-    <script src="https://checkout-ui.shiprocket.com/assets/js/channels/shopify.js"> </script>
-    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+  <!-- Google Analytics 4 - ADD THIS AFTER ConsentManager -->
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-11465660758"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'AW-11465660758');
+  </script>
+  <!-- Google tag (gtag.js) event -->
+  <!-- Google tag (gtag.js) event - delayed navigation helper -->
+  <script>
+    // Helper function to delay opening a URL until a gtag event is sent.
+    // Call it in response to an action that should navigate to a URL.
+    function gtagSendEvent(url) {
+      var callback = function () {
+        if (typeof url === 'string') {
+          window.location = url;
+        }
+      };
+      gtag('event', 'ads_conversion_Contact_1', {
+        'event_callback': callback,
+        'event_timeout': 2000,
+        // <event_parameters>
+      });
+      return false;
+    }
+  </script>
+  <!-- ✅ Shiprocket Checkout Styles -->
+  <link rel="stylesheet" href="https://checkout-ui.shiprocket.com/assets/styles/shopify.css">
+  <meta name="fastrr-disable-service-worker" content="true" />
+
+</head>
+
+<body>
+  <div id="root"></div>
+  <!-- ✅ Hidden field for Shiprocket (use your actual domain) -->
+  <input type="hidden" value="getyourprojectdone.in" id="sellerDomain" />
+
+  <!-- ✅ Shiprocket Checkout Script -->
+  <script src="https://checkout-ui.shiprocket.com/assets/js/channels/shopify.js"> </script>
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>
-

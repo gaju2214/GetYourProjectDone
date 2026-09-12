@@ -19,6 +19,7 @@ const authRoutes = require("./routes/authRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const subcategoryRoutes = require("./routes/subcategoryRoutes");
 const projectRoutes = require("./routes/projectRoutes");
+const engineeringKitRoutes = require("./routes/engineeringKitRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const protectedRoutes = require("./routes/protectedRoutes");
@@ -37,6 +38,10 @@ const discountRoutes = require('./routes/discountRoutes');
 const sitemapRoutes = require('./routes/sitemap');
 
 // ✅ NEW: Shiprocket Checkout routes
+const publicBlogRoutes = require("./routes/publicBlogRoutes");
+const adminBlogRoutes = require("./routes/adminBlogRoutes");
+const authenticateAdmin = require("./middleware/adminauth");
+
 
 const app = express();
 
@@ -47,6 +52,7 @@ const allowedOrigins = [
   "http://localhost:5174",
   "http://localhost:5175",
   "http://localhost:3000",
+  "http://localhost:3001",
   "http://192.168.31.24:5173",
   "https://www.getyourprojectdone.in",
   "https://getyourprojectdone.in",
@@ -86,6 +92,7 @@ app.use("/api/discounts", discountRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/subcategories", subcategoryRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/engineering-kits", engineeringKitRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payment", paymentRoutes); // ✅ Razorpay payment route
@@ -109,6 +116,9 @@ app.get("/protected", authenticateUser, (req, res) => {
 // Existing middlewares and routes
 app.use("/api/protected", protectedRoutes);
 app.use("/api/admin", adminRoutes);
+
+app.use("/api/blogs", publicBlogRoutes);
+app.use("/api/admin/blogs", authenticateAdmin, adminBlogRoutes);
 
 app.use('/api/userinfos', userinfo);
 

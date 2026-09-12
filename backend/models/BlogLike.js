@@ -1,0 +1,44 @@
+module.exports = (sequelize, DataTypes) => {
+  const BlogLike = sequelize.define(
+    "BlogLike",
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      blogId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "blogs",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "users",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+        onUpdate: "CASCADE",
+      },
+    },
+    {
+      tableName: "blog_likes",
+      timestamps: true,
+      indexes: [
+        {
+          unique: true,
+          fields: ["blogId", "userId"],
+        },
+      ],
+    }
+  );
+
+  return BlogLike;
+};

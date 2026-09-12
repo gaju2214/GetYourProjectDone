@@ -12,6 +12,8 @@ exports.createProject = async (req, res) => {
     components,
     details,
     review,
+    difficulty,
+    technologies,
     image, // Cloudinary URL
     block_diagram, // Cloudinary URL
     abstract_file, // Cloudinary URL
@@ -51,6 +53,18 @@ exports.createProject = async (req, res) => {
       parsedComponents = [components]; // fallback: wrap string into array
     }
 
+    // Parse technologies
+    let parsedTechnologies = [];
+    if (Array.isArray(technologies)) {
+      parsedTechnologies = technologies;
+    } else if (typeof technologies === "string" && technologies.trim() !== "") {
+      try {
+        parsedTechnologies = JSON.parse(technologies);
+      } catch (err) {
+        parsedTechnologies = technologies.split(",").map((t) => t.trim()).filter(Boolean);
+      }
+    }
+
     // Create project
     const project = await Project.create({
       title,
@@ -64,6 +78,8 @@ exports.createProject = async (req, res) => {
       abstract_file,
       details,
       review,
+      difficulty,
+      technologies: parsedTechnologies,
     });
 
     console.log("✅ Project created:", project.id);
@@ -396,6 +412,21 @@ exports.updateProject = async (req, res) => {
       updatedData.components = parsedComponents;
     }
 
+    // ✅ Handle technologies if they're being updated
+    if (updatedData.technologies) {
+      let parsedTechnologies = [];
+      if (Array.isArray(updatedData.technologies)) {
+        parsedTechnologies = updatedData.technologies;
+      } else if (typeof updatedData.technologies === "string") {
+        try {
+          parsedTechnologies = JSON.parse(updatedData.technologies);
+        } catch (err) {
+          parsedTechnologies = updatedData.technologies.split(",").map((t) => t.trim()).filter(Boolean);
+        }
+      }
+      updatedData.technologies = parsedTechnologies;
+    }
+
     // Update project
     await project.update(updatedData);
 
@@ -534,6 +565,32 @@ exports.deleteSubcategory = async (req, res) => {
   } catch (error) {
     console.error("Error deleting subcategory:", error);
     res.status(500).json({ message: "Server error" });
+  }
+};
+// ==================== GET PROJECTS BY CATEGORY SLUG ====================
+exports.getProjectsByCategorySlug = async (req, res) => {
+  const { slug } = req.params;
+  try {
+    const category = await Category.findOne({ where: { slug } });
+    if (!category) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+
+    const projects = await Project.findAll({
+      include: [
+        {
+          model: Subcategory,
+          as: "subcategory",
+          where: { categoryId: category.id },
+          include: [{ model: Category, as: "category" }]
+        }
+      ]
+    });
+
+    res.status(200).json(projects);
+  } catch (error) {
+    console.error("Error fetching projects by category slug:", error);
+    res.status(500).json({ error: "Failed to fetch projects by category" });
   }
 };
 
