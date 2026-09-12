@@ -9,9 +9,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING, // ✅ Changed from INTEGER to STRING
       allowNull: false,
     },
+    itemType: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'project', // 'project' | 'engineering_kit'
+    },
     projectId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
+    },
+    engineeringKitId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
     },
     quantity: {
       type: DataTypes.INTEGER,
@@ -35,6 +44,11 @@ module.exports = (sequelize, DataTypes) => {
     OrderItem.belongsTo(models.Project, {
       foreignKey: "projectId",
       as: "Project"
+    });
+
+    OrderItem.belongsTo(models.EngineeringKit, {
+      foreignKey: "engineeringKitId",
+      as: "EngineeringKit"
     });
   };
 

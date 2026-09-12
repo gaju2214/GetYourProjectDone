@@ -24,30 +24,24 @@ export default function EngineeringKit() {
   // Available difficulty options
   const difficultyOptions = ["Beginner", "Intermediate", "Advanced"];
 
-  // Available technology options
-  const technologyOptions = [
-    "Arduino",
-    "ESP32",
-    "Raspberry Pi",
-    "Bluetooth",
-    "RFID",
-    "IoT",
-    "Sensors"
-  ];
+  // Technology options are derived from the technologies actually tagged on kits (set from the admin panel)
+  const technologyOptions = Array.from(
+    new Set(projects.flatMap((proj) => (Array.isArray(proj.technologies) ? proj.technologies : [])))
+  ).sort();
 
   // --- Data Loading ---
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch subcategories for Engineering Kits
-        const subRes = await api.get("/api/categories/subcategories/by-slug/engineering-kit");
+        // Fetch subcategories for Engineering Kits (dedicated table)
+        const subRes = await api.get("/api/engineering-kits/subcategories");
         setSubcategories(subRes.data);
 
-        // Fetch projects in Engineering Kits category
-        const projRes = await api.get("/api/projects/by-category-slug/engineering-kit");
-        setProjects(projRes.data);
-        setFilteredProjects(projRes.data);
+        // Fetch all engineering kits
+        const projRes = await api.get("/api/engineering-kits?limit=1000");
+        setProjects(projRes.data.data || []);
+        setFilteredProjects(projRes.data.data || []);
       } catch (err) {
         console.error("Error loading Engineering Kit catalog data:", err);
         setError("Failed to load products. Please try again later.");
@@ -65,7 +59,7 @@ export default function EngineeringKit() {
     // 1. Filter by Subcategory
     if (selectedSubcategories.length > 0) {
       result = result.filter((proj) =>
-        selectedSubcategories.includes(Number(proj.subcategoryId))
+        selectedSubcategories.includes(Number(proj.engineeringSubcategoryId))
       );
     }
 
@@ -90,29 +84,10 @@ export default function EngineeringKit() {
 
     // 5. Filter by Technology
     if (selectedTechnologies.length > 0) {
-      result = result.filter((proj) => {
-        return selectedTechnologies.some((tech) => {
-          const lowerTech = tech.toLowerCase();
-          const titleMatch = proj.title?.toLowerCase().includes(lowerTech);
-          const descMatch = proj.description?.toLowerCase().includes(lowerTech);
-
-          // Parse Postgres string array format safely
-          let componentsList = [];
-          if (Array.isArray(proj.components)) {
-            componentsList = proj.components;
-          } else if (typeof proj.components === "string") {
-            componentsList = proj.components
-              .replace(/^\{|\}$/g, "")
-              .split(",")
-              .map((c) => c.trim().replace(/^"|"$/g, ""));
-          }
-          const compMatch = componentsList.some((c) =>
-            c.toLowerCase().includes(lowerTech)
-          );
-
-          return titleMatch || descMatch || compMatch;
-        });
-      });
+      result = result.filter((proj) =>
+        Array.isArray(proj.technologies) &&
+        selectedTechnologies.some((tech) => proj.technologies.includes(tech))
+      );
     }
 
     // Sort Projects

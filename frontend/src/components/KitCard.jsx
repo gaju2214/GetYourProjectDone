@@ -50,9 +50,10 @@ export default function KitCard({ product, categorySlug }) {
   const triggerAddToCart = async (userId) => {
     setIsAdding(true);
     try {
+      const isEngineeringKit = categorySlug === "engineering-kit";
       const cartItem = {
         userId: userId || user?.id || user?.user_id,
-        projectId: product.id,
+        ...(isEngineeringKit ? { engineeringKitId: product.id } : { projectId: product.id }),
         quantity: 1,
         price: product.price,
       };
@@ -93,7 +94,7 @@ export default function KitCard({ product, categorySlug }) {
       setShowOtpModal(true);
       return;
     }
-    navigate("/checkout", { state: { buyNowProduct: product, quantity: 1 } });
+    navigate("/checkout", { state: { buyNowProduct: product, quantity: 1, itemType: categorySlug === "engineering-kit" ? "engineering_kit" : "project" } });
   };
 
   // OTP Login APIs
@@ -129,7 +130,7 @@ export default function KitCard({ product, categorySlug }) {
         if (pendingAction === "cart") {
           triggerAddToCart(response.data.user.id);
         } else if (pendingAction === "buyNow") {
-          navigate("/checkout", { state: { buyNowProduct: product, quantity: 1 } });
+          navigate("/checkout", { state: { buyNowProduct: product, quantity: 1, itemType: categorySlug === "engineering-kit" ? "engineering_kit" : "project" } });
         }
       } else {
         alert("❌ Invalid OTP. Please check and try again.");

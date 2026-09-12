@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "../components/ui/Botton";
 import { Badge } from "../components/ui/Badge";
 import { Sheet, SheetContent, SheetTrigger } from "../components/ui/Sheet";
-import { Menu, ShoppingCart, User, Search, Home, MessageCircle, Layers, Cpu, Hammer, Wifi } from "lucide-react";
+import { Menu, ShoppingCart, User, Search, Home, MessageCircle, Cpu, Hammer, Wifi } from "lucide-react";
 import EngiProNetwork from "./EngiproNetwork";
 import api from "../api";
 
@@ -101,14 +101,6 @@ const Navigation = () => {
 
           {/* Quick Links Column */}
           <div className="flex items-center space-x-2 sm:space-x-4 shrink-0">
-            <Link to="/categories" className="flex items-center gap-1 hover:text-[#fb7b02] transition-colors">
-              <Layers className="w-3 h-3 text-[#fb7b02] shrink-0" />
-              <span className="inline sm:hidden">Kits</span>
-              <span className="hidden sm:inline">Project Kits</span>
-            </Link>
-            
-            <span className="text-gray-800">|</span>
-            
             <Link to="/engineering-kit" className="flex items-center gap-1 hover:text-[#fb7b02] transition-colors">
               <Cpu className="w-3 h-3 text-cyan-400 shrink-0" />
               <span className="inline sm:hidden">Engineering</span>
@@ -256,13 +248,6 @@ const Navigation = () => {
                           Home
                         </Link>
                         <Link
-                          to="/categories"
-                          onClick={() => setIsMenuOpen(false)}
-                          className="hover:text-[#003e8b] transition-colors py-2 border-b border-gray-50"
-                        >
-                          Project Kits
-                        </Link>
-                        <Link
                           to="/engineering-kit"
                           onClick={() => setIsMenuOpen(false)}
                           className="hover:text-[#003e8b] transition-colors py-2 border-b border-gray-50"
@@ -336,9 +321,6 @@ const Navigation = () => {
             <div className="flex items-center space-x-8">
               <Link to="/" className="hover:text-[#003e8b] py-2 transition-colors flex items-center gap-1.5">
                 <Home className="h-4 w-4" /> Home
-              </Link>
-              <Link to="/categories" className="hover:text-[#003e8b] py-2 transition-colors">
-                Project Kits / Categories
               </Link>
               <Link to="/engineering-kit" className="hover:text-[#003e8b] py-2 transition-colors">
                 Engineering Kits

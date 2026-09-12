@@ -19,6 +19,8 @@ db.Author = require('./Author')(sequelize, Sequelize);
 db.Blog = require('./Blog')(sequelize, Sequelize);
 db.Comment = require('./Comment')(sequelize, Sequelize);
 db.BlogLike = require('./BlogLike')(sequelize, Sequelize);
+db.EngineeringSubcategory = require('./EngineeringSubcategory')(sequelize, Sequelize);
+db.EngineeringKit = require('./EngineeringKit')(sequelize, Sequelize);
 
 // Call associate methods
 if (db.Category.associate) db.Category.associate(db);
@@ -30,6 +32,8 @@ if (db.OrderItem.associate) db.OrderItem.associate(db);
 if (db.Admin.associate) db.Admin.associate(db);
 if (db.UserInfo.associate) db.UserInfo.associate(db);
 if (db.Discount.associate) db.Discount.associate(db);
+if (db.EngineeringSubcategory.associate) db.EngineeringSubcategory.associate(db);
+if (db.EngineeringKit.associate) db.EngineeringKit.associate(db);
 
 // Define user-cart relationship
 db.User.hasOne(db.Cart);
@@ -65,5 +69,7 @@ module.exports = {
   Author: db.Author,
   Blog: db.Blog,
   Comment: db.Comment,
-  BlogLike: db.BlogLike
+  BlogLike: db.BlogLike,
+  EngineeringSubcategory: db.EngineeringSubcategory,
+  EngineeringKit: db.EngineeringKit
 };

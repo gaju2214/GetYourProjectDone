@@ -24,30 +24,25 @@ export default function DiyProjectKits() {
   // Available difficulty options
   const difficultyOptions = ["Beginner", "Intermediate", "Advanced"];
 
-  // Available technology options
-  const technologyOptions = [
-    "Arduino",
-    "ESP32",
-    "Raspberry Pi",
-    "Bluetooth",
-    "RFID",
-    "IoT",
-    "Sensors"
-  ];
+  // Technology options are derived from the technologies actually tagged on projects (set from the admin panel)
+  const technologyOptions = Array.from(
+    new Set(projects.flatMap((proj) => (Array.isArray(proj.technologies) ? proj.technologies : [])))
+  ).sort();
 
   // --- Data Loading ---
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        // Fetch subcategories for DIY Project Kits
-        const subRes = await api.get("/api/categories/subcategories/by-slug/diy-project-kit");
+        // Fetch all subcategories (this page is the main catalog, not a single category)
+        const subRes = await api.get("/api/categories/getallsubcategory");
         setSubcategories(subRes.data);
 
-        // Fetch projects in DIY Project Kits category
-        const projRes = await api.get("/api/projects/by-category-slug/diy-project-kit");
-        setProjects(projRes.data);
-        setFilteredProjects(projRes.data);
+        // Fetch all projects across every category
+        const projRes = await api.get("/api/projects?limit=1000");
+        const allProjects = Array.isArray(projRes.data) ? projRes.data : (projRes.data.data || []);
+        setProjects(allProjects);
+        setFilteredProjects(allProjects);
       } catch (err) {
         console.error("Error loading DIY Project Kits catalog data:", err);
         setError("Failed to load products. Please try again later.");
@@ -90,29 +85,10 @@ export default function DiyProjectKits() {
 
     // 5. Filter by Technology
     if (selectedTechnologies.length > 0) {
-      result = result.filter((proj) => {
-        return selectedTechnologies.some((tech) => {
-          const lowerTech = tech.toLowerCase();
-          const titleMatch = proj.title?.toLowerCase().includes(lowerTech);
-          const descMatch = proj.description?.toLowerCase().includes(lowerTech);
-
-          // Parse Postgres string array format safely
-          let componentsList = [];
-          if (Array.isArray(proj.components)) {
-            componentsList = proj.components;
-          } else if (typeof proj.components === "string") {
-            componentsList = proj.components
-              .replace(/^\{|\}$/g, "")
-              .split(",")
-              .map((c) => c.trim().replace(/^"|"$/g, ""));
-          }
-          const compMatch = componentsList.some((c) =>
-            c.toLowerCase().includes(lowerTech)
-          );
-
-          return titleMatch || descMatch || compMatch;
-        });
-      });
+      result = result.filter((proj) =>
+        Array.isArray(proj.technologies) &&
+        selectedTechnologies.some((tech) => proj.technologies.includes(tech))
+      );
     }
 
     // Sort Projects

@@ -51,14 +51,14 @@ export default function EngineeringKitDetails() {
       setLoading(true);
       setError(null);
       try {
-        const response = await api.get(`/api/projects/${id}`);
+        const response = await api.get(`/api/engineering-kits/${id}`);
         const prodData = response.data;
         setProduct(prodData);
         setQuantity(1);
 
-        // Fetch similar products in the same subcategory
-        if (prodData.subcategoryId) {
-          const simResponse = await api.get(`/api/projects/by-subcategory/${prodData.subcategoryId}`);
+        // Fetch similar kits in the same subcategory
+        if (prodData.engineeringSubcategoryId) {
+          const simResponse = await api.get(`/api/engineering-kits/by-subcategory/${prodData.engineeringSubcategoryId}`);
           // Filter out current product and keep up to 4
           const filteredSim = simResponse.data
             .filter((item) => Number(item.id) !== Number(prodData.id))
@@ -124,7 +124,7 @@ export default function EngineeringKitDetails() {
     try {
       const cartItem = {
         userId: userId || user?.id || user?.user_id,
-        projectId: product.id,
+        engineeringKitId: product.id,
         quantity: quantity,
         price: product.price,
       };
@@ -161,7 +161,7 @@ export default function EngineeringKitDetails() {
       setShowOtpModal(true);
       return;
     }
-    navigate("/checkout", { state: { buyNowProduct: product, quantity } });
+    navigate("/checkout", { state: { buyNowProduct: product, quantity, itemType: "engineering_kit" } });
   };
 
   // OTP Login Handlers
@@ -195,7 +195,7 @@ export default function EngineeringKitDetails() {
         if (pendingAction === "cart") {
           triggerAddToCart(response.data.user.id);
         } else if (pendingAction === "buyNow") {
-          navigate("/checkout", { state: { buyNowProduct: product, quantity } });
+          navigate("/checkout", { state: { buyNowProduct: product, quantity, itemType: "engineering_kit" } });
         }
       } else {
         alert("❌ Invalid OTP.");

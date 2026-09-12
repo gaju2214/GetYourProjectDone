@@ -14,6 +14,7 @@ export default function Checkout() {
   // --- Buy Now vs Cart State ---
   const buyNowProduct = location.state?.buyNowProduct || null;
   const buyNowQty = location.state?.quantity || 1;
+  const buyNowItemType = location.state?.itemType || "project";
 
   // --- States ---
   const [checkoutItems, setCheckoutItems] = useState([]);
@@ -51,10 +52,12 @@ export default function Checkout() {
 
         // 2. Set checkout items
         if (buyNowProduct) {
+          const isEngineeringKit = buyNowItemType === "engineering_kit";
           setCheckoutItems([
             {
               id: buyNowProduct.id,
-              projectId: buyNowProduct.id,
+              itemType: buyNowItemType,
+              ...(isEngineeringKit ? { engineeringKitId: buyNowProduct.id } : { projectId: buyNowProduct.id }),
               title: buyNowProduct.title,
               image: buyNowProduct.image,
               price: buyNowProduct.price,
@@ -67,11 +70,13 @@ export default function Checkout() {
             headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
           });
           const dbCartItems = cartRes.data.map((item) => ({
-            id: item.projectId,
+            id: item.projectId || item.engineeringKitId,
+            itemType: item.itemType || "project",
             projectId: item.projectId,
-            title: item.Project?.title || "Product Kit",
-            image: item.Project?.image,
-            price: item.Project?.price || item.price,
+            engineeringKitId: item.engineeringKitId,
+            title: item.title || "Product Kit",
+            image: item.image,
+            price: item.price,
             quantity: item.quantity,
           }));
           setCheckoutItems(dbCartItems);

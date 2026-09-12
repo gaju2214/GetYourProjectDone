@@ -24,6 +24,8 @@ const ProjectAdminPanel = () => {
     categoryId: "",
     subcategoryId: "",
     components: [],
+    technologies: [],
+    difficulty: "",
     details: "",
   });
 
@@ -96,7 +98,7 @@ const ProjectAdminPanel = () => {
     const checkAuth = async () => {
       try {
         const res = await api.get("/api/admin/checkAdmin");
-        if (res.data.status === 200 && res.data.admin.role === "admin") {
+        if (res.status === 200 && res.data.admin?.role === "admin") {
           setIsAuthenticated(true);
           setShowLoginPrompt(false);
         } else {
@@ -260,6 +262,7 @@ const ProjectAdminPanel = () => {
       const payload = {
         ...projectData,
         components: JSON.stringify(projectData.components),
+        technologies: JSON.stringify(projectData.technologies),
         image: imageUrl,
         block_diagram: blockDiagramUrl,
         abstract_file: abstractUrl,
@@ -275,6 +278,8 @@ const ProjectAdminPanel = () => {
         categoryId: "",
         subcategoryId: "",
         components: [],
+        technologies: [],
+        difficulty: "",
         details: "",
       });
       setImageFile(null);
@@ -729,6 +734,27 @@ const ProjectAdminPanel = () => {
                 })
               }
             />
+            <input
+              className="border border-gray-200 rounded-lg p-2.5 w-full text-xs font-medium focus:border-[#003e8b] outline-none"
+              type="text"
+              placeholder="Technologies (comma separated, e.g. Arduino, ESP32, IoT)"
+              onChange={(e) =>
+                setProjectData({
+                  ...projectData,
+                  technologies: e.target.value.split(",").map((t) => t.trim()).filter(Boolean),
+                })
+              }
+            />
+            <select
+              className="border border-gray-200 rounded-lg p-2.5 w-full text-xs font-medium focus:border-[#003e8b] outline-none"
+              value={projectData.difficulty}
+              onChange={(e) => setProjectData({ ...projectData, difficulty: e.target.value })}
+            >
+              <option value="">Select Difficulty</option>
+              <option value="Beginner">Beginner</option>
+              <option value="Intermediate">Intermediate</option>
+              <option value="Advanced">Advanced</option>
+            </select>
             <input
               className="border border-gray-200 rounded-lg p-2.5 w-full text-xs font-medium focus:border-[#003e8b] outline-none"
               type="number"

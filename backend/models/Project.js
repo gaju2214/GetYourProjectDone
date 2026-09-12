@@ -49,6 +49,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      technologies: {
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: true,
+      },
     },
     {
       tableName: "Projects",

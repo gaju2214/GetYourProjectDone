@@ -113,14 +113,15 @@
 // };
 
 
-const { CartItem, Project, User } = require('../models');
+const { CartItem, Project, EngineeringKit, User } = require('../models');
 
 // Add item to cart
 exports.addToCart = async (req, res) => {
-  const { userId, projectId, quantity } = req.body;
+  const { userId, projectId, engineeringKitId, quantity } = req.body;
+  const itemType = engineeringKitId ? 'engineering_kit' : 'project';
 
-  if (!userId || !projectId) {
-    return res.status(400).json({ message: 'Missing userId or projectId in request body' });
+  if (!userId || (!projectId && !engineeringKitId)) {
+    return res.status(400).json({ message: 'Missing userId or projectId/engineeringKitId in request body' });
   }
 
   try {
@@ -128,12 +129,20 @@ exports.addToCart = async (req, res) => {
     const userRecord = await User.findByPk(userId);
     if (!userRecord) return res.status(404).json({ error: 'User not found' });
 
-    // Check if project exists
-    const project = await Project.findByPk(projectId);
-    if (!project) return res.status(404).json({ error: 'Project not found' });
+    // Check if the item exists
+    if (itemType === 'engineering_kit') {
+      const kit = await EngineeringKit.findByPk(engineeringKitId);
+      if (!kit) return res.status(404).json({ error: 'Engineering kit not found' });
+    } else {
+      const project = await Project.findByPk(projectId);
+      if (!project) return res.status(404).json({ error: 'Project not found' });
+    }
 
     // Check if already in cart
-    const existing = await CartItem.findOne({ where: { userId, projectId } });
+    const whereClause = itemType === 'engineering_kit'
+      ? { userId, engineeringKitId, itemType }
+      : { userId, projectId, itemType };
+    const existing = await CartItem.findOne({ where: whereClause });
     if (existing) {
       existing.quantity += quantity || 1;
       await existing.save();
@@ -142,7 +151,9 @@ exports.addToCart = async (req, res) => {
 
     const cartItem = await CartItem.create({
       userId,
-      projectId,
+      itemType,
+      projectId: itemType === 'project' ? projectId : null,
+      engineeringKitId: itemType === 'engineering_kit' ? engineeringKitId : null,
       quantity: quantity || 1,
     });
 
@@ -161,22 +172,27 @@ exports.getCart = async (req, res) => {
   try {
     const cartItems = await CartItem.findAll({
       where: { userId },
-      include: [{ model: Project }],
+      include: [{ model: Project }, { model: EngineeringKit }],
     });
 
-    const result = cartItems.map(item => ({
-      id: item.id,           // CartItem ID
-      userId: item.userId,
-      projectId: item.projectId,
-      quantity: item.quantity,
-      price: item.Project?.price || 0,
-      title: item.Project?.title || 'Untitled Project',
-      description: item.Project?.description || '',
-      image: item.Project?.image || '/placeholder-image.jpg',
-      difficulty: item.Project?.difficulty || 'N/A',
-      category: item.Project?.category || 'Category',
-      subcategory: item.Project?.subcategory || 'Subcategory',
-    }));
+    const result = cartItems.map(item => {
+      const source = item.itemType === 'engineering_kit' ? item.EngineeringKit : item.Project;
+      return {
+        id: item.id,           // CartItem ID
+        userId: item.userId,
+        itemType: item.itemType,
+        projectId: item.projectId,
+        engineeringKitId: item.engineeringKitId,
+        quantity: item.quantity,
+        price: source?.price || 0,
+        title: source?.title || 'Untitled Product',
+        description: source?.description || '',
+        image: source?.image || '/placeholder-image.jpg',
+        difficulty: source?.difficulty || 'N/A',
+        category: source?.category || 'Category',
+        subcategory: source?.subcategory || 'Subcategory',
+      };
+    });
 
     res.json(result);
 
